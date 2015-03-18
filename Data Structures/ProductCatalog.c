@@ -25,7 +25,8 @@ ProductCatalog *insertProduct(ProductCatalog *cat, char *product)
 {
 	char *idC = product + 2;
 	int id = atoi(idC);
-	cat->Cat[toupper(product[0]) - 'A'][toupper(product[1]) - 'A'] = insertBST(NULL, id, NULL, 0);
+	intBST *b = cat->Cat[toupper(product[0]) - 'A'][toupper(product[1]) - 'A'];
+	cat->Cat[toupper(product[0]) - 'A'][toupper(product[1]) - 'A'] = insertBST(b, id, NULL, 0);
 	//intBST *b2 = cat->Cat[toupper(product[0]) - 'A'][toupper(product[1]) - 'A'];
 	cat->used++;
 	return cat;

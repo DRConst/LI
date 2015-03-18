@@ -1,17 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "minHeap.h"
-
-
-
-typedef struct sales_str
-{
-	Heap **Tree;
-}*Sales;
+#include "ProductCatalog.h"
+#include "../Queries/Queries.h"
 
 
 int main()
 {
+	/*
 	char buff[6];
 	FILE *fp;
 	fp = fopen("FichClientes.txt", "r");
@@ -42,8 +37,23 @@ int main()
 		if (j == 445)
 			break;
 	}
+
+	ProductCatalog *cat = initProductCatalog(NULL);*/
+
+	ProductCatalog *cat;
+	cat = initProductCatalog(NULL);
+
+
+	char buff[8], b[1024];
+	FILE *fp;
+	fp = fopen("ProdA.txt", "r");
+
+	while (fgets(buff, 8, fp))
+	{
+		cat = insertProduct(cat, buff);
+	}
+	query2(cat, 'A');
+
 }
-
-
 
 

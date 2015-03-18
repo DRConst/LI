@@ -10,3 +10,5 @@ typedef struct productCatalog
 }ProductCatalog;
 
 
+ProductCatalog *initProductCatalog(ProductCatalog *cat);
+ProductCatalog *insertProduct(ProductCatalog *cat, char *product);

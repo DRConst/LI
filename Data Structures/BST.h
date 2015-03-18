@@ -1,7 +1,7 @@
 #pragma once
 typedef struct intNode_stc
 {
-	int key;
+	int key, dataSize;
 	void *data;
 	struct intNode_stc *l, *r;
 }Node;

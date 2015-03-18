@@ -24,6 +24,7 @@ Node *createNode(int elem, void *data, int dataSize)
 {
 	Node *toRet = malloc(sizeof(Node));
 	toRet->key = elem;
+	toRet->dataSize = dataSize;
 	if (data)
 	{
 		toRet->data = malloc(dataSize);
@@ -61,7 +62,7 @@ int auxInsert(Node *node, int elem, void *data, int dataSize)
 		return 1;
 	}
 
-	
+	return 1;
 }
 
 intBST *insertBST(intBST *b, int elem, void *data, int dataSize)
@@ -94,22 +95,69 @@ int *inOrderBST(intBST *b)
 	inOrderAux(b->root, toRet, &i);
 	return toRet;
 }
+Node *getNodeAux(Node *n,int key)
+{
+	if(!n)
+	{
+		return NULL;
+	}	
+	if(n->key == key)
+	{
+		return n;
+	}	
+	if(key < n->key)
+	{
+		return getNodeAux(n->l, key);
+	}
+	if(key > n->key)
+	{
+		return getNodeAux(n->r, key);
+	}
+	
+	return NULL;
+}
+
+Node *getNode(intBST *b, int key)
+{	
+	if(!b)
+		return NULL;
+	return getNodeAux(b->root,key);
+	
+}
+
+int getNodeData(Node *n,void **data, int *dataSize)
+{
+	*dataSize = n->dataSize;
+	*data = malloc(n->dataSize);	
+	memcpy(*data, n->data, n->dataSize);
+	return 1;
+}
 /*
 int main()
 {
 	intBST b;
 
 	initBST(&b);
+	char buff[] = "ASD\0";
 	for (int i = 0; i < 100; i++)
-		insertBST(&b, rand(time(NULL)), NULL, 0);
-
+	{
+		int j = rand()%100;
+		if(j==50){
+		insertBST(&b, j, buff, 4);}
+		else{
+		insertBST(&b,j,NULL,0);}
+		
+	}
 	int *order = inOrderBST(&b);
 
 	for (int i = 0; i < b.used; i++)
 	{
 		printf("%d ", order[i]);
 	}
-
-
-
-}*/
+	
+	char c[4];int i;
+	Node *n = getNode(&b,20);
+	getNodeData(n,(void**)&c,&i);
+	printf("%s", c);
+}
+*/
