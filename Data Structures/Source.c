@@ -40,19 +40,30 @@ int main()
 
 	ProductCatalog *cat = initProductCatalog(NULL);*/
 
-	ProductCatalog *cat;
-	cat = initProductCatalog(NULL);
-
-
+	ProductCatalog *pCat, *cCat;
+	
 	char buff[8], b[1024];
 	FILE *fp;
-	fp = fopen("ProdA.txt", "r");
+	fp = fopen("FichProdutos.txt", "r");
+
+
+	pCat = initProductCatalog(NULL);
+	cCat = initClientCatalog(NULL);
 
 	while (fgets(buff, 8, fp))
 	{
-		cat = insertProduct(cat, buff);
+		pCat = insertProduct(pCat, buff);
 	}
-	query2(cat, 'A');
+
+	fp = fopen("FichClientes.txt", "r");
+
+	while (fgets(buff, 8, fp))
+	{
+		cCat = insertClient(cCat, buff);
+	}
+
+	query2(pCat, 'A');
+	query6(cCat, 'A');
 
 }
 

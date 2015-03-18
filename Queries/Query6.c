@@ -1,9 +1,9 @@
 #include "Queries.h"
 
 
-char **query2(ProductCatalog *cat, char t)
+char **query6(ClientCatalog *cat, char t)
 {
-	char **toRet = NULL, buff[5];
+	char **toRet = NULL, buff[4];
 	int *codes, i, j, used;
 	int cnt = 0;
 	for (i = 0; i < 26; i++)
@@ -15,13 +15,13 @@ char **query2(ProductCatalog *cat, char t)
 			for (j = 0; j < used; j++)
 			{
 				toRet = realloc(toRet, sizeof(char*)*(cnt + 1));
-				toRet[0];
-				toRet[cnt] = malloc(sizeof(char) * 7);
+				//toRet[0];
+				toRet[cnt] = malloc(sizeof(char) * 6);
 				toRet[cnt][0] = t;
 				toRet[cnt][1] = 'A' + i;
-				_itoa_s(codes[j], buff, 5, 10);
-				buff[4] = '\0';
-				strcpy_s(toRet[cnt] + 2, 5, buff);
+				_itoa_s(codes[j], buff, 4, 10);
+				buff[3] = '\0';
+				strcpy_s(toRet[cnt] + 2, 4, buff);
 				cnt++;
 
 			}
