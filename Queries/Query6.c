@@ -1,7 +1,7 @@
 #include "Queries.h"
 
 
-char **query6(ClientCatalog *cat, char t, int *count)
+char **query6(ClientCatalog *cat, char t)
 {
 	char **toRet = NULL, buff[4];
 	int *codes, i, j, used;
@@ -15,21 +15,23 @@ char **query6(ClientCatalog *cat, char t, int *count)
 			for (j = 0; j < used; j++)
 			{
 				toRet = realloc(toRet, sizeof(char*)*(cnt + 1));
+				//toRet[0];
 				toRet[cnt] = malloc(sizeof(char) * 6);
 				toRet[cnt][0] = t;
 				toRet[cnt][1] = 'A' + i;
-				itoa(codes[j], buff, 10);
+				_itoa_s(codes[j], buff, 4, 10);
 				buff[3] = '\0';
-				strcpy(toRet[cnt] + 2, buff);
+				strcpy_s(toRet[cnt] + 2, 4, buff);
 				cnt++;
 
 			}
 		}
 	}
 
-    *count = cnt;
-
-
+	for (i = 0; i < cnt; i++)
+	{
+		printf("%s\n", toRet[i]);
+	}
 	return toRet;
 }
 

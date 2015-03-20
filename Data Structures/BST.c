@@ -43,6 +43,7 @@ int auxInsert(Node *node, int elem, void *data, int dataSize)
 		return 1;
 	if (elem < node->key && node->l)
 	{
+		//node = node->l;
 		return auxInsert(node->l,elem,data,dataSize);
 	}
 	if (elem < node->key && !node->l)
@@ -52,6 +53,7 @@ int auxInsert(Node *node, int elem, void *data, int dataSize)
 	}
 	if (elem > node->key && node->r)
 	{
+		//node = node->r;
 		return auxInsert(node->r, elem, data, dataSize);
 	}
 	if (elem > node->key && !node->r)
@@ -98,11 +100,11 @@ Node *getNodeAux(Node *n,int key)
 	if(!n)
 	{
 		return NULL;
-	}
+	}	
 	if(n->key == key)
 	{
 		return n;
-	}
+	}	
 	if(key < n->key)
 	{
 		return getNodeAux(n->l, key);
@@ -111,22 +113,22 @@ Node *getNodeAux(Node *n,int key)
 	{
 		return getNodeAux(n->r, key);
 	}
-
+	
 	return NULL;
 }
 
 Node *getNode(intBST *b, int key)
-{
+{	
 	if(!b)
 		return NULL;
 	return getNodeAux(b->root,key);
-
+	
 }
 
 int getNodeData(Node *n,void **data, int *dataSize)
 {
 	*dataSize = n->dataSize;
-	*data = malloc(n->dataSize);
+	*data = malloc(n->dataSize);	
 	memcpy(*data, n->data, n->dataSize);
 	return 1;
 }
@@ -144,7 +146,7 @@ int main()
 		insertBST(&b, j, buff, 4);}
 		else{
 		insertBST(&b,j,NULL,0);}
-
+		
 	}
 	int *order = inOrderBST(&b);
 
@@ -152,7 +154,7 @@ int main()
 	{
 		printf("%d ", order[i]);
 	}
-
+	
 	char c[4];int i;
 	Node *n = getNode(&b,20);
 	getNodeData(n,(void**)&c,&i);
