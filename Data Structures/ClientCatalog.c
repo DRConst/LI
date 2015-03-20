@@ -29,7 +29,6 @@ ClientCatalog *insertClient(ClientCatalog *cat, char *client)
 	b = cat->Cat[toupper(client[0]) - 'A'][toupper(client[1]) - 'A'];
 	cat->Cat[toupper(client[0]) - 'A'][toupper(client[1]) - 'A'] = insertBST(b, id, NULL, 0);
 	b = cat->Cat[toupper(client[0]) - 'A'][toupper(client[1]) - 'A'];
-	//intBST *b2 = cat->Cat[toupper(client[0]) - 'A'][toupper(client[1]) - 'A'];
 	cat->used++;
 	return cat;
 }
