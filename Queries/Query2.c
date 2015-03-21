@@ -6,12 +6,13 @@ char **query2(ProductCatalog *cat, char t, int *count )
 	char **toRet = NULL, buff[5];
 	int *codes, i, j, used;
 	int cnt = 0;
+
 	for (i = 0; i < 26; i++)
 	{
-		if (cat->Cat['A' - toupper(t)][i])
+		if ( cat->Cat[ t - 'A' ][i] )
 		{
-			used = cat->Cat['A' - toupper(t)][i]->used;
-			codes = inOrderBST(cat->Cat['A' - toupper(t)][i]);
+			used = cat->Cat[ t - 'A' ][i]->used;
+			codes = inOrderBST(cat->Cat[ t - 'A'][i]);
 			for (j = 0; j < used; j++)
 			{
 				toRet = realloc(toRet, sizeof(char*)*(cnt + 1));
@@ -28,14 +29,7 @@ char **query2(ProductCatalog *cat, char t, int *count )
 	}
 
     *count = cnt;
-/*
-    paginateResults( 1, cnt, 1, 1, toRet, "Produtos", cnt );
-    /*
-	for (i = 0; i < cnt; i++)
-	{
-		printf("%s\n", toRet[i]);
-	}
-	*/
+
 	return toRet;
 }
 

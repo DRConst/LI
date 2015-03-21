@@ -12,7 +12,8 @@
 
 #define MAX_PATH 150
 
-#define HEADER_MENU "\n\n-------------------------------------------------------------\n"
+#define MAX_SEPARATOR "------------------------------------------------------------------------------------------------------------------"
+#define HEADER_MENU "\n-------------------------------------------------------------\n"
 #define MENU_OPTION_1 " 1\t-\tRead Files\n"
 #define MENU_OPTION_2 " 2\t-\tProducts By Prefix\n"
 #define MENU_OPTION_3 " 3\t-\tProduct Sales Info(given month)\n"

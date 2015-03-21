@@ -8,10 +8,10 @@ char **query6(ClientCatalog *cat, char t, int *count)
 	int cnt = 0;
 	for (i = 0; i < 26; i++)
 	{
-		if (cat->Cat['A' - toupper(t)][i])
+		if (cat->Cat[ t - 'A' ][i])
 		{
-			used = cat->Cat['A' - toupper(t)][i]->used;
-			codes = inOrderBST(cat->Cat['A' - toupper(t)][i]);
+			used = cat->Cat[ t - 'A' ][i]->used;
+			codes = inOrderBST(cat->Cat[ t - 'A' ][i]);
 			for (j = 0; j < used; j++)
 			{
 				toRet = realloc(toRet, sizeof(char*)*(cnt + 1));

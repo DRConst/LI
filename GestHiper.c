@@ -1,16 +1,17 @@
 #include "GestHiper.h"
 
 void printMenu();
-void readFiles( ProductCatalog *productCat, ClientCatalog *clientCat );
-void getProductsByPrefix();
-void getClientsByPrefix();
+void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat );
+void getProductsByPrefix( ProductCatalog *productCat );
+void getClientsByPrefix( ClientCatalog *clientCat );
 void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... );
+void genColumn( char *ret, char *s, int max );
 
 int main()
 {
 	int op;
-    ProductCatalog *productCat;
-    ClientCatalog *clientCat;
+    ProductCatalog *productCat = NULL;
+    ClientCatalog *clientCat = NULL;
 
 
 
@@ -23,68 +24,54 @@ int main()
         #if _WIN32
             system("cls");
         #else
-            system("clear")
+            system("clear");
         #endif
 
 		switch( op ) {
 
 			case 1:
-				printf(" on 1");
-				readFiles( productCat, clientCat );
+				readFiles( &productCat, &clientCat );
 			break;
 
 			case 2:
-				printf(" on 2");
-				getProductsByPrefix();
+				getProductsByPrefix( productCat );
 			break;
 
 			case 3:
-				printf(" on 3");
 			break;
 
 			case 4:
-				printf(" on 4");
 			break;
 
 			case 5:
-				printf(" on 5");
 			break;
 
 			case 6:
-				printf(" on 6");
-				getClientsByPrefix();
+				getClientsByPrefix( clientCat );
 			break;
 
 			case 7:
-				printf(" on 7");
 			break;
 
 			case 8:
-				printf(" on 8");
 			break;
 
 			case 9:
-				printf(" on 9");
 			break;
 
 			case 10:
-				printf(" on 10");
 			break;
 
 			case 11:
-				printf(" on 11");
 			break;
 
 			case 12:
-				printf(" on 12");
 			break;
 
 			case 13:
-				printf(" on 13");
 			break;
 
 			case 14:
-				printf(" on 14");
 			break;
 
 			case 0:
@@ -119,7 +106,7 @@ void printMenu()
     );
 }
 
-void readFiles( ProductCatalog *productCat, ClientCatalog *clientCat )
+void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
 {
 	char clients[MAX_PATH] = "";
 	char products[MAX_PATH] = "";
@@ -128,9 +115,14 @@ void readFiles( ProductCatalog *productCat, ClientCatalog *clientCat )
 	char buff[8];
 	FILE *clientsFp, *productsFp, *salesFp;
 
+    /*
+        TODO:
+        if structures !empty, free them
+    */
+
     fflush(stdin);
 
-	printf("\n Optional file paths[Max: MAX_PATH], enter for default");
+	printf("\n Optional file paths[Max: %d], enter for default\n", MAX_PATH);
 
 	printf("\n Clients File: ");
 	fgets( clients, MAX_PATH, stdin);
@@ -142,58 +134,55 @@ void readFiles( ProductCatalog *productCat, ClientCatalog *clientCat )
 	fgets( sales, MAX_PATH, stdin);
 */
 
-    if( strlen( clients ) == 1 )
-        clientsFp = fopen("FichClientes.txt", "r" );
-    else
-        clientsFp = fopen( clients , "r" );
-
-    if( clientsFp == NULL ) {
-        printf( "\nClients File Not Found");
-        return;
-    }
-
     if( strlen( products ) == 1 )
-        productsFp = fopen("FichProdutos.txt", "r" );
-    else
-        productsFp = fopen( products , "r" );
+        strcpy( products, "FichProdutos.txt" );
 
-    if( productsFp == NULL ) {
+    if( ( productsFp = fopen( products, "r" ) ) == NULL ) {
         printf( "\nProducts File Not Found");
         return;
     }
 
-    if( !strlen( sales ) )
-        salesFp = fopen("Compras.txt", "r" );
-    else
-        salesFp = fopen( sales , "r" );
 
-    if( salesFp == NULL ) {
-        printf( "\nSales File Not Found");
+    if( strlen( clients ) == 1 )
+        strcpy( clients, "FichClientes.txt" );
+
+    if( ( clientsFp = fopen( clients, "r" ) ) == NULL ) {
+        printf( "\nClients File Not Found");
         return;
     }
 
 
-    productCat = initProductCatalog(NULL);
+    /*
+    if( strlen( sales ) == 1 )
+        strcpy( sales, "Compras.txt" );
+
+    if( ( salesFp = fopen( sales, "r" ) ) == NULL ) {
+        printf( "\nSales File Not Found");
+        return;
+    }
+    */
+
+
+    *productCat = initProductCatalog(NULL);
     while( fgets(buff, 8, productsFp ) )
     {
         if( isalpha( buff[0] ) && isalpha( buff[1] ) &&
           isdigit( buff[2] ) && isdigit( buff[3] ) &&
           isdigit( buff[4] ) && isdigit( buff[5] ) )
 
-            productCat = insertProduct(productCat, buff);
+            *productCat = insertProduct( *productCat, buff);
     }
 
-    clientCat = initClientCatalog(NULL);
+    *clientCat = initClientCatalog(NULL);
     while( fgets(buff, 7, clientsFp ) )
     {
         if( isalpha( buff[0] ) && isalpha( buff[1] ) &&
           isdigit( buff[2] ) && isdigit( buff[3] ) &&
           isdigit( buff[4] ) )
 
-            clientCat = insertClient(clientCat, buff);
+            *clientCat = insertClient( *clientCat, buff);
     }
 
-    printf("all done");
     /*
         TODO:
             Process Sales File
@@ -201,12 +190,17 @@ void readFiles( ProductCatalog *productCat, ClientCatalog *clientCat )
             Do Accounting
 
 	*/
+
+    printf("\nProduct Catalog: %s, %d read\n", products, (*productCat)->used );
+    printf("Clients Catalog: %s, %d read\n", clients, (*clientCat)->used );
+    /* printf("Sales Catalog: %s, %d read\n", sales, (*salesCat)->used ); */
+    getchar();
 }
 
 void getProductsByPrefix( ProductCatalog *productCat )
 {
 	char c;
-	int cnt;
+	int cnt = 0;
 	char **res;
 
 	fflush( stdin );
@@ -215,10 +209,13 @@ void getProductsByPrefix( ProductCatalog *productCat )
 	scanf( "%c", &c);
 
 	c = toupper( c );
-    printf( "prefix: %c", c);
+
 	if( c >= 'A' && c <= 'Z' ) {
-        res = query2( productCat, c, &cnt );printf("past query2");
-		paginateResults( 1, cnt, 1, 1, res, "Produtos", cnt );
+        res = query2( productCat, c, &cnt );
+        if( cnt )
+            paginateResults( 1, cnt, 1, 1, 8, res, "Produtos", cnt );
+        else
+            printf( "\nNo Products By That Prefix" );
 	}else
 		printf("\nInvalid Input");
 
@@ -239,7 +236,10 @@ void getClientsByPrefix( ClientCatalog *clientCat )
 
 	if( c >= 'A' && c <= 'Z' ) {
         res = query6( clientCat, c, &cnt );
-		paginateResults( 1, cnt, 1, 1, res, "Clientes", cnt );
+		if( cnt )
+            paginateResults( 1, cnt, 1, 1, 8, res, "Clientes", cnt );
+        else
+            printf("\nNo Clients By That Prefix");
 	}else
 		printf("\nInvalid Input");
 
@@ -252,9 +252,11 @@ void getClientsByPrefix( ClientCatalog *clientCat )
 		50, // eachListSize
 		0, // showIdx
 		2, // nPostArgs, shown on footer
+            columnSize1, // Max number of chars per entry, title included, works best for pairs
 			results1, // firstList
 			r1Title, // firstList's title shown on header
 
+            columnSize2, // Max numbe....
 			results2, // secondList
 			r2Title, // secondList's title shown on header
 
@@ -273,45 +275,74 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 	int i, j, nPage;
 	va_list args;
 	int curPage = 0;
-	int maxPage = ceil( listSize / 10 );
+	int maxPage = ceil( (listSize / 10.0) );
 	char input[10] = "";
+	char buf[500] = "";
+	char idx[6] = "";
+	int *columnSize;
+
+
+    columnSize = (int*)malloc( sizeof(int) * nLists );
 	lists = (char***)malloc( sizeof( char ** ) * nLists );
 
+    fflush( stdin );
 	va_start( args, postArgs );
 
+    if( showIdx ) {
+        genColumn( buf, "Indx", 6 );    /* columnSize for Indx is 6 */
+        strcat( header, buf);
+    }
+    /*
 	if( showIdx )
-		strcat( header, "| Idx\t| ");
+        // strcat( header, "|Idx\t| ");
+        sprintf(header, "%s|\n|%.*s|", genColumn( "Indx", 6 ), strlen(genColumn( "Indx", 6) ) - 2, MAX_SEPARATOR);
 	else
-		strcat( header, "|\t" );
+		strcat( header, "" );
+    */
 
 	for( i = 0; i < nLists; i++ ) {
+
+        columnSize[i] = va_arg( args, int );
+
         lists[i] = va_arg( args, char** );
 
-		strcat( header, va_arg( args, char* ) );
-		strcat( header, "|\t\n" );
+        genColumn( buf, va_arg( args, char*), columnSize[i] );
+
+        sprintf( header, "%s%s", header, buf );
 	}
 
-	while( curPage != -1 ) {
+	strcat( header, "|\n");
+
+	while( curPage != -1 )
+    {
+
+        #if _WIN32
+            system("cls");
+        #else
+            system("clear");
+        #endif
 
 		strcpy( body, "" );
 		strcpy( footer, "" );
 		for( i = curPage * 10;
 			i < listSize && i < ( ( curPage + 1 ) * 10 ) ; i++ )
 			{
-
-			if( showIdx )
-				sprintf( line, "| %d\t| ", i + 1 );
-			else
-				strcat( line, "|\t" );
+            strcpy( line, "" );
+			if( showIdx ) {
+				sprintf( idx, "%d", i + 1);
+				genColumn( buf, idx, 6 );   /* columnSize for Indx is 6 */
+				strcat( line, buf );
+			}
 
 			for( j = 0; j < nLists; j++ ) {
-				strcat( line, lists[j][i] );
-				strcat( line, " |" );
+                strcpy( buf, "");
+                genColumn( buf, lists[j][i], columnSize[j] );
+                strcat( line, buf );
 			}
-			strcat( line, "\n" );
+			strcat( line, "|\n" );
 			strcat( body, line );
 
-			sprintf( footer, "page %d/%d , %d/%d shown ", curPage+1, maxPage, i + 1, listSize );
+			sprintf( footer, " page %d/%d , %d/%d shown ", curPage+1, maxPage, i + 1, listSize );
 
 		}/*
 printf("%s",footer);
@@ -322,7 +353,16 @@ printf("%s",footer);
 		}*/
 		strcat( footer, "\n(n)ext/(p)revious/(q)uit or page number \n: ");
 
-        printf("%s\n%s\n%s", header, body, footer );
+
+
+        sprintf( buf, "|%.*s|", strlen( header ) - 3, MAX_SEPARATOR );
+/*
+        strcat( header, buf );
+        strcat( body, buf );
+*/
+        /* sprintf(header, "%s\n|%*.s|\n", header, strlen( header ), MAX_SEPARATOR ); */
+
+        printf("%s%s\n%s%s\n%s", header, buf, body, buf, footer );
 		fgets( input, 10, stdin );
 
 		if( ( nPage = atoi( input ) ) == 0 )
@@ -345,14 +385,26 @@ printf("%s",footer);
 			}
 		else
 			/* pageNumber */
-			if( ( nPage > 0 ) && ( nPage < maxPage ) )
+			if( ( nPage > 0 ) && ( nPage <= maxPage ) )
 				curPage = nPage - 1;
 
-        #if _WIN32
-            system("cls");
-        #else
-            system("clear")
-        #endif
 	}
+
+	free( lists );
+	free( columnSize );
+
+}
+
+void genColumn( char *ret, char *s, int max )
+{
+    int n = 0;
+
+    n = 1 + (max/2);
+
+    sprintf( ret, "|%*s%*s",
+        n + strlen(s)/2,
+        s,
+        n - strlen(s)/2,
+    "");
 
 }
