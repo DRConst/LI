@@ -19,7 +19,7 @@ char **query2(ProductCatalog *cat, char t, int *count )
 				toRet[cnt] = malloc(sizeof(char) * 7);
 				toRet[cnt][0] = t;
 				toRet[cnt][1] = 'A' + i;
-				itoa(codes[j], buff, 10);
+				sprintf( buff, "%d", codes[j] );
 				buff[4] = '\0';
 				strcpy(toRet[cnt] + 2, buff);
 				cnt++;

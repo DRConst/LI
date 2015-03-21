@@ -18,8 +18,7 @@ char **query6(ClientCatalog *cat, char t, int *count)
 				toRet[cnt] = malloc(sizeof(char) * 6);
 				toRet[cnt][0] = t;
 				toRet[cnt][1] = 'A' + i;
-				itoa(codes[j], buff, 10);
-				buff[3] = '\0';
+				sprintf(buff, "%d", codes[j] );
 				strcpy(toRet[cnt] + 2, buff);
 				cnt++;
 
