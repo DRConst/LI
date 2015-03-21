@@ -12,7 +12,10 @@
 
 #define MAX_PATH 150
 
+#define PER_PAGE 15
+
 #define MAX_SEPARATOR "------------------------------------------------------------------------------------------------------------------"
+
 #define HEADER_MENU "\n-------------------------------------------------------------\n"
 #define MENU_OPTION_1 " 1\t-\tRead Files\n"
 #define MENU_OPTION_2 " 2\t-\tProducts By Prefix\n"

@@ -195,6 +195,7 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
     printf("Clients Catalog: %s, %d read\n", clients, (*clientCat)->used );
     /* printf("Sales Catalog: %s, %d read\n", sales, (*salesCat)->used ); */
     getchar();
+
 }
 
 void getProductsByPrefix( ProductCatalog *productCat )
@@ -205,7 +206,7 @@ void getProductsByPrefix( ProductCatalog *productCat )
 
 	fflush( stdin );
 
-	printf("\n Enter Prefix[A-Z]: ");
+	printf("\n Enter Product Prefix[A-Z]: ");
 	scanf( "%c", &c);
 
 	c = toupper( c );
@@ -213,7 +214,7 @@ void getProductsByPrefix( ProductCatalog *productCat )
 	if( c >= 'A' && c <= 'Z' ) {
         res = query2( productCat, c, &cnt );
         if( cnt )
-            paginateResults( 1, cnt, 1, 1, 8, res, "Produtos", cnt );
+            paginateResults( 1, cnt, 1, 0, 8, res, "Produtos" );
         else
             printf( "\nNo Products By That Prefix" );
 	}else
@@ -229,7 +230,7 @@ void getClientsByPrefix( ClientCatalog *clientCat )
 
 	fflush( stdin );
 
-	printf("\n Enter Prefix[A-Z]: ");
+	printf("\n Enter Client Prefix[A-Z]: ");
 	scanf( "%c", &c);
 
 	c = toupper( c );
@@ -237,7 +238,7 @@ void getClientsByPrefix( ClientCatalog *clientCat )
 	if( c >= 'A' && c <= 'Z' ) {
         res = query6( clientCat, c, &cnt );
 		if( cnt )
-            paginateResults( 1, cnt, 1, 1, 8, res, "Clientes", cnt );
+            paginateResults( 1, cnt, 1, 0, 8, res, "Clientes" );
         else
             printf("\nNo Clients By That Prefix");
 	}else
@@ -275,7 +276,7 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 	int i, j, nPage;
 	va_list args;
 	int curPage = 0;
-	int maxPage = ceil( (listSize / 10.0) );
+	int maxPage = ceil( (listSize / (float)PER_PAGE ) );
 	char input[10] = "";
 	char buf[500] = "";
 	char idx[6] = "";
@@ -292,13 +293,6 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
         genColumn( buf, "Indx", 6 );    /* columnSize for Indx is 6 */
         strcat( header, buf);
     }
-    /*
-	if( showIdx )
-        // strcat( header, "|Idx\t| ");
-        sprintf(header, "%s|\n|%.*s|", genColumn( "Indx", 6 ), strlen(genColumn( "Indx", 6) ) - 2, MAX_SEPARATOR);
-	else
-		strcat( header, "" );
-    */
 
 	for( i = 0; i < nLists; i++ ) {
 
@@ -324,8 +318,8 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 
 		strcpy( body, "" );
 		strcpy( footer, "" );
-		for( i = curPage * 10;
-			i < listSize && i < ( ( curPage + 1 ) * 10 ) ; i++ )
+		for( i = curPage * PER_PAGE;
+			i < listSize && i < ( ( curPage + 1 ) * PER_PAGE ) ; i++ )
 			{
             strcpy( line, "" );
 			if( showIdx ) {
@@ -342,15 +336,16 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 			strcat( line, "|\n" );
 			strcat( body, line );
 
-			sprintf( footer, " page %d/%d , %d/%d shown ", curPage+1, maxPage, i + 1, listSize );
+			sprintf( footer, " page %d/%d | %d/%d shown | %d per page", curPage+1, maxPage, i + 1, listSize, PER_PAGE );
 
-		}/*
-printf("%s",footer);
+		}
+
+
 		for( j = 0; j < postArgs; j++ ) {
 			strcat( footer, " | " );
-
 			strcat( footer, va_arg( args, char* ) );
-		}*/
+		}
+
 		strcat( footer, "\n(n)ext/(p)revious/(q)uit or page number \n: ");
 
 
