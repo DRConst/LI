@@ -4,6 +4,7 @@ void printMenu();
 void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat );
 void getProductsByPrefix( ProductCatalog *productCat );
 void getClientsByPrefix( ClientCatalog *clientCat );
+void getProductSalesInfo( ProductCatalog *prodCat );
 void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... );
 void genColumn( char *ret, char *s, int max );
 
@@ -165,7 +166,7 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
     */
 
     printf("\nReading Products Catalog...");
-    *productCat = initProductCatalog(NULL);
+    *productCat = initProductCatalog();
     while( fgets(buff, 8, productsFp ) )
     {
         if( isalpha( buff[0] ) && isalpha( buff[1] ) &&
@@ -177,7 +178,7 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
     printf("Done \n\t%d read", (*productCat)->used );
 
     printf("\nReading Clients Catalog...");
-    *clientCat = initClientCatalog(NULL);
+    *clientCat = initClientCatalog();
     while( fgets(buff, 7, clientsFp ) )
     {
         if( isalpha( buff[0] ) && isalpha( buff[1] ) &&
@@ -242,12 +243,13 @@ void getProductSalesInfo( ProductCatalog *prodCat /* Accounting Structure missin
     printf("\n Enter Month[1,12]: ");
     ret = scanf("%d", &nMonth );
 
-    if( !ret ||
-        ( !existsProduct( prodCat, prod ) ) ||
-        ( strlen( prod ) != 6 ) ||
-        ( ( nMonth < 1 ) || ( nMonth > 12 ) )
-    ) {
-        printf("\nInvalid input");
+    if( !ret || ( ( nMonth < 1 ) || ( nMonth > 12 ) ) ) {
+        printf("\nInvalid Month");
+        return;
+    }
+
+    if( ( !existsProduct( prodCat, prod ) ) || ( strlen( prod ) != 6 ) ) {
+        printf("\nInvalid Product Code");
         return;
     }
 
@@ -419,6 +421,11 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 	}
 
 	free( lists );
+
+	for( i = 0; i < nLists; i++ )
+        for( j = 0; j < listSize; j++ )
+            free( lists[i][j] );
+
 	free( columnSize );
 
 }
