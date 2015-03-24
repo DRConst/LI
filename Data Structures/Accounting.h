@@ -12,7 +12,7 @@ typedef struct sale
 
 typedef struct entry
 {
-	int *cnt, cntS;
+	int cnt[12], cntS[12];
 	int units;
 	int **records; //Matrix Month x Index
 }Entry;
@@ -30,5 +30,5 @@ typedef struct accounting
 Accounting *initAccounting();
 Accounting *addSale(Accounting *acc, ClientCatalog *cat, ProductCatalog *pr, Sale *sale);
 Sale *createSale(int month, int amnt, double price, char *product, char *client, char type);
-
+int getSalesCount(Accounting *acc);
 Entry *initEntry();
