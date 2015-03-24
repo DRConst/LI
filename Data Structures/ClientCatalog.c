@@ -50,12 +50,16 @@ Client *getClient(ClientCatalog *cat, char *client)
 
 	cl->name = malloc(sizeof(char)* 7);
 	strcpy(cl->name, client);
-	//clintf("\n%d", key);
 
 
 	cl->data = &n->data;
 	cl->dataSize = n->dataSize;
 	return cl;
+}
+
+int getClientCount( ClientCatalog *clientCat )
+{
+    return ( clientCat ) ? ( clientCat->used ) : -1 ;
 }
 
 

@@ -19,5 +19,6 @@ typedef struct client
 ClientCatalog *initClientCatalog();
 ClientCatalog *insertClient(ClientCatalog *cat, char *client);
 int existsClient(ClientCatalog *cat, char *product);
+int getClientCount( ClientCatalog *clientCat );
 Client *getClient(ClientCatalog *cat, char *client);
 int freeClientCatalog(ClientCatalog *cat);

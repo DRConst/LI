@@ -23,9 +23,14 @@ int existsProduct( ProductCatalog *cat, char *product )
 	return(getProduct(cat, product) != NULL);
 }
 
+int getProductCount( ProductCatalog *prodCat )
+{
+    return ( prodCat ) ? ( prodCat->used ) : -1 ;
+}
+
 Product *getProduct(ProductCatalog *cat, char *product)
 {
-	Product *pr = malloc(sizeof(Product));	
+	Product *pr = malloc(sizeof(Product));
 	int key = atoi(product + 2);
 	Node *n = getNode(cat->Cat[product[0] - 'A'][product[1] - 'A'], key);
 
@@ -35,9 +40,8 @@ Product *getProduct(ProductCatalog *cat, char *product)
 
 	pr->name = malloc(sizeof(char)* 7);
 	strcpy(pr->name, product);
-	//printf("\n%d", key);
-	
-	
+
+
 	pr->data = &n->data;
 	pr->dataSize = n->dataSize;
 	return pr;

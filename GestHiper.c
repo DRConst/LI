@@ -1,10 +1,22 @@
 #include "GestHiper.h"
 
 void printMenu();
-void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat );
+
+void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat, Accounting **acc );
 void getProductsByPrefix( ProductCatalog *productCat );
 void getClientsByPrefix( ClientCatalog *clientCat );
-void getProductSalesInfo( ProductCatalog *prodCat );
+void getProductSalesInfo( ProductCatalog *prodCat, Accounting *acc );
+void getUnboughtProducts( Accounting *acc );
+void getClientSalesCount( Accounting *acc, ClientCatalog *clientCat );
+void getSalesInterval( Accounting *acc );
+void getProductBuyers( Accounting *acc );
+void getClientSales( Accounting *acc );
+void getActiveClients( Accounting *acc );
+void generateCSV( Accounting *acc );
+void getMostWantedProducts( Accounting *acc );
+void getClientMostWantedProducts( Accounting *acc );
+void getAllInactive( Accounting *acc );
+
 void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... );
 void genColumn( char *ret, char *s, int max );
 
@@ -13,6 +25,7 @@ int main()
 	int op = 1;
     ProductCatalog *productCat = NULL;
     ClientCatalog *clientCat = NULL;
+    Accounting *acc = NULL;
     int ret;
 
 
@@ -34,7 +47,7 @@ int main()
             switch( op ) {
 
                 case 1:
-                    readFiles( &productCat, &clientCat );
+                    readFiles( &productCat, &clientCat, &acc );
                 break;
 
                 case 2:
@@ -42,13 +55,15 @@ int main()
                 break;
 
                 case 3:
-                    getProductSalesInfo( productCat );
+                    getProductSalesInfo( productCat, acc );
                 break;
 
                 case 4:
+                    getUnboughtProducts( acc );
                 break;
 
                 case 5:
+                    getClientSalesCount( acc, clientCat );
                 break;
 
                 case 6:
@@ -112,13 +127,19 @@ void printMenu()
     );
 }
 
-void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
+void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat, Accounting **acc )
 {
 	char clients[MAX_PATH] = "";
 	char products[MAX_PATH] = "";
 	char sales[MAX_PATH] = "";
 	char buff[8];
 	FILE *clientsFp, *productsFp, *salesFp;
+
+    char type;
+    int qtd, month, ret;
+    char prod[7], client[6];
+    double price;
+    Sale *sale;
 
     /*
         TODO:
@@ -132,10 +153,10 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
 
 	printf("\n Products File: ");
 	fgets( products, MAX_PATH, stdin);
-/*
+
 	printf("\n Sales File: ");
 	fgets( sales, MAX_PATH, stdin);
-*/
+
 
     if( strlen( products ) == 1 )
         strcpy( products, "FichProdutos.txt" );
@@ -155,7 +176,6 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
     }
 
 
-    /*
     if( strlen( sales ) == 1 )
         strcpy( sales, "Compras.txt" );
 
@@ -163,7 +183,7 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
         printf( "\nSales File Not Found");
         return;
     }
-    */
+
 
     printf("\nReading Products Catalog...");
     *productCat = initProductCatalog();
@@ -175,7 +195,7 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
 
             *productCat = insertProduct( *productCat, buff);
     }
-    printf("Done \n\t%d read", (*productCat)->used );
+    printf("Done \n\t%d read", getProductCount( *productCat ) );
 
     printf("\nReading Clients Catalog...");
     *clientCat = initClientCatalog();
@@ -187,9 +207,22 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
 
             *clientCat = insertClient( *clientCat, buff);
     }
-    printf("Done \n\t%d read", (*clientCat)->used );
+    printf("Done \n\t%d read", getClientCount( *clientCat ) );
 
+    printf("\nReading Sales Catalog...");
+    *acc = initAccounting();
+    while( fgets( buff, 64, salesFp ) )
+    {
+        ret = sscanf( buff, "%s %lf %d %c %s %d", prod, &price, &qtd, &type, client, &month );
 
+        sale = createSale( month, qtd, price, prod, client, type );
+        printf("\n%d", getSalesCount( acc ) );
+        if( ret == 6 )
+            addSale( *acc, *clientCat, *productCat,
+                    sale
+            );
+    }
+    printf("Done \n\t%d read", getSalesCount( acc ) );
     /*
         TODO:
             Process Sales File
@@ -229,7 +262,7 @@ void getProductsByPrefix( ProductCatalog *productCat )
 
 }
 
-void getProductSalesInfo( ProductCatalog *prodCat /* Accounting Structure missing */ )
+void getProductSalesInfo( ProductCatalog *prodCat, Accounting *acc )
 {
     int nMonth = 0;
     char prod[7] = "";
@@ -248,12 +281,32 @@ void getProductSalesInfo( ProductCatalog *prodCat /* Accounting Structure missin
         return;
     }
 
-    if( ( !existsProduct( prodCat, prod ) ) || ( strlen( prod ) != 6 ) ) {
+    if( ( strlen( prod ) != 6 ) || ( !existsProduct( prodCat, prod ) ) ) {
         printf("\nInvalid Product Code");
         return;
     }
 
     printf("\n All's well");
+
+}
+
+void getUnboughtProducts( Accounting *acc )
+{
+}
+
+void getClientSalesCount( Accounting *acc, ClientCatalog *clientCat )
+{
+    char client[6] = "";
+
+
+    printf("\nEnter Client Code: ");
+    fgets( client, 6, stdin );
+
+    if( ( strlen( client ) != 6 ) || ( !existsClient( clientCat, client ) ) ) {
+        printf("\nInvalid Client Code");
+        return;
+    }
+
 
 }
 
@@ -279,6 +332,21 @@ void getClientsByPrefix( ClientCatalog *clientCat )
 	}else
 		printf("\nInvalid Input");
 
+}
+
+void getSalesInterval( Accounting *acc )
+{
+    int ret;
+    int startingMonth, endingMonth;
+
+    printf("\n Enter Starting and Finishing Months[1,12]: ");
+    ret = scanf("%d %d", &startingMonth, &endingMonth );
+/*
+    if( (ret != 2 ) || ( endingMonth > startingMonth > 0 ) ||
+       ( ( nMonth < 1 ) || ( nMonth > 12 ) ) ) {
+        printf("\nInvalid Month");
+        return;
+    }*/
 }
 
 /* args: nLists, nPostArgs

@@ -14,7 +14,7 @@ typedef struct entry
 {
 	int cnt[12], cntS[12];
 	int units;
-	int **records; //Matrix Month x Index
+	int **records; /* Matrix Month x Index */
 }Entry;
 
 
