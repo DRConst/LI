@@ -134,7 +134,7 @@ void freeBSTAux(Node *n)
 {
 	if (!n)
 		return;
-	//free(n->data);
+
 	freeBSTAux(n->l);
 	freeBSTAux(n->r);
 	free(n->l);
