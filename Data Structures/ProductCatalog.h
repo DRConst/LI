@@ -12,3 +12,4 @@ typedef struct productCatalog
 
 ProductCatalog *initProductCatalog(ProductCatalog *cat);
 ProductCatalog *insertProduct(ProductCatalog *cat, char *product);
+int existsProduct( ProductCatalog *cat, char *product );

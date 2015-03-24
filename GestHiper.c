@@ -9,17 +9,19 @@ void genColumn( char *ret, char *s, int max );
 
 int main()
 {
-	int op;
+	int op = 1;
     ProductCatalog *productCat = NULL;
     ClientCatalog *clientCat = NULL;
-
+    int ret;
 
 
 
 
 	do {
 		printMenu();
-		scanf("%d", &op );
+		ret = scanf("%d", &op );
+
+		fflush(stdin);
 
         #if _WIN32
             system("cls");
@@ -27,56 +29,59 @@ int main()
             system("clear");
         #endif
 
-		switch( op ) {
+        if( ret ) {
+            switch( op ) {
 
-			case 1:
-				readFiles( &productCat, &clientCat );
-			break;
+                case 1:
+                    readFiles( &productCat, &clientCat );
+                break;
 
-			case 2:
-				getProductsByPrefix( productCat );
-			break;
+                case 2:
+                    getProductsByPrefix( productCat );
+                break;
 
-			case 3:
-			break;
+                case 3:
+                    getProductSalesInfo( productCat );
+                break;
 
-			case 4:
-			break;
+                case 4:
+                break;
 
-			case 5:
-			break;
+                case 5:
+                break;
 
-			case 6:
-				getClientsByPrefix( clientCat );
-			break;
+                case 6:
+                    getClientsByPrefix( clientCat );
+                break;
 
-			case 7:
-			break;
+                case 7:
+                break;
 
-			case 8:
-			break;
+                case 8:
+                break;
 
-			case 9:
-			break;
+                case 9:
+                break;
 
-			case 10:
-			break;
+                case 10:
+                break;
 
-			case 11:
-			break;
+                case 11:
+                break;
 
-			case 12:
-			break;
+                case 12:
+                break;
 
-			case 13:
-			break;
+                case 13:
+                break;
 
-			case 14:
-			break;
+                case 14:
+                break;
 
-			case 0:
-			break;
-		}
+                case 0:
+                break;
+            }
+        }
 
 	}while( op != 0 && op != EOF );
 
@@ -111,16 +116,13 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
 	char clients[MAX_PATH] = "";
 	char products[MAX_PATH] = "";
 	char sales[MAX_PATH] = "";
-
 	char buff[8];
 	FILE *clientsFp, *productsFp, *salesFp;
 
     /*
         TODO:
-        if structures !empty, free them
+        if structures !empty, free them here
     */
-
-    fflush(stdin);
 
 	printf("\n Optional file paths[Max: %d], enter for default\n", MAX_PATH);
 
@@ -162,7 +164,7 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
     }
     */
 
-
+    printf("\nReading Products Catalog...");
     *productCat = initProductCatalog(NULL);
     while( fgets(buff, 8, productsFp ) )
     {
@@ -172,7 +174,9 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
 
             *productCat = insertProduct( *productCat, buff);
     }
+    printf("Done \n\t%d read", (*productCat)->used );
 
+    printf("\nReading Clients Catalog...");
     *clientCat = initClientCatalog(NULL);
     while( fgets(buff, 7, clientsFp ) )
     {
@@ -182,6 +186,8 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
 
             *clientCat = insertClient( *clientCat, buff);
     }
+    printf("Done \n\t%d read", (*clientCat)->used );
+
 
     /*
         TODO:
@@ -190,10 +196,10 @@ void readFiles( ProductCatalog **productCat, ClientCatalog **clientCat )
             Do Accounting
 
 	*/
-
+/*
     printf("\nProduct Catalog: %s, %d read\n", products, (*productCat)->used );
     printf("Clients Catalog: %s, %d read\n", clients, (*clientCat)->used );
-    /* printf("Sales Catalog: %s, %d read\n", sales, (*salesCat)->used ); */
+    printf("Sales Catalog: %s, %d read\n", sales, (*salesCat)->used ); */
     getchar();
 
 }
@@ -219,6 +225,33 @@ void getProductsByPrefix( ProductCatalog *productCat )
             printf( "\nNo Products By That Prefix" );
 	}else
 		printf("\nInvalid Input");
+
+}
+
+void getProductSalesInfo( ProductCatalog *prodCat /* Accounting Structure missing */ )
+{
+    int nMonth = 0;
+    char prod[7] = "";
+    int ret;
+
+    printf("\n Enter Product Code: ");
+    fgets( prod, 7, stdin );
+
+    fflush( stdin );
+
+    printf("\n Enter Month[1,12]: ");
+    ret = scanf("%d", &nMonth );
+
+    if( !ret ||
+        ( !existsProduct( prodCat, prod ) ) ||
+        ( strlen( prod ) != 6 ) ||
+        ( ( nMonth < 1 ) || ( nMonth > 12 ) )
+    ) {
+        printf("\nInvalid input");
+        return;
+    }
+
+    printf("\n All's well");
 
 }
 

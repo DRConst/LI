@@ -19,6 +19,14 @@ ProductCatalog *initProductCatalog(ProductCatalog *cat)
 	return cat;
 }
 
+int existsProduct( ProductCatalog *cat, char *product )
+{
+    int key = atoi( product + 2 );
+
+    printf("\n%d", key);
+    return ( getNode( cat->Cat[ product[0] ][ product[1] ], key ) != NULL );
+
+}
 
 
 ProductCatalog *insertProduct(ProductCatalog *cat, char *product)
