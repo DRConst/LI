@@ -10,5 +10,5 @@ typedef struct clientCatalog
 }ClientCatalog;
 
 
-ClientCatalog *initClientCatalog(ClientCatalog *cat);
+ClientCatalog *initClientCatalog();
 ClientCatalog *insertClient(ClientCatalog *cat, char *client);

@@ -11,10 +11,9 @@
 
 
 
-intBST *initBST(intBST *b)
+intBST *initBST()
 {
-	if (!b)
-		b = (intBST*)malloc(sizeof(intBST));
+	intBST *b = (intBST*)malloc(sizeof(intBST));
 	b->used = 0;
 	b->root = NULL;
 	return b;

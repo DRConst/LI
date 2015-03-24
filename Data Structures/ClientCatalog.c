@@ -1,11 +1,10 @@
 #include "ClientCatalog.h"
 
 
-ClientCatalog *initClientCatalog(ClientCatalog *cat)
+ClientCatalog *initClientCatalog()
 {
 	int i = 0; int j = 0;
-	if (!cat)
-		cat = malloc(sizeof(ClientCatalog));
+	ClientCatalog *cat = malloc(sizeof(ClientCatalog));
 	cat->Cat = malloc(sizeof(intBST**) * 26);
 	for (i = 0; i < 26; i++)
 	{

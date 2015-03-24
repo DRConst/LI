@@ -13,6 +13,6 @@ typedef struct intBST_stc
 }intBST;
 
 
-intBST *initBST(intBST *b);
+intBST *initBST();
 intBST *insertBST(intBST *b, int elem, void *data, int dataSize);
 int *inOrderBST(intBST *b);

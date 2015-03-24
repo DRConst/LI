@@ -1,11 +1,10 @@
 #include "ProductCatalog.h"
+#include <string.h>
 
-
-ProductCatalog *initProductCatalog(ProductCatalog *cat)
+ProductCatalog *initProductCatalog()
 {
 	int i = 0; int j = 0;
-	if (!cat)
-		cat = malloc(sizeof(ProductCatalog));
+	ProductCatalog *cat = malloc(sizeof(ProductCatalog));
 	cat->Cat = malloc(sizeof(intBST**) * 26);
 	for (i = 0; i < 26; i++)
 	{
@@ -24,13 +23,20 @@ int existsProduct( ProductCatalog *cat, char *product )
     int key = atoi( product + 2 );
 
     printf("\n%d", key);
-    return ( getNode( cat->Cat[ product[0] ][ product[1] ], key ) != NULL );
+	return (getNode(cat->Cat[product[0] - 'A'][product[1] - 'A'], key) != NULL);
 
 }
 
 
 ProductCatalog *insertProduct(ProductCatalog *cat, char *product)
 {
+	int i;
+	
+	if (!strcmp(product, "AA1019"))
+	{
+		i = 0;
+	}
+		
 	char *idC = product + 2;
 	intBST *b;
 	int id = atoi(idC);
