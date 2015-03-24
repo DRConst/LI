@@ -83,7 +83,6 @@ Accounting *addSale(Accounting *acc, ClientCatalog *cCat, ProductCatalog *pCat, 
 
 	memcpy(&acc->sales[acc->cntS],sale,sizeof(Sale));
 
-	//Check if product already has associated metadata
 	pr = getProduct(pCat, sale->product);
 	/*
 	if (!pr)
@@ -149,7 +148,7 @@ Accounting *addSale(Accounting *acc, ClientCatalog *cCat, ProductCatalog *pCat, 
 	else
 	{
 		if (!pr->data)
-			return NULL; //Something went seriously wrong
+			return NULL; 
 
 		*pr->data = (int*)malloc(sizeof(int));
 		*(int*)*pr->data = acc->cntEP;
@@ -188,7 +187,7 @@ Accounting *addSale(Accounting *acc, ClientCatalog *cCat, ProductCatalog *pCat, 
 	else
 	{
 		if (!cli->data)
-			return NULL; //Something went seriously wrong
+			return NULL; /*Something went seriously wrong*/
 
 		*cli->data = (int*)malloc(sizeof(int));
 		*(int*)*cli->data = acc->cntEP;
@@ -224,7 +223,6 @@ Entry *initEntry()
 {
 	Entry *e = malloc(sizeof(Entry));
 	int i;
-	//e->cnt = malloc(sizeof(int*)* 12);
 	for (i = 0; i < 12; i++)
 	{
 		e->cnt[i] = 0;
