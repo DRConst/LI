@@ -30,13 +30,6 @@ int existsProduct( ProductCatalog *cat, char *product )
 
 ProductCatalog *insertProduct(ProductCatalog *cat, char *product)
 {
-	int i;
-	
-	if (!strcmp(product, "AA1019"))
-	{
-		i = 0;
-	}
-		
 	char *idC = product + 2;
 	intBST *b;
 	int id = atoi(idC);
@@ -44,6 +37,19 @@ ProductCatalog *insertProduct(ProductCatalog *cat, char *product)
 	cat->Cat[toupper(product[0]) - 'A'][toupper(product[1]) - 'A'] = insertBST(b, id, NULL, 0);
 	cat->used++;
 	return cat;
+}
+
+int freeProductCatalog(ProductCatalog *cat)
+{
+	int i, j;
+
+	for (i = 0; i < 26; i++)
+	{
+		for (j = 0; j < 26; j++)
+		{
+			freeBST(cat->Cat[i][j]);
+		}
+	}
 }
 
 /*

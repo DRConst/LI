@@ -13,3 +13,5 @@ typedef struct productCatalog
 ProductCatalog *initProductCatalog();
 ProductCatalog *insertProduct(ProductCatalog *cat, char *product);
 int existsProduct( ProductCatalog *cat, char *product );
+
+int freeProductCatalog(ProductCatalog *cat);

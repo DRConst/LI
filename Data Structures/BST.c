@@ -129,6 +129,30 @@ int getNodeData(Node *n,void **data, int *dataSize)
 	memcpy(*data, n->data, n->dataSize);
 	return 1;
 }
+
+void freeBSTAux(Node *n)
+{
+	if (!n)
+		return;
+	//free(n->data);
+	freeBSTAux(n->l);
+	freeBSTAux(n->r);
+	free(n->l);
+	free(n->r);
+	return;
+}
+
+int freeBST(intBST *b)
+{
+	if (!b)
+		return 0;
+
+
+	freeBSTAux(b->root);
+	free(b->root);
+	free(b);
+	return 1;
+}
 /*
 int main()
 {

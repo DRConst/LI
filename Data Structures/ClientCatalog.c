@@ -18,6 +18,18 @@ ClientCatalog *initClientCatalog()
 	return cat;
 }
 
+int freeClientCatalog(ClientCatalog *cat)
+{
+	int i, j;
+
+	for (i = 0; i < 26; i++)
+	{
+		for (j = 0; j < 26; j++)
+		{
+			freeBST(cat->Cat[i][j]);
+		}
+	}
+}
 
 
 ClientCatalog *insertClient(ClientCatalog *cat, char *client)
