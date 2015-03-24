@@ -9,9 +9,15 @@ typedef struct productCatalog
 	intBST ***Cat;
 }ProductCatalog;
 
+typedef struct product
+{
+	char *name;
+	void **data;
+	int dataSize;
+}Product;
 
 ProductCatalog *initProductCatalog();
 ProductCatalog *insertProduct(ProductCatalog *cat, char *product);
 int existsProduct( ProductCatalog *cat, char *product );
-
+Product *getProduct(ProductCatalog *cat, char* product);
 int freeProductCatalog(ProductCatalog *cat);

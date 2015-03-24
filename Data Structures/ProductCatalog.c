@@ -20,13 +20,28 @@ ProductCatalog *initProductCatalog()
 
 int existsProduct( ProductCatalog *cat, char *product )
 {
-    int key = atoi( product + 2 );
-
-    printf("\n%d", key);
-	return (getNode(cat->Cat[product[0] - 'A'][product[1] - 'A'], key) != NULL);
-
+	return(getProduct(cat, product) != NULL);
 }
 
+Product *getProduct(ProductCatalog *cat, char *product)
+{
+	Product *pr = malloc(sizeof(Product));	
+	int key = atoi(product + 2);
+	Node *n = getNode(cat->Cat[product[0] - 'A'][product[1] - 'A'], key);
+
+	if (!n)
+		return NULL;
+
+
+	pr->name = malloc(sizeof(char)* 7);
+	strcpy(pr->name, product);
+	//printf("\n%d", key);
+	
+	
+	pr->data = &n->data;
+	pr->dataSize = n->dataSize;
+	return pr;
+}
 
 ProductCatalog *insertProduct(ProductCatalog *cat, char *product)
 {
@@ -50,6 +65,7 @@ int freeProductCatalog(ProductCatalog *cat)
 			freeBST(cat->Cat[i][j]);
 		}
 	}
+	return 1;
 }
 
 /*

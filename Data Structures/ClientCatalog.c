@@ -29,6 +29,33 @@ int freeClientCatalog(ClientCatalog *cat)
 			freeBST(cat->Cat[i][j]);
 		}
 	}
+
+	return 1;
+}
+
+int existsClient(ClientCatalog *cat, char *Client)
+{
+	return(getClient(cat, Client) != NULL);
+}
+
+Client *getClient(ClientCatalog *cat, char *client)
+{
+	Client *cl = malloc(sizeof(Client));
+	int key = atoi(client + 2);
+	Node *n = getNode(cat->Cat[client[0] - 'A'][client[1] - 'A'], key);
+
+	if (!n)
+		return NULL;
+
+
+	cl->name = malloc(sizeof(char)* 7);
+	strcpy(cl->name, client);
+	//clintf("\n%d", key);
+
+
+	cl->data = &n->data;
+	cl->dataSize = n->dataSize;
+	return cl;
 }
 
 
