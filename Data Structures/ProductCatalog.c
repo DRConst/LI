@@ -69,6 +69,8 @@ int freeProductCatalog(ProductCatalog *cat)
 			freeBST(cat->Cat[i][j]);
 		}
 	}
+	free(cat->Cat);
+	free(cat);
 	return 1;
 }
 

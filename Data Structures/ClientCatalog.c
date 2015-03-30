@@ -29,7 +29,8 @@ int freeClientCatalog(ClientCatalog *cat)
 			freeBST(cat->Cat[i][j]);
 		}
 	}
-
+	free(cat->Cat);
+	free(cat);
 	return 1;
 }
 

@@ -12,7 +12,7 @@ typedef struct sale
 
 typedef struct entry
 {
-	int cnt[12], cntS[12];
+	int cnt[12]/*Number of Index entries per Month (width of matrix at that row)*/, cntS[12];
 	int units;
 	int **records; /* Matrix Month x Index */
 }Entry;
@@ -21,8 +21,8 @@ typedef struct entry
 typedef struct accounting
 {
 	int cntEC, cntEP, sizeEC, sizeEP, sizeS, cntS;
-	Entry *entriesCli, *entriesPr;
-	Sale *sales;
+	Entry **entriesCli, **entriesPr;
+	Sale **sales;
 }Accounting;
 
 
