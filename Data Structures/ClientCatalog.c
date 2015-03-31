@@ -54,7 +54,7 @@ Client *getClient(ClientCatalog *cat, char *client)
 
 
 	cl->data = &n->data;
-	cl->dataSize = n->dataSize;
+	cl->dataSize = &n->dataSize;
 	return cl;
 }
 

@@ -43,7 +43,7 @@ Product *getProduct(ProductCatalog *cat, char *product)
 
 
 	pr->data = &n->data;
-	pr->dataSize = n->dataSize;
+	pr->dataSize = &(n->dataSize);
 	return pr;
 }
 

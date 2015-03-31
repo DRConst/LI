@@ -13,7 +13,7 @@ typedef struct product
 {
 	char *name;
 	void **data;
-	int dataSize;
+	int *dataSize;
 }Product;
 
 ProductCatalog *initProductCatalog();
