@@ -148,7 +148,6 @@ void readFiles( ProductCatalog **prodCat, ClientCatalog **clientCat, Accounting 
 	char clients[MAX_PATH] = "";
 	char products[MAX_PATH] = "";
 	char sales[MAX_PATH] = "";
-	char buff[8];
 	FILE *clientsFp, *productsFp, *salesFp;
 
     char type;
@@ -230,13 +229,13 @@ void readFiles( ProductCatalog **prodCat, ClientCatalog **clientCat, Accounting 
         ret = sscanf( buff, "%s %lf %d %c %s %d", prod, &price, &qtd, &type, client, &month );
 
         sale = createSale( month, qtd, price, prod, client, type );
-        printf("\n%d", getSalesCount( acc ) );
+        /*printf("\n%d", getSalesCount( acc ) );*/
         if( ret == 6 )
             addSale( *acc, *clientCat, *prodCat,
                     sale
             );
     }
-    printf("Done \n\t%d read", getSalesCount( acc ) );
+    printf("Done \n\t%d read", getSalesCount( *acc ) );
     /*
         TODO:
             Process Sales File

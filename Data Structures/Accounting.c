@@ -37,8 +37,8 @@ int copySale(Sale **dest, Sale* src)
 		return 0;
 	*dest = createSale(src->month, src->amnt, src->price, src->product, src->client, src->type);
 	/*dest->amnt = src->amnt;
-	//strcpy(dest->client,src->client);
-	//strcpy(dest->product, src->product);
+	strcpy(dest->client,src->client);
+	strcpy(dest->product, src->product);
 	dest->month = src->month;
 	dest->price = src->price;
 	dest->type = src->type;*/
@@ -55,198 +55,6 @@ int copyEntry(Entry **dest, Entry *src)
 	(*dest)->units = src->units;
 
 }
-
-/*Accounting *addSale(Accounting *acc, ClientCatalog *cCat, ProductCatalog *pCat, Sale *sale)
-{
-	Client *cli;
-	Product *pr;
-	Entry *cliE, *prE;
-	int i;
-	if (!acc || !cCat || !pCat || !sale)
-		return NULL;
-	
-	if (!existsClient(cCat, sale->client) || !existsProduct(pCat, sale->product))
-		return NULL;
-
-
-	cli = getClient(cCat, sale->client);
-	pr = getProduct(pCat, sale->product);
-	/* RESIZE 
-	if (acc->cntEC == acc->sizeEC)
-	{
-		if (!acc->sizeEC)
-			acc->sizeEC = 2;
-		else{
-			acc->sizeEC += acc->sizeEC;
-		}
-
-		acc->entriesCli = realloc(acc->entriesCli, acc->sizeEC);
-	}
-
-	if (acc->cntEP == acc->sizeEP)
-	{
-		if (!acc->sizeEP)
-			acc->sizeEP = 2;
-		else{
-			acc->sizeEP += acc->sizeEP;
-		}
-
-		acc->entriesPr= realloc(acc->entriesPr, acc->sizeEP);
-	}
-
-	if (acc->cntS == acc->sizeS)
-	{
-		if (!acc->sizeS)
-			acc->sizeS = 2;
-		else{
-			acc->sizeS += acc->sizeS;
-		}
-
-		acc->sales = realloc(acc->sales, acc->sizeS);
-	}
-
-	//memcpy(&acc->sales[acc->cntS],sale,sizeof(Sale));
-	copySale(&acc->sales[acc->cntS], sale);
-	
-	//pr = getProduct(pCat, sale->product);
-	/*
-	if (!pr)
-		return NULL;
-	if (pr->data != NULL && *pr->data != NULL)
-	{
-		i = *(int*)*pr->data;
-		prE = &acc->entriesPr[i];
-		if (prE->records[sale->month] == NULL)
-		{
-			prE->cntS[sale->month] = 1;
-			prE->cnt[sale->month] = 1;
-			prE->records[sale->month] = malloc(sizeof(int));
-			prE->records[sale->month][0] = acc->cntS;
-		}else{
-			if (prE->cnt[sale->month] == prE->cntS[sale->month])
-			{
-				prE->records[sale->month] = realloc(prE->records[sale->month], prE->cntS[sale->month] * 2);
-				prE->cntS[sale->month] += prE->cntS[sale->month];
-			}
-			prE->records[sale->month][prE->cnt[sale->month]] = acc->cntS;
-			prE->cnt[sale->month]++;
-			memcpy(&acc->entriesPr[acc->cntEP++], prE, sizeof(Entry));
-		}
-	}
-	else
-	{
-		if (!pr->data)
-			return NULL; //Something went seriously wrong
-
-		*pr->data = (int*)malloc(sizeof(int));
-		*(int*)*pr->data = acc->cntEP;
-		prE = initEntry();
-		if (prE->records[sale->month] == NULL)
-		{
-			prE->cntS[sale->month] = 1;
-			prE->cnt[sale->month] = 1;
-			prE->records[sale->month] = malloc(sizeof(int));
-			prE->records[sale->month][0] = acc->cntS;
-		}
-		else{
-			if (prE->cnt[sale->month] == prE->cntS[sale->month])
-			{
-				prE->records[sale->month] = realloc(prE->records[sale->month], prE->cntS[sale->month] * 2);
-				prE->cntS[sale->month] += prE->cntS[sale->month];
-			}
-			prE->records[sale->month][prE->cnt[sale->month]] = acc->cntS;
-			acc->cntS++;
-			prE->cnt[sale->month]++;
-			memcpy(&acc->entriesPr[acc->cntEP++], prE, sizeof(Entry));
-		}
-
-		acc->cntEP++;
-	}
-
-	if (!pr)
-		return NULL;
-	if (pr->data != NULL && *pr->data != NULL)
-	{
-		i = *(int*)*pr->data;
-		prE = acc->entriesPr[i];
-	}
-	else
-	{
-		if (!pr->data)
-			return NULL; 
-
-		*pr->data = (int*)malloc(sizeof(int));
-		*(int*)*pr->data = acc->cntEP;
-		prE = initEntry();
-		memcpy(acc->entriesPr[acc->cntEP], prE, sizeof(Entry));
-		
-	}
-//	prE = initEntry();
-	
-	if (prE->records[sale->month] == NULL)
-	{
-		prE->cntS[sale->month] = 1;
-		prE->cnt[sale->month] = 1;
-		prE->records[sale->month] = malloc(sizeof(int));
-		prE->records[sale->month][0] = acc->cntS;
-	}
-	else{
-		if (prE->cnt[sale->month] == prE->cntS[sale->month])
-		{
-			prE->records[sale->month] = realloc(prE->records[sale->month], prE->cntS[sale->month] * 2);
-			prE->cntS[sale->month] += prE->cntS[sale->month];
-		}
-		prE->records[sale->month][prE->cnt[sale->month]] = acc->cntS;
-		acc->cntS++;
-		prE->cnt[sale->month]++;
-		memcpy(&acc->entriesPr[acc->cntEP++], prE, sizeof(Entry));
-	}
-	
-	cli = getClient(pCat, sale->product);
-	
-
-	if (!cli)
-		return NULL;
-	if (cli->data != NULL && *cli->data != NULL)
-	{
-		i = *(int*)*cli->data;
-		cliE = &acc->entriesCli[i];
-	}
-	else
-	{
-		if (!cli->data)
-			return NULL; /*Something went seriously wrong
-
-		*cli->data = (int*)malloc(sizeof(int));
-		*(int*)*cli->data = acc->cntEP;
-		cliE = initEntry();
-		memcpy(&acc->entriesCli[acc->cntEC], cliE, sizeof(Entry));
-
-	}
-	cliE = initEntry();
-	if (cliE->records[sale->month] == NULL)
-	{
-		cliE->cntS[sale->month] = 1;
-		cliE->cnt[sale->month] = 1;
-		cliE->records[sale->month] = malloc(sizeof(int));
-		cliE->records[sale->month][0] = acc->cntS;
-	}
-	else{
-		if (cliE->cnt[sale->month] == cliE->cntS[sale->month])
-		{
-			cliE->records[sale->month] = realloc(cliE->records[sale->month], cliE->cntS[sale->month] * 2);
-			cliE->cntS[sale->month] += cliE->cntS[sale->month];
-		}
-		cliE->records[sale->month][cliE->cnt[sale->month]] = acc->cntS;
-		acc->cntS++;
-		cliE->cnt[sale->month]++;
-		memcpy(&acc->entriesCli[acc->cntEP++], cliE, sizeof(Entry));
-	}
-
-	
-	acc->cntS++;
-}*/
-
 Accounting *addSale(Accounting *acc, ClientCatalog *cCat, ProductCatalog *pCat, Sale *sale)
 {
 	/*Misc vars*/
@@ -436,5 +244,5 @@ Entry *initEntry()
 
 int getSalesCount(Accounting *acc)
 {
-	return acc ? acc->sizeS : -1;
+	return acc ? acc->cntS : -1;
 }
