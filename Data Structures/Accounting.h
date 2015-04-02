@@ -8,6 +8,7 @@ typedef struct sale
 	int month, amnt;
 	double price;
 	char *product, *client, type;
+	void **data; int dataS, dataC;
 }Sale;
 
 typedef struct entry
@@ -26,7 +27,7 @@ typedef struct accounting
 }Accounting;
 
 
-
+Accounting orderAcc(Accounting *acc);
 Accounting *initAccounting();
 Accounting *addSale(Accounting *acc, ClientCatalog *cat, ProductCatalog *pr, Sale *sale);
 Sale *createSale(int month, int amnt, double price, char *product, char *client, char type);

@@ -152,7 +152,7 @@ void readFiles( ProductCatalog **prodCat, ClientCatalog **clientCat, Accounting 
 
     char type;
     int qtd, month, ret;
-    char prod[7], client[6];
+    char prod[7], client[6], buff[128];
     double price;
     Sale *sale;
 
@@ -243,7 +243,7 @@ void readFiles( ProductCatalog **prodCat, ClientCatalog **clientCat, Accounting 
             Do Accounting
 
 	*/
-
+	orderAcc(*acc);
     getchar();
 
 }

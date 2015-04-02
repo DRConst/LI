@@ -37,14 +37,18 @@ Node *createNode(int elem, void *data, int dataSize)
 int auxInsert(Node *node, int elem, void *data, int dataSize)
 {
 	if (!node)
+	{
 		node = createNode(elem, data, dataSize);
-	if (elem == node->key)
 		return 1;
-	if (elem < node->key && node->l)
+	}
+		
+	//if (elem == node->key)
+		//return 1;
+	if (elem <= node->key && node->l)
 	{
 		return auxInsert(node->l,elem,data,dataSize);
 	}
-	if (elem < node->key && !node->l)
+	if (elem <= node->key && !node->l)
 	{
 		node->l = createNode(elem, data, dataSize);
 		return 1;
@@ -58,6 +62,7 @@ int auxInsert(Node *node, int elem, void *data, int dataSize)
 		node->r = createNode(elem, data, dataSize);
 		return 1;
 	}
+
 
 	return 1;
 }
@@ -76,10 +81,13 @@ intBST *insertBST(intBST *b, int elem, void *data, int dataSize)
 
 int inOrderAux(Node *n, int *toRet, int *i)
 {
+	int j, k;
 	if (!n)
 		return 0;
 	inOrderAux(n->l, toRet, i);
+	j = *i;
 	toRet[*i] = n->key;
+	k = toRet[*i];
 	*i += 1;
 	inOrderAux(n->r, toRet, i);
 	return 1;

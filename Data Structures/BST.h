@@ -12,7 +12,7 @@ typedef struct intBST_stc
 	Node *root;
 }intBST;
 
-
+int getNodeData(Node *n, void **data, int *dataSize);
 intBST *initBST();
 intBST *insertBST(intBST *b, int elem, void *data, int dataSize);
 int *inOrderBST(intBST *b);
