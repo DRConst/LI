@@ -3,7 +3,7 @@ typedef struct intNode_stc
 {
 	int key, dataSize;
 	void *data;
-	struct intNode_stc *l, *r;
+	struct intNode_stc *l, *r, *p;
 }Node;
 
 typedef struct intBST_stc

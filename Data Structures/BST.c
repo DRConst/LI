@@ -19,7 +19,7 @@ intBST *initBST()
 	return b;
 }
 
-Node *createNode(int elem, void *data, int dataSize)
+Node *createNode(int elem, void *data, int dataSize, Node *p)
 {
 	Node *toRet = malloc(sizeof(Node));
 	toRet->key = elem;
@@ -32,13 +32,14 @@ Node *createNode(int elem, void *data, int dataSize)
 	else
 		toRet->data = NULL;
 	toRet->r = toRet->l = NULL;
+	toRet->p = p;
 	return toRet;
 }
 int auxInsert(Node *node, int elem, void *data, int dataSize)
 {
 	if (!node)
 	{
-		node = createNode(elem, data, dataSize);
+		node = createNode(elem, data, dataSize, NULL);
 		return 1;
 	}
 		
@@ -50,7 +51,7 @@ int auxInsert(Node *node, int elem, void *data, int dataSize)
 	}
 	if (elem <= node->key && !node->l)
 	{
-		node->l = createNode(elem, data, dataSize);
+		node->l = createNode(elem, data, dataSize, node);
 		return 1;
 	}
 	if (elem > node->key && node->r)
@@ -59,7 +60,7 @@ int auxInsert(Node *node, int elem, void *data, int dataSize)
 	}
 	if (elem > node->key && !node->r)
 	{
-		node->r = createNode(elem, data, dataSize);
+		node->r = createNode(elem, data, dataSize, node);
 		return 1;
 	}
 
@@ -72,13 +73,55 @@ intBST *insertBST(intBST *b, int elem, void *data, int dataSize)
 	if (!b)
 		b = initBST(NULL);
 	if (!b->root)
-		b->root = createNode(elem, data, dataSize);
+		b->root = createNode(elem, data, dataSize, NULL);
 	else
 		auxInsert(b->root, elem, data, dataSize);
 	b->used++;
 	return b;
 }
 
+
+intBST *insertBST_it(intBST *b, int elem, void *data, int dataSize)
+{
+	Node *n;
+	if (!b)
+		b = initBST(NULL);
+	if (!b->root)
+		b->root = createNode(elem, data, dataSize, NULL);
+	else
+	{
+		n = b->root;
+		while (n)
+		{
+			if (elem <= n->key)
+			{
+				if (n->l)
+				{
+					n = n->l;
+				}
+				else
+				{
+					n->l = createNode(elem, data, dataSize,n);
+					n = NULL;
+				}
+			}
+			else
+			{
+				if(n->r)
+				{
+					n = n->r;
+				}
+				else
+				{
+					n->r = createNode(elem, data, dataSize,n);
+					n = NULL;
+				}
+			}
+		}
+	}
+	b->used++;
+	return b;
+}
 int inOrderAux(Node *n, int *toRet, int *i)
 {
 	int j, k;
@@ -99,6 +142,26 @@ int *inOrderBST(intBST *b)
 	int *toRet = malloc(sizeof(int) * b->used);
 	inOrderAux(b->root, toRet, &i);
 	return toRet;
+}
+
+
+int *inOrderBST_it(intBST *b)
+{
+	int *toRet = malloc(sizeof(int)* b->used);
+	Node *n,n1;
+	n = b->root;
+	int i = 0;
+	while (n)
+	{
+		while (n->l)
+		{
+			n = n->l;
+		}
+		toRet[i] = n->key;
+
+	}
+
+
 }
 Node *getNodeAux(Node *n,int key)
 {
