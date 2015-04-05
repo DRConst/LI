@@ -259,7 +259,7 @@ void quick_sort(int *a, int n) {
 
 Accounting orderAcc(Accounting *acc)
 {
-	/*
+	
 	int i;
 	int *j = malloc(sizeof(int)*acc->cntEC);
 	int *k = malloc(sizeof(int)*acc->cntEP);
@@ -271,34 +271,32 @@ Accounting orderAcc(Accounting *acc)
 	prE = malloc(sizeof(Entry*)*acc->cntEP);
 	//memcpy(cliE, acc->entriesCli, sizeof(Entry*)*acc->cntEC);
 
-	struct test{
-		int index, used;
-	}Test;
 	for (i = 0; i < acc->cntEC; i++)
 	{
-		j[i] = i;
-		if (!acc->entriesCli[i])
-			i = i;
-		else
-		{
-			insertBST(b, acc->entriesCli[i]->units, &j[i], sizeof(int));
-			cnt++;
-		}
+	j[i] = i;
+	if (!acc->entriesCli[i])
+	i = i;
+	else
+	{
+	insertBST(b, acc->entriesCli[i]->units, &j[i], sizeof(int));
+	cnt++;
+	}
 
 	}
 	toRet = inOrderBST(b);
 	for (i = 0; i < b->used; i++)
 	{
 
-		int *a = malloc(sizeof(int));
-		int c;
-		getNodeData(getNode(b, toRet[i]), &a, &c);
-		cliE[i] = acc->entriesCli[i];
+	int *a = malloc(sizeof(int));
+	int c;
+	getNodeData(getNode(b, toRet[i]), &a, &c);
+	cliE[i] = acc->entriesCli[*a];	
 	}
-	//free(j);
+	acc->entriesCli = cliE;
+	acc->cntEC = b->used;
 	freeBST(b);
 	for (i = 0; i < acc->cntEP; i++)
-	{	
+	{
 		k[i] = i;
 		if (!acc->entriesPr[i])
 			i = i;
@@ -307,24 +305,27 @@ Accounting orderAcc(Accounting *acc)
 			insertBST_it(b1, acc->entriesPr[i]->units, &k[i], sizeof(int));
 			/*cnt++;*/
 		}
-		
-
-
 	}
-	toRet = inOrderBST(b1);
-	//quick_sort(toRet, acc->cntEP);
-
-
-	for (i = 0; i < b->used; i++)
+	toRet = inOrderBST_it(b1);
+	
+	cnt = 0;
+	for (i = 0; i < b1->used; i++)
 	{
 
 		int *a = malloc(sizeof(int));
-		int c;
-		getNodeData(getNode(b, toRet[i]), &a, &c);
+		int	c;
+		getNodeData(getNode(b1, toRet[i]), &a, &c);
 		prE[i] = acc->entriesPr[*a];
+		cnt++;
+	}
+	acc->entriesPr = prE;
+	acc->cntEP = b1->used;
+	for (i = 0; i < acc->cntEP; i++)
+	{
+		printf("%d\n", acc->entriesPr[i]->units);
 	}
 
-	return *acc;*/
+	return *acc;
 }
 
 

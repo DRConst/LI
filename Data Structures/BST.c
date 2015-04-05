@@ -1,6 +1,5 @@
 #include "BST.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <time.h>
 
@@ -148,18 +147,28 @@ int *inOrderBST(intBST *b)
 int *inOrderBST_it(intBST *b)
 {
 	int *toRet = malloc(sizeof(int)* b->used);
-	Node *n,n1;
-	n = b->root;
-	int i = 0;
-	while (n)
-	{
-		while (n->l)
-		{
-			n = n->l;
+	int  i = 0;
+	Stack *s = initStack();
+	Node *current = b->root;
+	int done = 0;
+	while (!done) {
+		if (current) {
+			push(s,current);
+			current = current->l;
 		}
-		toRet[i] = n->key;
-
+		else {
+			if (s->cnt == 0) {
+				done = 1;
+			}
+			else {
+				pop(s, &current);
+				toRet[i++] = current->key;
+				current = current->r;
+			}
+		}
 	}
+
+	return toRet;
 
 
 }

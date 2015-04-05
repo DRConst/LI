@@ -1,4 +1,6 @@
 #pragma once
+#include "Stack.h"
+#include <stdlib.h>
 typedef struct intNode_stc
 {
 	int key, dataSize;
