@@ -235,8 +235,10 @@ void readFiles( ProductCatalog **prodCat, ClientCatalog **clientCat, Accounting 
                     sale
             );
     }
-    orderAcc(*acc);
     printf("Done \n\t%d read", getSalesCount( *acc ) );
+    printf("\nOrdering Sales Catalog...");
+    orderAcc(*acc);
+    printf("Done \n");
     /*
         TODO:
             Process Sales File
@@ -320,12 +322,12 @@ void getProductSalesInfo( ProductCatalog *prodCat, Accounting *acc )
     }
 
     count = getProductSalesPerMonth( acc, *(getProduct( prodCat, prod)), nMonth, &nSalesP, &nSalesN, &total );
-/*
+
     if( !count ) {
         printf("\n No Sales found for given Product/Month");
         return;
     }
-*/
+
     printf("Product: %s\n\t Normal: %d\n\t Promo: %d\n\t Total: %d\n\tProfit: %.2f", prod, nSalesN, nSalesP, count, total );
     getchar();
 

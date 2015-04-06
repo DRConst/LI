@@ -17,6 +17,8 @@ typedef struct intBST_stc
 int getNodeData(Node *n, void **data, int *dataSize);
 intBST *initBST();
 intBST *insertBST(intBST *b, int elem, void *data, int dataSize);
+intBST *insertBST_it(intBST *b, int elem, void *data, int dataSize);
 int *inOrderBST(intBST *b);
+int *inOrderBST_it(intBST *b);
 Node *getNode(intBST *b, int key);
 int freeBST(intBST *b);

@@ -24,6 +24,7 @@ Sale *createSale(int month, int amnt, double price, char *product, char *client,
 	s->amnt = amnt;
 	s->month = month;
 	s->price = price;
+	s->type = type;
 	s->product = malloc(sizeof(char)* 70);
 	strcpy(s->product, product);
 	s->client = malloc(sizeof(char)* 60);
@@ -192,13 +193,13 @@ int addSale(Accounting_s *acc, ClientCatalog *cCat, ProductCatalog *pCat, Sale *
 		/*Check if there is space to add Entry_s, else realloc*/
 		if (acc->entriesPr[i]->cnt[sale->month - 1] == acc->entriesPr[i]->cntS[sale->month - 1])
 		{
-			acc->entriesPr[i]->cntS[sale->month - 1] += acc->entriesPr[i]->cntS[sale->month - 1];
-			realloc(acc->entriesPr[i]->records[sale->month - 1], acc->entriesPr[i]->cntS[sale->month - 1]);
+			acc->entriesPr[i]->cntS[sale->month - 1] *= 2;
+			acc->entriesPr[i]->records[sale->month - 1] = realloc(acc->entriesPr[i]->records[sale->month - 1], sizeof(int)*acc->entriesPr[i]->cntS[sale->month - 1]);
 		}
 		acc->entriesPr[i]->records[sale->month - 1][acc->entriesPr[i]->cnt[sale->month - 1]] = acc->cntS;
 		bindData(acc->sales[acc->cntS], &acc->entriesPr[i]->records[sale->month - 1][acc->entriesPr[i]->cnt[sale->month - 1]]);
 		acc->entriesPr[i]->units += sale->amnt;
-/*        acc->entriesPr[i]->cnt[ (sale->month - 1) ] ++; */
+        acc->entriesPr[i]->cnt[ (sale->month - 1) ] ++;
 
 		/*copyEntry(&acc->entriesPr[i], tE);*/
 	}/*Else create new Product Entry_s, update metadata*/else{
@@ -220,23 +221,20 @@ int addSale(Accounting_s *acc, ClientCatalog *cCat, ProductCatalog *pCat, Sale *
 	if (*cl->dataSize != 0)
 	{
 		i = *(*(int **)cl->data); /*Index of entriecl where the client is bound*/
-printf("gotidx: %d", i);
 		tE = acc->entriesCli[i];
 
 		/*Check if there is space to add Entry_s, else realloc*/
 		if (acc->entriesCli[i]->cnt[sale->month - 1] == acc->entriesCli[i]->cntS[sale->month - 1])
 		{
-			acc->entriesCli[i]->cntS[sale->month - 1] += acc->entriesCli[i]->cntS[sale->month - 1];
-			realloc(acc->entriesCli[i]->records[sale->month - 1], acc->entriesCli[i]->cntS[sale->month - 1]);
+			acc->entriesCli[i]->cntS[sale->month - 1] *= 2;
+			acc->entriesCli[i]->records[sale->month - 1] = realloc(acc->entriesCli[i]->records[sale->month - 1], sizeof(int)*acc->entriesCli[i]->cntS[sale->month - 1]);
 		}
 		acc->entriesCli[i]->records[sale->month - 1][acc->entriesCli[i]->cnt[sale->month - 1]] = acc->cntS;
 		bindData(acc->sales[acc->cntS], &acc->entriesCli[i]->records[sale->month - 1][acc->entriesCli[i]->cnt[sale->month - 1]]);
 		acc->entriesCli[i]->units += sale->amnt;
-		printf("got here\n");
         acc->entriesCli[i]->cnt[ (sale->month - 1) ] ++;
 
 
-        printf("c: %d\n", tE->cnt[ sale->month - 1 ] );
 		/*copyEntry(&acc->entriesCli[i], tE);*/
 	}/*Else create new client Entry_s, update metadata*/else{
 		acc->entriesCli[acc->cntEC] = initEntry();
@@ -340,10 +338,6 @@ int orderAcc(Accounting_s *acc)
 	}
 	acc->entriesPr = prE;
 	acc->cntEP = b1->used;
-	for (i = 0; i < acc->cntEP; i++)
-	{
-		printf("%d\n", acc->entriesPr[i]->units);
-	}
 
 	return 1;
 }
@@ -403,7 +397,8 @@ int getProductSalesPerMonth( Accounting_s *acc, Product prod, int month, int *nS
     countN = countP = 0;
     total = 0.0;
 
-    for( i = 0; i < count; i++) {
+    for( i = 0; i < count; i++)
+    {
         if( acc->sales[ e->records[ month ][i] ]->type == 'N' )
             countN++;
         else
