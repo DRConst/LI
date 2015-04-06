@@ -19,7 +19,7 @@ int push(Stack *s, int x)
 		int *tmp = realloc(s->stack, s->size * sizeof(int));
 		if (!tmp)
 			return 0;
-		//free(s->stack);
+		/* free(s->stack); */
 		s->stack = tmp;
 	}
 

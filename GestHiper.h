@@ -11,8 +11,6 @@
 #include "./Data Structures/ClientCatalog.h"
 #include "./Data Structures/Accounting.h"
 
-#include "./Queries/Queries.h"
-
 #define MAX_PATH 150
 
 #define PER_PAGE 15

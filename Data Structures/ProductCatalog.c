@@ -1,10 +1,16 @@
 #include "ProductCatalog.h"
 #include <string.h>
 
-ProductCatalog *initProductCatalog()
+typedef struct productCatalog
+{
+	int used;
+	intBST ***Cat;
+}ProductCatalog_s;
+
+ProductCatalog_s *initProductCatalog()
 {
 	int i = 0; int j = 0;
-	ProductCatalog *cat = malloc(sizeof(ProductCatalog));
+	ProductCatalog_s *cat = malloc(sizeof(ProductCatalog_s));
 	cat->Cat = malloc(sizeof(intBST**) * 26);
 	for (i = 0; i < 26; i++)
 	{
@@ -18,17 +24,17 @@ ProductCatalog *initProductCatalog()
 	return cat;
 }
 
-int existsProduct( ProductCatalog *cat, char *product )
+int existsProduct( ProductCatalog_s *cat, char *product )
 {
 	return(getProduct(cat, product) != NULL);
 }
 
-int getProductCount( ProductCatalog *prodCat )
+int getProductCount( ProductCatalog_s *prodCat )
 {
     return ( prodCat ) ? ( prodCat->used ) : -1 ;
 }
 
-Product *getProduct(ProductCatalog *cat, char *product)
+Product *getProduct(ProductCatalog_s *cat, char *product)
 {
 	Product *pr = malloc(sizeof(Product));
 	int key = atoi(product + 2);
@@ -47,7 +53,7 @@ Product *getProduct(ProductCatalog *cat, char *product)
 	return pr;
 }
 
-ProductCatalog *insertProduct(ProductCatalog *cat, char *product)
+ProductCatalog_s *insertProduct(ProductCatalog_s *cat, char *product)
 {
 	char *idC = product + 2;
 	intBST *b;
@@ -58,7 +64,7 @@ ProductCatalog *insertProduct(ProductCatalog *cat, char *product)
 	return cat;
 }
 
-int freeProductCatalog(ProductCatalog *cat)
+int freeProductCatalog(ProductCatalog_s *cat)
 {
 	int i, j;
 
@@ -74,8 +80,37 @@ int freeProductCatalog(ProductCatalog *cat)
 	return 1;
 }
 
-/*
-*/
+char **getProductsByPrefix(ProductCatalog_s *cat, char t, int *count )
+{
+	char **toRet = NULL, buff[5];
+	int *codes, i, j, used;
+	int cnt = 0;
+
+	for (i = 0; i < 26; i++)
+	{
+		if ( cat->Cat[ t - 'A' ][i] )
+		{
+			used = cat->Cat[ t - 'A' ][i]->used;
+			codes = inOrderBST(cat->Cat[ t - 'A'][i]);
+			for (j = 0; j < used; j++)
+			{
+				toRet = realloc(toRet, sizeof(char*)*(cnt + 1));
+				toRet[cnt] = malloc(sizeof(char) * 7);
+				toRet[cnt][0] = t;
+				toRet[cnt][1] = 'A' + i;
+				sprintf( buff, "%d", codes[j] );
+				buff[4] = '\0';
+				strcpy(toRet[cnt] + 2, buff);
+				cnt++;
+
+			}
+		}
+	}
+
+    *count = cnt;
+
+	return toRet;
+}
 
 
 

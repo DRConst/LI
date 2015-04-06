@@ -41,9 +41,11 @@ int auxInsert(Node *node, int elem, void *data, int dataSize)
 		node = createNode(elem, data, dataSize, NULL);
 		return 1;
 	}
-		
-	//if (elem == node->key)
-		//return 1;
+
+	/*
+	if (elem == node->key)
+        return 1;
+    */
 	if (elem <= node->key && node->l)
 	{
 		return auxInsert(node->l,elem,data,dataSize);

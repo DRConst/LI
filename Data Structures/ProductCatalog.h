@@ -3,11 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
-typedef struct productCatalog
-{
-	int used;
-	intBST ***Cat;
-}ProductCatalog;
+
+typedef struct productCatalog ProductCatalog;
 
 typedef struct product
 {
@@ -22,3 +19,4 @@ int existsProduct( ProductCatalog *cat, char *product );
 int getProductCount( ProductCatalog *prodCat );
 Product *getProduct(ProductCatalog *cat, char* product);
 int freeProductCatalog(ProductCatalog *cat);
+char **getProductsByPrefix(ProductCatalog *cat, char t, int *count );

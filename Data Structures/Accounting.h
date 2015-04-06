@@ -11,25 +11,18 @@ typedef struct sale
 	void **data; int dataS, dataC;
 }Sale;
 
-typedef struct entry
-{
-	int cnt[12]/*Number of Index entries per Month (width of matrix at that row)*/, cntS[12];
-	int units;
-	int **records; /* Matrix Month x Index */
-}Entry;
+typedef struct entry Entry;
+
+typedef struct accounting Accounting;
 
 
-typedef struct accounting
-{
-	int cntEC, cntEP, sizeEC, sizeEP, sizeS, cntS;
-	Entry **entriesCli, **entriesPr;
-	Sale **sales;
-}Accounting;
-
-
-Accounting orderAcc(Accounting *acc);
+int orderAcc(Accounting *acc);
 Accounting *initAccounting();
-Accounting *addSale(Accounting *acc, ClientCatalog *cat, ProductCatalog *pr, Sale *sale);
+int addSale(Accounting *acc, ClientCatalog *cat, ProductCatalog *pr, Sale *sale);
 Sale *createSale(int month, int amnt, double price, char *product, char *client, char type);
 int getSalesCount(Accounting *acc);
 Entry *initEntry();
+int getProductSalesPerMonth( Accounting *acc, Product prod, int month, int *nSalesP, int *nSalesN, double *totalProfit );
+int getEntriesClientsCount( Accounting *acc );
+int getEntriesProductsCount( Accounting *acc );
+

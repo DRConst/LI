@@ -1,10 +1,15 @@
 #include "ClientCatalog.h"
 
+typedef struct clientCatalog
+{
+	int used;
+	intBST ***Cat;
+}ClientCatalog_s;
 
-ClientCatalog *initClientCatalog()
+ClientCatalog_s *initClientCatalog()
 {
 	int i = 0; int j = 0;
-	ClientCatalog *cat = malloc(sizeof(ClientCatalog));
+	ClientCatalog_s *cat = malloc(sizeof(ClientCatalog_s));
 	cat->Cat = malloc(sizeof(intBST**) * 26);
 	for (i = 0; i < 26; i++)
 	{
@@ -18,7 +23,7 @@ ClientCatalog *initClientCatalog()
 	return cat;
 }
 
-int freeClientCatalog(ClientCatalog *cat)
+int freeClientCatalog(ClientCatalog_s *cat)
 {
 	int i, j;
 
@@ -34,12 +39,12 @@ int freeClientCatalog(ClientCatalog *cat)
 	return 1;
 }
 
-int existsClient(ClientCatalog *cat, char *Client)
+int existsClient(ClientCatalog_s *cat, char *Client)
 {
 	return(getClient(cat, Client) != NULL);
 }
 
-Client *getClient(ClientCatalog *cat, char *client)
+Client *getClient(ClientCatalog_s *cat, char *client)
 {
 	Client *cl = malloc(sizeof(Client));
 	int key = atoi(client + 2);
@@ -58,13 +63,13 @@ Client *getClient(ClientCatalog *cat, char *client)
 	return cl;
 }
 
-int getClientCount( ClientCatalog *clientCat )
+int getClientCount( ClientCatalog_s *clientCat )
 {
     return ( clientCat ) ? ( clientCat->used ) : -1 ;
 }
 
 
-ClientCatalog *insertClient(ClientCatalog *cat, char *client)
+ClientCatalog_s *insertClient(ClientCatalog_s *cat, char *client)
 {
 	char *idC = client + 2;
 	intBST *b;
@@ -76,6 +81,36 @@ ClientCatalog *insertClient(ClientCatalog *cat, char *client)
 	return cat;
 }
 
+char **getClientsByPrefix(ClientCatalog *cat, char t, int *count)
+{
+	char **toRet = NULL, buff[4];
+	int *codes, i, j, used;
+	int cnt = 0;
+	for (i = 0; i < 26; i++)
+	{
+		if (cat->Cat[ t - 'A' ][i])
+		{
+			used = cat->Cat[ t - 'A' ][i]->used;
+			codes = inOrderBST(cat->Cat[ t - 'A' ][i]);
+			for (j = 0; j < used; j++)
+			{
+				toRet = realloc(toRet, sizeof(char*)*(cnt + 1));
+				toRet[cnt] = malloc(sizeof(char) * 6);
+				toRet[cnt][0] = t;
+				toRet[cnt][1] = 'A' + i;
+				sprintf(buff, "%d", codes[j] );
+				strcpy(toRet[cnt] + 2, buff);
+				cnt++;
+
+			}
+		}
+	}
+
+    *count = cnt;
+
+
+	return toRet;
+}
 
 
 
