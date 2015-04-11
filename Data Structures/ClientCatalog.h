@@ -12,12 +12,12 @@ typedef struct client
 	char *name;
 	void **data;
 	int *dataSize;
-}Client;
+}*Client;
 
 ClientCatalog initClientCatalog();
 ClientCatalog insertClient(ClientCatalog cat, char *client);
 int existsClient(ClientCatalog cat, char *client);
 int getClientCount( ClientCatalog clientCat );
-Client *getClient(ClientCatalog cat, char *client);
+Client getClient(ClientCatalog cat, char *client);
 int freeClientCatalog(ClientCatalog cat);
 char **getClientsByPrefix(ClientCatalog cat, char t, int *count);

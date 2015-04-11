@@ -31,11 +31,13 @@ int freeClientCatalog(ClientCatalog_s cat)
 	{
 		for (j = 0; j < 26; j++)
 		{
-			freeBST(cat->Cat[i][j]);
+			//freeBST(cat->Cat[i][j]);
+
 		}
 	}
-	free(cat->Cat);
-	free(cat);
+	//free(cat->Cat);
+	//free(cat);
+	cat = NULL;
 	return 1;
 }
 
@@ -44,9 +46,9 @@ int existsClient(ClientCatalog_s cat, char *Client)
 	return(getClient(cat, Client) != NULL);
 }
 
-Client *getClient(ClientCatalog_s cat, char *client)
+Client getClient(ClientCatalog_s cat, char *client)
 {
-	Client *cl = malloc(sizeof(Client));
+	Client cl = malloc(sizeof(struct client));
 	int key = atoi(client + 2);
 	Node *n = getNode(cat->Cat[client[0] - 'A'][client[1] - 'A'], key);
 

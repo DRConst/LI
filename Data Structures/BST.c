@@ -228,8 +228,6 @@ int freeBST(intBST *b)
 {
 	if (!b)
 		return 0;
-
-
 	freeBSTAux(b->root);
 	free(b->root);
 	free(b);

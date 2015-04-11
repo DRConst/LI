@@ -34,9 +34,9 @@ int getProductCount( ProductCatalog_s *prodCat )
     return ( prodCat ) ? ( prodCat->used ) : -1 ;
 }
 
-Product *getProduct(ProductCatalog_s *cat, char *product)
+Product getProduct(ProductCatalog_s *cat, char *product)
 {
-	Product *pr = malloc(sizeof(Product));
+	Product pr = malloc(sizeof(struct product));
 	int key = atoi(product + 2);
 	Node *n = getNode(cat->Cat[product[0] - 'A'][product[1] - 'A'], key);
 
@@ -72,11 +72,11 @@ int freeProductCatalog(ProductCatalog_s *cat)
 	{
 		for (j = 0; j < 26; j++)
 		{
-			freeBST(cat->Cat[i][j]);
+			//freeBST(cat->Cat[i][j]);
 		}
 	}
-	free(cat->Cat);
-	free(cat);
+	//free(cat->Cat);
+	//free(cat);
 	return 1;
 }
 

@@ -75,7 +75,7 @@ void bindData(Sale *s, int *i)
 	}
 	s->data[s->dataC++] = i;
 }
-int addSale(Accounting_s *acc, ClientCatalog cCat, ProductCatalog *pCat, Sale *sale)
+int addSale(Accounting_s *acc, ClientCatalog cCat, ProductCatalog pCat, Sale *sale)
 {
 	/*Misc vars*/
 	int i, monthIdx;
@@ -85,9 +85,9 @@ int addSale(Accounting_s *acc, ClientCatalog cCat, ProductCatalog *pCat, Sale *s
 	Sale **reS;
 
 	/*Vars for product binding*/
-	Product *pr;
+	Product pr;
 	Entry_s *tE;
-	Client *cl;
+	Client cl;
 
 	/*Check if the sizes allow for insertion, if not realloc stuff*/
 
@@ -261,23 +261,6 @@ int addSale(Accounting_s *acc, ClientCatalog cCat, ProductCatalog *pCat, Sale *s
 }
 
 
-void quick_sort(int *a, int n) {
-	int b, i, j;
-
-	for ( i = 0; i < n; ++i)
-	{
-		for ( j = i + 1; j < n; ++j)
-		{
-			if (a[i] > a[j])
-			{
-				b = a[i];
-				a[i] = a[j];
-				a[j] = b;
-			}
-		}
-	}
-}
-
 
 int orderAcc(Accounting_s *acc)
 {
@@ -384,10 +367,10 @@ int getProductSalesPerMonth( Accounting_s *acc, Product prod, int month, int *nS
     Entry *e;
 
 
-    if( !(acc->cntEP) || !(*(prod.dataSize)) )
+    if( !(acc->cntEP) || !(*(prod->dataSize)) )
         return 0;
 
-    idx = *(*(int **)prod.data);
+    idx = *(*(int **)prod->data);
 
     e = acc->entriesPr[ idx ];
 
