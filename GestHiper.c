@@ -2,12 +2,12 @@
 
 void printMenu();
 
-void readFiles( ProductCatalog **prodCat, ClientCatalog **clientCat, Accounting **acc );
+void readFiles( ProductCatalog **prodCat, ClientCatalog *clientCat, Accounting **acc );
 void ProductsByPrefix( ProductCatalog *prodCat );
-void ClientsByPrefix( ClientCatalog *clientCat );
+void ClientsByPrefix( ClientCatalog clientCat );
 void getProductSalesInfo( ProductCatalog *prodCat, Accounting *acc );
 void getUnboughtProducts( Accounting *acc );
-void getClientSalesCount( Accounting *acc, ClientCatalog *clientCat );
+void getClientSalesCount( Accounting *acc, ClientCatalog clientCat );
 void getSalesInterval( Accounting *acc );
 void getProductBuyers( Accounting *acc );
 void getClientSales( Accounting *acc );
@@ -19,14 +19,14 @@ void getAllInactive( Accounting *acc );
 
 void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... );
 void genColumn( char *ret, char *s, int max );
-void freeData( ProductCatalog **prodCat, ClientCatalog **clientCat, Accounting **acc );
+void freeData( ProductCatalog *prodCat, ClientCatalog clientCat, Accounting *acc );
 
 
 int main()
 {
 	int op = 1;
     ProductCatalog *prodCat = initProductCatalog();
-    ClientCatalog *clientCat = initClientCatalog();
+    ClientCatalog clientCat = initClientCatalog();
     Accounting *acc = initAccounting();
     int ret;
 
@@ -112,7 +112,6 @@ int main()
 
 	}while( op != 0 && op != EOF );
 
-    freeData( &prodCat, &clientCat, &acc );
 
 	return 0;
 }
@@ -143,7 +142,7 @@ void printMenu()
 
 
 
-void readFiles( ProductCatalog **prodCat, ClientCatalog **clientCat, Accounting **acc )
+void readFiles( ProductCatalog **prodCat, ClientCatalog *clientCat, Accounting **acc )
 {
 	char clients[MAX_PATH] = "";
 	char products[MAX_PATH] = "";
@@ -157,7 +156,7 @@ void readFiles( ProductCatalog **prodCat, ClientCatalog **clientCat, Accounting 
     Sale *sale;
 
 
-    freeData( prodCat, clientCat, acc );
+    freeData( *prodCat, &clientCat, *acc );
 
 	printf("\n Optional file paths[Max: %d], enter for default\n", MAX_PATH);
 
@@ -211,16 +210,16 @@ void readFiles( ProductCatalog **prodCat, ClientCatalog **clientCat, Accounting 
     printf("Done \n\t%d read", getProductCount( *prodCat ) );
 
     printf("\nReading Clients Catalog...");
-    *clientCat = initClientCatalog();
+    clientCat = initClientCatalog();
     while( fgets(buff, 7, clientsFp ) )
     {
         if( isalpha( buff[0] ) && isalpha( buff[1] ) &&
           isdigit( buff[2] ) && isdigit( buff[3] ) &&
           isdigit( buff[4] ) )
 
-            *clientCat = insertClient( *clientCat, buff);
+            clientCat = insertClient( clientCat, buff);
     }
-    printf("Done \n\t%d read", getClientCount( *clientCat ) );
+    printf("Done \n\t%d read", getClientCount( clientCat ) );
 
     printf("\nReading Sales Catalog...");
     *acc = initAccounting();
@@ -231,7 +230,7 @@ void readFiles( ProductCatalog **prodCat, ClientCatalog **clientCat, Accounting 
         sale = createSale( month, qtd, price, prod, client, type );
 
         if( ret == 6 )
-            addSale( *acc, *clientCat, *prodCat,
+            addSale( *acc, clientCat, *prodCat,
                     sale
             );
     }
@@ -339,7 +338,7 @@ void getUnboughtProducts( Accounting *acc )
 }
 
 
-void getClientSalesCount( Accounting *acc, ClientCatalog *clientCat )
+void getClientSalesCount( Accounting *acc, ClientCatalog clientCat )
 {
     char client[6] = "";
 
@@ -356,7 +355,7 @@ void getClientSalesCount( Accounting *acc, ClientCatalog *clientCat )
 }
 
 
-void ClientsByPrefix( ClientCatalog *clientCat )
+void ClientsByPrefix( ClientCatalog clientCat )
 {
 	char c;
 	int cnt;
@@ -530,7 +529,7 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 			strcat( line, "|\n" );
 			strcat( body, line );
 
-			sprintf( footer, " page %d/%d | %d/%d shown | %d per page", curPage+1, maxPage, i + 1, listSize, PER_PAGE );
+        sprintf( footer, " page %d/%d | %d/%d shown | %d per page", curPage+1, maxPage, i + 1, listSize, PER_PAGE );
 
 		}
 
@@ -579,11 +578,16 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 
 	}
 
-	free( lists );
 
-	for( i = 0; i < nLists; i++ )
+	for( i = 0; i < nLists; i++ ) {
+
         for( j = 0; j < listSize; j++ )
             free( lists[i][j] );
+
+        free( lists[i] );
+    }
+
+    free( lists );
 
 	free( columnSize );
 
@@ -603,14 +607,15 @@ void genColumn( char *ret, char *s, int max )
 
 }
 
-void freeData( ProductCatalog **prodCat, ClientCatalog **clientCat, Accounting **acc )
+void freeData( ProductCatalog *prodCat, ClientCatalog *clientCat, Accounting *acc )
 {
 
     /*
         TODO: Call Each Catalog's own free function
-
-        freeProductCatalog( &prodCat );
-        freeClientCatalog( &clientCat );
+*/
+        freeProductCatalog( prodCat );
+        freeClientCatalog( clientCat );
+/*
         freeAccounting( &acc );
 
     */

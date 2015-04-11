@@ -33,5 +33,3 @@
 #define MENU_OPTION_13 " 13\t-\tClient's Top 3 Most Bought\n"
 #define MENU_OPTION_14 " 14\t-\tInactive Clients And Products\n"
 #define EXIT_OPTION " 0\t-\tExit Program\n"
-
-void paginateResults( int a, int b, int c, int d, ... );

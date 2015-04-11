@@ -18,7 +18,7 @@ typedef struct accounting Accounting;
 
 int orderAcc(Accounting *acc);
 Accounting *initAccounting();
-int addSale(Accounting *acc, ClientCatalog *cat, ProductCatalog *pr, Sale *sale);
+int addSale(Accounting *acc, ClientCatalog cat, ProductCatalog *pr, Sale *sale);
 Sale *createSale(int month, int amnt, double price, char *product, char *client, char type);
 int getSalesCount(Accounting *acc);
 Entry *initEntry();
