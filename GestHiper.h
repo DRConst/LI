@@ -10,6 +10,7 @@
 #include "./Data Structures/ProductCatalog.h"
 #include "./Data Structures/ClientCatalog.h"
 #include "./Data Structures/Accounting.h"
+#include "./Data Structures/StringList.h"
 
 #define MAX_PATH 150
 

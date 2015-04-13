@@ -5,6 +5,8 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "StringList.h"
+
 typedef struct clientCatalog *ClientCatalog;
 
 typedef struct client
@@ -20,4 +22,4 @@ int existsClient(ClientCatalog cat, char *client);
 int getClientCount( ClientCatalog clientCat );
 Client getClient(ClientCatalog cat, char *client);
 int freeClientCatalog(ClientCatalog cat);
-char **getClientsByPrefix(ClientCatalog cat, char t, int *count);
+StringList getClientsByPrefix(ClientCatalog cat, char t );

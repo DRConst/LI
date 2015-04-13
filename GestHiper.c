@@ -49,7 +49,7 @@ int main()
         if( ret ) {
             switch( op ) {
                 case 1:
-					freeData(prodCat, clientCat, acc);
+/*					freeData(prodCat, clientCat, acc);  */
 
 					prodCat = initProductCatalog();
 
@@ -238,7 +238,7 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc 
     }
     printf("Done \n\t%d read", getSalesCount( acc ) );
     printf("\nOrdering Sales Catalog...");
-    //orderAcc(*acc);
+/*  orderAcc(*acc); */
     printf("Done \n");
     /*
         TODO:
@@ -257,8 +257,7 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc 
 void ProductsByPrefix( ProductCatalog prodCat )
 {
 	char c;
-	int cnt = 0;
-	char **res;
+	StringList l;
 
 	fflush( stdin );
 
@@ -273,11 +272,14 @@ void ProductsByPrefix( ProductCatalog prodCat )
 	c = toupper( c );
 
 	if( c >= 'A' && c <= 'Z' ) {
-        res = getProductsByPrefix( prodCat, c, &cnt );
-        if( cnt )
-            paginateResults( 1, cnt, 1, 0, 8, res, "Produtos" );
+        l = getProductsByPrefix( prodCat, c );
+        if( getCountStringList( l ) )
+            paginateResults( 1, getCountStringList( l ), 1, 0, 8, getStringList( l ), "Produtos" );
         else
             printf( "\nNo Products By That Prefix" );
+
+        freeStringList( l );
+
 	}else
 		printf("\nInvalid Input");
 
@@ -360,8 +362,7 @@ void getClientSalesCount( Accounting acc, ClientCatalog clientCat )
 void ClientsByPrefix( ClientCatalog clientCat )
 {
 	char c;
-	int cnt;
-	char **res;
+	StringList l;
 
 	fflush( stdin );
 
@@ -371,11 +372,13 @@ void ClientsByPrefix( ClientCatalog clientCat )
 	c = toupper( c );
 
 	if( c >= 'A' && c <= 'Z' ) {
-        res = getClientsByPrefix( clientCat, c, &cnt );
-		if( cnt )
-            paginateResults( 1, cnt, 1, 0, 8, res, "Clientes" );
+        l = getClientsByPrefix( clientCat, c );
+		if( getCountStringList( l ) )
+            paginateResults( 1, getCountStringList( l ), 1, 0, 8, getStringList( l ), "Clientes" );
         else
             printf("\nNo Clients By That Prefix");
+
+        freeStringList( l );
 	}else
 		printf("\nInvalid Input");
 
@@ -461,6 +464,9 @@ void getAllInactive( Accounting acc )
 
 	);
 */
+
+#define CEILING_POS( X, Y ) (1+((X - 1) / Y) )
+
 void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 {
 	char header[300] = "";
@@ -471,7 +477,8 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 	int i, j, nPage;
 	va_list args;
 	int curPage = 0;
-	int maxPage = ceil( (listSize / (float)PER_PAGE ) );
+/*	int maxPage = ceil( (listSize / (float)PER_PAGE ) ); */
+	int maxPage = CEILING_POS( listSize, (float)PER_PAGE );
 	char input[10] = "";
 	char buf[500] = "";
 	char idx[6] = "";
@@ -560,7 +567,7 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 			switch( toupper( input[0] ) ) {
 
 				case 'N': /* next page */
-					if( curPage < maxPage )
+					if( ( curPage + 1 ) < maxPage )
 						curPage++;
 				break;
 

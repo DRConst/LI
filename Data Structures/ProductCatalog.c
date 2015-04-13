@@ -72,19 +72,19 @@ int freeProductCatalog(ProductCatalog_s *cat)
 	{
 		for (j = 0; j < 26; j++)
 		{
-			//freeBST(cat->Cat[i][j]);
+			freeBST(cat->Cat[i][j]);
 		}
 	}
-	//free(cat->Cat);
-	//free(cat);
+	free(cat->Cat);
+	free(cat);
 	return 1;
 }
 
-char **getProductsByPrefix(ProductCatalog_s *cat, char t, int *count )
+StringList getProductsByPrefix(ProductCatalog_s *cat, char t )
 {
-	char **toRet = NULL, buff[5];
+    char buff[7];
 	int *codes, i, j, used;
-	int cnt = 0;
+	StringList l = initStringList();
 
 	for (i = 0; i < 26; i++)
 	{
@@ -94,22 +94,13 @@ char **getProductsByPrefix(ProductCatalog_s *cat, char t, int *count )
 			codes = inOrderBST(cat->Cat[ t - 'A'][i]);
 			for (j = 0; j < used; j++)
 			{
-				toRet = realloc(toRet, sizeof(char*)*(cnt + 1));
-				toRet[cnt] = malloc(sizeof(char) * 7);
-				toRet[cnt][0] = t;
-				toRet[cnt][1] = 'A' + i;
-				sprintf( buff, "%d", codes[j] );
-				buff[4] = '\0';
-				strcpy(toRet[cnt] + 2, buff);
-				cnt++;
-
+			    sprintf( buff, "%c%c%d", t, 'A' + i, codes[j] );
+			    l = insertStringList( l, buff, 7 );
 			}
 		}
 	}
 
-    *count = cnt;
-
-	return toRet;
+	return l;
 }
 
 
