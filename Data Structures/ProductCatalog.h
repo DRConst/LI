@@ -21,3 +21,5 @@ int getProductCount( ProductCatalog prodCat );
 Product getProduct(ProductCatalog cat, char* product);
 int freeProductCatalog(ProductCatalog cat);
 StringList getProductsByPrefix(ProductCatalog cat, char t);
+int getProductMetaData(Product pr);
+void *getProductMetaDataAddr(Product pr);

@@ -9,7 +9,7 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc );
 void getUnboughtProducts( Accounting acc );
 void getClientSalesCount( Accounting acc, ClientCatalog clientCat );
 void getSalesInterval( Accounting acc );
-void getProductBuyers( Accounting acc );
+void getProductBuyers(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
 void getClientSales( Accounting acc );
 void getActiveClients( Accounting acc );
 void generateCSV( Accounting acc );
@@ -85,11 +85,11 @@ int main()
                 break;
 
                 case 8:
-                    getProductBuyers( acc );
+					getProductBuyers(acc, prodCat, clientCat);
                 break;
 
                 case 9:
-                    getClientSales( acc );
+					getClientSales(acc, prodCat, clientCat);
                 break;
 
                 case 10:
@@ -238,7 +238,7 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc 
     }
     printf("Done \n\t%d read", getSalesCount( acc ) );
     printf("\nOrdering Sales Catalog...");
-/*  orderAcc(*acc); */
+	orderAcc(acc, prodCat, clientCat);
     printf("Done \n");
     /*
         TODO:
@@ -402,15 +402,50 @@ void getSalesInterval( Accounting acc )
 }
 
 
-void getProductBuyers( Accounting acc )
+void getProductBuyers( Accounting acc , ProductCatalog pCat, ClientCatalog cCat )
 {
+	char product[7];
+	int ret;
 
+	printf("\n Enter Product: ");
+	ret = scanf("%s", product);
+
+	ProductBuyers pB = productBuyers(acc, pCat, cCat, product);
 }
 
 
-void getClientSales( Accounting acc )
+void getClientSales(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
 {
+	char client[6];
+	int month;
+	int ret,i = 0;
+	char **lists; int *cnt, size;
+	Monthly_Purchases mp;
+	do
+	{
+		printf("\n Enter Client: ");
+		ret = scanf("%s", client);
+	} while (ret < 1);
+	ret = 0;
+	do
+	{
+		printf("\n Enter month[1..12]: ");
+		ret = scanf("%d", &month);
+	} while (ret < 1);
 
+	if (month > 12 || month < 1)
+	{
+		printf("\n Invalid month.");
+		return;
+	}
+	
+	mp = mostBoughtMonthlyProductsByClient(acc, pCat, cCat, client, month - 1);
+	lists = getMonthlyPurchasesList(mp);
+	cnt = getMonthlyPurchasesCounts;
+	size = getMonthlyPurchasesSize(mp);
+	/*TODO PAGINATE*/
+	/*placeholder*/
+	
 }
 
 

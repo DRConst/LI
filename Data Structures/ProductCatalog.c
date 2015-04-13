@@ -106,3 +106,15 @@ StringList getProductsByPrefix(ProductCatalog_s *cat, char t )
 
 
 
+int getProductMetaData(Product pr)
+{
+	if (!pr->data)
+		return -1;
+	return *(*(int **)pr->data);
+}
+void *getProductMetaDataAddr(Product pr)
+{
+	if (!pr->data)
+		return -1;
+	return *pr->data;
+}
