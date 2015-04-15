@@ -56,7 +56,7 @@ char* getIdxStringList( StringList_s l, int idx )
 
 char** getStringList( StringList_s l )
 {
-    if(!l)
+    if(!l || l->count == 0)
         return NULL;
 
     return l->data;

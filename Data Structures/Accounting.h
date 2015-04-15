@@ -4,6 +4,7 @@
 #include "ProductCatalog.h"
 #include "ClientCatalog.h"
 #include "minHeap.h"
+#include "StringList.h"
 typedef struct sale
 {
 	int month, amnt;
@@ -19,11 +20,6 @@ typedef struct productBuyers
 	int cntN, cntP;
 }*ProductBuyers;
 
-typedef struct stringList
-{
-	char **list;
-	int cnt;
-}*StringList;
 
 typedef struct entry Entry;
 
@@ -42,6 +38,11 @@ int getEntriesClientsCount(Accounting acc);
 int getEntriesProductsCount(Accounting acc);
 ProductBuyers productBuyers(Accounting acc, ProductCatalog pCat, ClientCatalog cCat, char *product);
 Monthly_Purchases mostBoughtMonthlyProductsByClient(Accounting acc, ProductCatalog pCat, ClientCatalog cCat, char *client, int month);
+StringList yearRoundClients(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
+StringList mostSoldProducts(Accounting acc, ProductCatalog pCat, ClientCatalog cCat, int N);
+StringList productsWithoutPurchases(Accounting acc);
+StringList clientsWithoutPurchases(Accounting acc);
+
 Monthly_Purchases initMonthlyPurchases();
 Monthly_Purchases registerMonthlyPurchase(Monthly_Purchases mp, char *product, int cnt);
 char **getMonthlyPurchasesList(Monthly_Purchases mp);

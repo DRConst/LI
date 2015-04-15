@@ -562,7 +562,88 @@ Monthly_Purchases mostBoughtMonthlyProductsByClient(Accounting acc, ProductCatal
 
 }
 
+StringList yearRoundClients(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
+{
+	StringList toRet = initStringList();
+	int i = acc->cntEC - 1, j,k;
+	Entry_s ent = acc->entriesCli[i--];
+	while (ent && ent->units > 12 &&  i > 0)
+	{
+		k = 1;
+		for (j = 0; j < 12 && k; j++)
+		{
+			if (ent->cnt[j] < 1)
+				k = 0;
+		}
+		if (k)
+			insertStringList(toRet, ent->name, sizeof ent->name);
+		ent = acc->entriesCli[i--];
+	}
+	return toRet;
+}
 
+StringList mostSoldProducts(Accounting acc, ProductCatalog pCat, ClientCatalog cCat, int N)
+{
+	StringList sl = initStringList();
+	int i = acc->cntEP - 1,j,k;
+	int cli = 0;
+	Entry_s ent;
+	ClientCatalog tmp = initClientCatalog();
+	Sale *s;
+	char *buff = calloc(50, sizeof (char));
+	char b[10];
+	for (i, N; i > 0 && N > 0; i--, N--)
+	{
+		ent = acc->entriesPr[i];
+		for (j = 0; j < 12; j++)
+			for (k = 0; k < ent->cnt[j]; k++)
+			{
+				s = acc->sales[ent->records[j][k]];
+				if (!existsClient(tmp, s->client))
+				{
+					insertClient(tmp, s->client);
+					cli++;
+				}
+			}
+		memset(buff, '\0', 50);
+		strcat(buff, ent->name);
+		strcat(buff, " for ");
+		itoa(cli, b, 10);
+		strcat(buff, b);
+		strcat(buff, " clients and ");
+		itoa(ent->units, b, 10);
+		strcat(buff, b);
+		strcat(buff, " units\n");
+		insertStringList(sl, buff, 50);
+		cli = 0;
+	}
+	return sl;
+}
+
+
+StringList productsWithoutPurchases(Accounting acc)
+{
+	int i;
+	StringList sl = initStringList();
+	for (i = 0; i < acc->cntEP && acc->entriesPr[i]->units == 0; i++)
+	{
+		insertStringList(sl, acc->entriesPr[i]->name, 7);
+	}
+	return sl;
+
+}
+
+StringList clientsWithoutPurchases(Accounting acc)
+{
+	int i;
+	StringList sl = initStringList();
+	for (i = 0; i < acc->cntEC && acc->entriesCli[i]->units == 0; i++)
+	{
+		insertStringList(sl, acc->entriesCli[i]->name, 6);
+	}
+	return sl;
+
+}
 /*MONTHLY PURCHASES FUNCTIONS*/
 
 Monthly_Purchases initMonthlyPurchases()
