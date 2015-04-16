@@ -9,7 +9,7 @@ typedef struct clientCatalog
 ClientCatalog_s initClientCatalog()
 {
 	int i = 0; int j = 0;
-	ClientCatalog_s cat = malloc(sizeof(ClientCatalog_s));
+	ClientCatalog_s cat = malloc(sizeof(*cat));
 	cat->Cat = malloc(sizeof(intBST**) * 26);
 	for (i = 0; i < 26; i++)
 	{

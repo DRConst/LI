@@ -1,6 +1,7 @@
 #pragma once
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 #include "ProductCatalog.h"
 #include "ClientCatalog.h"
 #include "minHeap.h"

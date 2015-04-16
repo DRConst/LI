@@ -10,10 +10,10 @@ void getUnboughtProducts( Accounting acc );
 void getClientSalesCount( Accounting acc, ClientCatalog clientCat );
 void getSalesInterval( Accounting acc );
 void getProductBuyers(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
-void getClientSales( Accounting acc );
-void getActiveClients( Accounting acc );
+void getClientSales(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
+void getActiveClients(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
 void generateCSV( Accounting acc );
-void getMostWantedProducts( Accounting acc );
+void getMostWantedProducts(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
 void getClientMostWantedProducts( Accounting acc );
 void getAllInactive( Accounting acc );
 
@@ -101,7 +101,7 @@ int main()
                 break;
 
                 case 12:
-                    getMostWantedProducts( acc );
+                    getMostWantedProducts( acc, prodCat, clientCat );
                 break;
 
                 case 13:
@@ -438,14 +438,14 @@ void getClientSales(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
 		printf("\n Invalid month.");
 		return;
 	}
-	
+
 	mp = mostBoughtMonthlyProductsByClient(acc, pCat, cCat, client, month - 1);
 	lists = getMonthlyPurchasesList(mp);
 	cnt = getMonthlyPurchasesCounts;
 	size = getMonthlyPurchasesSize(mp);
 	/*TODO PAGINATE*/
 	/*placeholder*/
-	
+
 }
 
 
@@ -454,8 +454,12 @@ void getActiveClients(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
 	StringList sl = yearRoundClients(acc, pCat, cCat);
 	char **list = getStringList(sl);
 	int size = getCountStringList(sl), i;
-	/*for (i = 0; i < size; i++)
-		printf("%s\n", list[i]);*/
+
+
+    if( !size )
+        printf("No Active Clients Found.");
+    else
+        paginateResults( 1, size, 1, 0, 6, list, "Clients" );
 }
 
 
@@ -470,8 +474,12 @@ void getMostWantedProducts(Accounting acc, ProductCatalog pCat, ClientCatalog cC
 	StringList sl = mostSoldProducts(acc, pCat, cCat, 5);
 	char **list = getStringList(sl);
 	int size = getCountStringList(sl), i;
-	for (i = 0; i < size; i++)
-		printf("%s\n", list[i]);
+
+
+    if( !size)
+        printf("No Products Found.");
+    else
+        paginateResults( 1, size, 1, 0, 8, list, "Products" );
 }
 
 
@@ -487,6 +495,13 @@ void getAllInactive( Accounting acc )
 	StringList s2 = clientsWithoutPurchases(acc);
 	char **l1 = getStringList(s1), **l2 = getStringList(s2);
 	int sz1 = getCountStringList(s1), sz2 = getCountStringList(s2), i;
+
+
+	paginateResults( 2, ( (sz1 > sz2) ? sz1 : sz2),
+                 0, 0,
+                 8, l1, "Products",
+                 6, l2, "Clients"
+    );
 }
 
 

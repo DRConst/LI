@@ -5,12 +5,12 @@ typedef struct productCatalog
 {
 	int used;
 	intBST ***Cat;
-}ProductCatalog_s;
+}*ProductCatalog_s;
 
-ProductCatalog_s *initProductCatalog()
+ProductCatalog_s initProductCatalog()
 {
 	int i = 0; int j = 0;
-	ProductCatalog_s *cat = malloc(sizeof(ProductCatalog_s));
+	ProductCatalog_s cat = malloc(sizeof(*cat));
 	cat->Cat = malloc(sizeof(intBST**) * 26);
 	for (i = 0; i < 26; i++)
 	{
@@ -24,17 +24,17 @@ ProductCatalog_s *initProductCatalog()
 	return cat;
 }
 
-int existsProduct( ProductCatalog_s *cat, char *product )
+int existsProduct( ProductCatalog_s cat, char *product )
 {
 	return(getProduct(cat, product) != NULL);
 }
 
-int getProductCount( ProductCatalog_s *prodCat )
+int getProductCount( ProductCatalog_s prodCat )
 {
     return ( prodCat ) ? ( prodCat->used ) : -1 ;
 }
 
-Product getProduct(ProductCatalog_s *cat, char *product)
+Product getProduct(ProductCatalog_s cat, char *product)
 {
 	Product pr = malloc(sizeof(struct product));
 	int key = atoi(product + 2);
@@ -53,7 +53,7 @@ Product getProduct(ProductCatalog_s *cat, char *product)
 	return pr;
 }
 
-ProductCatalog_s *insertProduct(ProductCatalog_s *cat, char *product)
+ProductCatalog_s insertProduct(ProductCatalog_s cat, char *product)
 {
 	char *idC = product + 2;
 	intBST *b;
@@ -64,7 +64,7 @@ ProductCatalog_s *insertProduct(ProductCatalog_s *cat, char *product)
 	return cat;
 }
 
-int freeProductCatalog(ProductCatalog_s *cat)
+int freeProductCatalog(ProductCatalog_s cat)
 {
 	int i, j;
 
@@ -80,7 +80,7 @@ int freeProductCatalog(ProductCatalog_s *cat)
 	return 1;
 }
 
-StringList getProductsByPrefix(ProductCatalog_s *cat, char t )
+StringList getProductsByPrefix(ProductCatalog_s cat, char t )
 {
     char buff[7];
 	int *codes, i, j, used;

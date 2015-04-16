@@ -475,7 +475,7 @@ ProductBuyers productBuyers(Accounting acc, ProductCatalog pCat, ClientCatalog c
 
 Monthly_Purchases mostBoughtMonthlyProductsByClient(Accounting acc, ProductCatalog pCat, ClientCatalog cCat, char *client, int month)
 {
-	StringList sl = initStringList;
+	StringList sl = initStringList();
 	ProductCatalog tmp = initProductCatalog();	Product pr;
 	Client cl = getClient(cCat, client);
 	Entry_s e;
@@ -608,10 +608,10 @@ StringList mostSoldProducts(Accounting acc, ProductCatalog pCat, ClientCatalog c
 		memset(buff, '\0', 50);
 		strcat(buff, ent->name);
 		strcat(buff, " for ");
-		itoa(cli, b, 10);
+		sprintf( b, "%d", cli );
 		strcat(buff, b);
 		strcat(buff, " clients and ");
-		itoa(ent->units, b, 10);
+		sprintf( b, "%d", ent->units );
 		strcat(buff, b);
 		strcat(buff, " units\n");
 		insertStringList(sl, buff, 50);

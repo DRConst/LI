@@ -8,5 +8,7 @@ minHeap newHeap(int size);
 Elem extractMin(minHeap h);
 int getMinHeapSize(minHeap h);
 int getMinHeapUsed(minHeap h);
+int getUsed(minHeap h);
+int getSize(minHeap h);
 void* getElemDataAddr(Elem e);
 int getElemKey(Elem e);

@@ -29,7 +29,7 @@ void bubble_down(Elem *h, int size) {
 		imin = LEFT(i);
 		if (RIGHT(i)<size && h[RIGHT(i)]->key < h[imin]->key)
 			imin = RIGHT(i);
-		// imin guarda indice do menor filho...
+/*		 imin guarda indice do menor filho... */
 		if (h[i]->key <= h[imin]->key) break;
 		swap(h, i, imin);
 		i = imin;
