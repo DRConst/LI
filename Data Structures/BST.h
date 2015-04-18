@@ -1,24 +1,19 @@
 #pragma once
-#include "Stack.h"
+/*#include "Stack.h"*/
 #include <stdlib.h>
-typedef struct intNode_stc
-{
-	int key, dataSize;
-	void *data;
-	struct intNode_stc *l, *r, *p;
-}Node;
 
-typedef struct intBST_stc
-{
-	int used;
-	Node *root;
-}intBST;
+typedef struct intNode_stc *Node;
 
-int getNodeData(Node *n, void **data, int *dataSize);
-intBST *initBST();
-intBST *insertBST(intBST *b, int elem, void *data, int dataSize);
-intBST *insertBST_it(intBST *b, int elem, void *data, int dataSize);
-int *inOrderBST(intBST *b);
-int *inOrderBST_it(intBST *b);
-Node *getNode(intBST *b, int key);
-int freeBST(intBST *b);
+typedef struct intBST_stc *intBST;
+
+int getNodeData(Node n, void **data, int *dataSize);
+intBST initBST();
+intBST insertBST(intBST b, int elem, void *data, int dataSize);
+/*intBST insertBST_it(intBST b, int elem, void *data, int dataSize);*/
+int *inOrderBST(intBST b);
+/*int *inOrderBST_it(intBST b);*/
+Node getNode(intBST b, int key);
+int freeBST(intBST b);
+int getUsedBST(intBST b);
+void *getDataAddr(Node n);
+void *getDataSizeAddr(Node n);

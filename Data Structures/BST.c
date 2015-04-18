@@ -7,20 +7,32 @@
 #define LEFT(i) 2*i+1
 #define RIGHT(i) 2*i+2
 
-
-
-
-intBST *initBST()
+typedef struct intNode_stc
 {
-	intBST *b = (intBST*)malloc(sizeof(intBST));
+	int key, dataSize;
+	void *data;
+	struct intNode_stc *l, *r, *p;
+};
+
+
+typedef struct intBST_stc
+{
+	int used;
+	Node root;
+};
+
+
+intBST initBST()
+{
+	intBST b = malloc(sizeof *b);
 	b->used = 0;
 	b->root = NULL;
 	return b;
 }
 
-Node *createNode(int elem, void *data, int dataSize, Node *p)
+Node createNode(int elem, void *data, int dataSize, Node p)
 {
-	Node *toRet = malloc(sizeof(Node));
+	Node toRet = malloc(sizeof(*toRet));
 	toRet->key = elem;
 	toRet->dataSize = dataSize;
 	if (data)
@@ -30,11 +42,12 @@ Node *createNode(int elem, void *data, int dataSize, Node *p)
 	}
 	else
 		toRet->data = NULL;
-	toRet->r = toRet->l = NULL;
+	toRet->r = NULL;
+	toRet->l = NULL;
 	toRet->p = p;
 	return toRet;
 }
-int auxInsert(Node *node, int elem, void *data, int dataSize)
+int auxInsert(Node node, int elem, void *data, int dataSize)
 {
 	if (!node)
 	{
@@ -69,10 +82,10 @@ int auxInsert(Node *node, int elem, void *data, int dataSize)
 	return 1;
 }
 
-intBST *insertBST(intBST *b, int elem, void *data, int dataSize)
+intBST insertBST(intBST b, int elem, void *data, int dataSize)
 {
 	if (!b)
-		b = initBST(NULL);
+		b = initBST();
 	if (!b->root)
 		b->root = createNode(elem, data, dataSize, NULL);
 	else
@@ -81,10 +94,10 @@ intBST *insertBST(intBST *b, int elem, void *data, int dataSize)
 	return b;
 }
 
-
-intBST *insertBST_it(intBST *b, int elem, void *data, int dataSize)
+/*
+intBST insertBST_it(intBST b, int elem, void *data, int dataSize)
 {
-	Node *n;
+	Node n;
 	if (!b)
 		b = initBST(NULL);
 	if (!b->root)
@@ -122,8 +135,8 @@ intBST *insertBST_it(intBST *b, int elem, void *data, int dataSize)
 	}
 	b->used++;
 	return b;
-}
-int inOrderAux(Node *n, int *toRet, int *i)
+}*/
+int inOrderAux(Node n, int *toRet, int *i)
 {
 	int j, k;
 	if (!n)
@@ -137,7 +150,7 @@ int inOrderAux(Node *n, int *toRet, int *i)
 	return 1;
 }
 
-int *inOrderBST(intBST *b)
+int *inOrderBST(intBST b)
 {
 	int i = 0;
 	int *toRet = malloc(sizeof(int) * b->used);
@@ -145,13 +158,13 @@ int *inOrderBST(intBST *b)
 	return toRet;
 }
 
-
-int *inOrderBST_it(intBST *b)
+/*
+int *inOrderBST_it(intBST b)
 {
 	int *toRet = malloc(sizeof(int)* b->used);
 	int  i = 0;
 	Stack *s = initStack();
-	Node *current = b->root;
+	Node current = b->root;
 	int done = 0;
 	while (!done) {
 		if (current) {
@@ -172,9 +185,9 @@ int *inOrderBST_it(intBST *b)
 
 	return toRet;
 
-
-}
-Node *getNodeAux(Node *n,int key)
+	
+}*/
+Node getNodeAux(Node n,int key)
 {
 	if(!n)
 	{
@@ -196,7 +209,7 @@ Node *getNodeAux(Node *n,int key)
 	return NULL;
 }
 
-Node *getNode(intBST *b, int key)
+Node getNode(intBST b, int key)
 {
 	if(!b)
 		return NULL;
@@ -204,7 +217,7 @@ Node *getNode(intBST *b, int key)
 
 }
 
-int getNodeData(Node *n,void **data, int *dataSize)
+int getNodeData(Node n,void **data, int *dataSize)
 {
 	*dataSize = n->dataSize;
 	*data = malloc(n->dataSize);
@@ -212,7 +225,7 @@ int getNodeData(Node *n,void **data, int *dataSize)
 	return 1;
 }
 
-void freeBSTAux(Node *n)
+void freeBSTAux(Node n)
 {
 	if (!n)
 		return;
@@ -224,7 +237,7 @@ void freeBSTAux(Node *n)
 	return;
 }
 
-int freeBST(intBST *b)
+int freeBST(intBST b)
 {
 	if (!b)
 		return 0;
@@ -233,32 +246,18 @@ int freeBST(intBST *b)
 	free(b);
 	return 1;
 }
-/*
-int main()
+
+int getUsedBST(intBST b)
 {
-	intBST b;
-
-	initBST(&b);
-	char buff[] = "ASD\0";
-	for (int i = 0; i < 100; i++)
-	{
-		int j = rand()%100;
-		if(j==50){
-		insertBST(&b, j, buff, 4);}
-		else{
-		insertBST(&b,j,NULL,0);}
-
-	}
-	int *order = inOrderBST(&b);
-
-	for (int i = 0; i < b.used; i++)
-	{
-		printf("%d ", order[i]);
-	}
-
-	char c[4];int i;
-	Node *n = getNode(&b,20);
-	getNodeData(n,(void**)&c,&i);
-	printf("%s", c);
+	return (!b ? 0 : b->used);
 }
-*/
+
+void *getDataAddr(Node n)
+{
+	return (!n ? NULL : &n->data);
+}
+
+void *getDataSizeAddr(Node n)
+{
+	return (!n ? NULL : &n->dataSize);
+}

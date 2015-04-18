@@ -1,19 +1,26 @@
 #include "ClientCatalog.h"
 
+typedef struct client
+{
+	char *name;
+	void **data;
+	int *dataSize;
+};
+
 typedef struct clientCatalog
 {
 	int used;
-	intBST ***Cat;
+	intBST **Cat;
 }*ClientCatalog_s;
 
 ClientCatalog_s initClientCatalog()
 {
 	int i = 0; int j = 0;
 	ClientCatalog_s cat = malloc(sizeof(*cat));
-	cat->Cat = malloc(sizeof(intBST**) * 26);
+	cat->Cat = malloc(sizeof(intBST*) * 26);
 	for (i = 0; i < 26; i++)
 	{
-		cat->Cat[i] = malloc(sizeof(intBST*) * 26);
+		cat->Cat[i] = malloc(sizeof(intBST) * 26);
 		for (j = 0; j < 26; j++)
 			cat->Cat[i][j] = NULL;
 	}
@@ -50,7 +57,7 @@ Client getClient(ClientCatalog_s cat, char *client)
 {
 	Client cl = malloc(sizeof(struct client));
 	int key = atoi(client + 2);
-	Node *n = getNode(cat->Cat[client[0] - 'A'][client[1] - 'A'], key);
+	Node n = getNode(cat->Cat[client[0] - 'A'][client[1] - 'A'], key);
 
 	if (!n)
 		return NULL;
@@ -60,8 +67,8 @@ Client getClient(ClientCatalog_s cat, char *client)
 	strcpy(cl->name, client);
 
 
-	cl->data = &n->data;
-	cl->dataSize = &n->dataSize;
+	cl->data = getDataAddr(n);
+	cl->dataSize = getDataSizeAddr(n);
 	return cl;
 }
 
@@ -74,7 +81,7 @@ int getClientCount( ClientCatalog_s clientCat )
 ClientCatalog_s insertClient(ClientCatalog_s cat, char *client)
 {
 	char *idC = client + 2;
-	intBST *b;
+	intBST b;
 	int id = atoi(idC);
 	b = cat->Cat[toupper(client[0]) - 'A'][toupper(client[1]) - 'A'];
 	cat->Cat[toupper(client[0]) - 'A'][toupper(client[1]) - 'A'] = insertBST(b, id, NULL, 0);
@@ -92,7 +99,7 @@ StringList getClientsByPrefix(ClientCatalog_s cat, char t )
 	{
 		if (cat->Cat[ t - 'A' ][i])
 		{
-			used = cat->Cat[ t - 'A' ][i]->used;
+			used = getUsedBST(cat->Cat[ t - 'A' ][i]);
 			codes = inOrderBST(cat->Cat[ t - 'A' ][i]);
 			for (j = 0; j < used; j++)
 			{
@@ -109,3 +116,48 @@ StringList getClientsByPrefix(ClientCatalog_s cat, char t )
 
 
 
+int getClientMetaData(Client cli)
+{
+	if (!cli->data)
+		return -1;
+	return *(*(int **)cli->data);
+}
+void *getClientMetaDataAddr(Client cli)
+{
+	if (!cli->data)
+		return NULL;
+	return *cli->data;
+}
+
+
+int getClientDataSize(Client cli)
+{
+	if (cli)
+		return(cli->dataSize ? *cli->dataSize : 0);
+	return 0;
+}
+
+void allocClientMetaData(Client cli, int size)
+{
+	*(int**)cli->data = malloc(size);
+}
+
+void allocClientDataSize(Client cli, int size)
+{
+	cli->dataSize = malloc(size);
+	*cli->dataSize = size;
+}
+void setClientDataSize(Client cli, int size)
+{
+	*cli->dataSize = size;
+}
+
+void setClientMetaData(Client cli, int x)
+{
+	*(*(int**)cli->data) = x;
+}
+
+char *getClientName(Client cli)
+{
+	return cli->name;
+}

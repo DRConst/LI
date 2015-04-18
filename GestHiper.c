@@ -441,7 +441,7 @@ void getClientSales(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
 
 	mp = mostBoughtMonthlyProductsByClient(acc, pCat, cCat, client, month - 1);
 	lists = getMonthlyPurchasesList(mp);
-	cnt = getMonthlyPurchasesCounts;
+	cnt = getMonthlyPurchasesCounts(mp);
 	size = getMonthlyPurchasesSize(mp);
 	/*TODO PAGINATE*/
 	/*placeholder*/
@@ -453,7 +453,7 @@ void getActiveClients(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
 {
 	StringList sl = yearRoundClients(acc, pCat, cCat);
 	char **list = getStringList(sl);
-	int size = getCountStringList(sl), i;
+	int size = getCountStringList(sl);
 
 
     if( !size )
@@ -473,7 +473,7 @@ void getMostWantedProducts(Accounting acc, ProductCatalog pCat, ClientCatalog cC
 {
 	StringList sl = mostSoldProducts(acc, pCat, cCat, 5);
 	char **list = getStringList(sl);
-	int size = getCountStringList(sl), i;
+	int size = getCountStringList(sl);
 
 
     if( !size)
@@ -494,7 +494,7 @@ void getAllInactive( Accounting acc )
 	StringList s1 = productsWithoutPurchases(acc);
 	StringList s2 = clientsWithoutPurchases(acc);
 	char **l1 = getStringList(s1), **l2 = getStringList(s2);
-	int sz1 = getCountStringList(s1), sz2 = getCountStringList(s2), i;
+	int sz1 = getCountStringList(s1), sz2 = getCountStringList(s2);
 
 
 	paginateResults( 2, ( (sz1 > sz2) ? sz1 : sz2),

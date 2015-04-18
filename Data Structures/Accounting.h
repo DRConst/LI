@@ -6,21 +6,10 @@
 #include "ClientCatalog.h"
 #include "minHeap.h"
 #include "StringList.h"
-typedef struct sale
-{
-	int month, amnt;
-	double price;
-	char *product, *client, type;
-	void **data; int dataS, dataC;
-}Sale;
 
+typedef struct sale *Sale;
 
-typedef struct productBuyers
-{
-	char **listN, **listP;
-	int cntN, cntP;
-}*ProductBuyers;
-
+typedef struct productBuyers *ProductBuyers;
 
 typedef struct entry Entry;
 
@@ -30,8 +19,8 @@ typedef struct montly_purchases *Monthly_Purchases;
 
 int orderAcc(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
 Accounting initAccounting();
-int addSale(Accounting acc, ClientCatalog cat, ProductCatalog pr, Sale *sale);
-Sale *createSale(int month, int amnt, double price, char *product, char *client, char type);
+int addSale(Accounting acc, ClientCatalog cat, ProductCatalog pr, Sale sale);
+Sale createSale(int month, int amnt, double price, char *product, char *client, char type);
 int getSalesCount(Accounting acc);
 Entry *initEntry();
 int getProductSalesPerMonth(Accounting acc, Product prod, int month, int *nSalesP, int *nSalesN, double *totalProfit);

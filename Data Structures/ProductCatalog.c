@@ -4,17 +4,24 @@
 typedef struct productCatalog
 {
 	int used;
-	intBST ***Cat;
+	intBST **Cat;
 }*ProductCatalog_s;
+
+typedef struct product
+{
+	char *name;
+	void **data;
+	int *dataSize;
+};
 
 ProductCatalog_s initProductCatalog()
 {
 	int i = 0; int j = 0;
 	ProductCatalog_s cat = malloc(sizeof(*cat));
-	cat->Cat = malloc(sizeof(intBST**) * 26);
+	cat->Cat = malloc(sizeof(intBST*) * 26);
 	for (i = 0; i < 26; i++)
 	{
-		cat->Cat[i] = malloc(sizeof(intBST*)*26);
+		cat->Cat[i] = malloc(sizeof(intBST)*26);
 		for (j = 0; j < 26; j++)
 			cat->Cat[i][j] = NULL;
 	}
@@ -38,7 +45,7 @@ Product getProduct(ProductCatalog_s cat, char *product)
 {
 	Product pr = malloc(sizeof(struct product));
 	int key = atoi(product + 2);
-	Node *n = getNode(cat->Cat[product[0] - 'A'][product[1] - 'A'], key);
+	Node n = getNode(cat->Cat[product[0] - 'A'][product[1] - 'A'], key);
 
 	if (!n)
 		return NULL;
@@ -48,15 +55,15 @@ Product getProduct(ProductCatalog_s cat, char *product)
 	strcpy(pr->name, product);
 
 
-	pr->data = &n->data;
-	pr->dataSize = &(n->dataSize);
+	pr->data = getDataAddr(n);
+	pr->dataSize = getDataSizeAddr(n);
 	return pr;
 }
 
 ProductCatalog_s insertProduct(ProductCatalog_s cat, char *product)
 {
 	char *idC = product + 2;
-	intBST *b;
+	intBST b;
 	int id = atoi(idC);
 	b = cat->Cat[toupper(product[0]) - 'A'][toupper(product[1]) - 'A'];
 	cat->Cat[toupper(product[0]) - 'A'][toupper(product[1]) - 'A'] = insertBST(b, id, NULL, 0);
@@ -90,7 +97,7 @@ StringList getProductsByPrefix(ProductCatalog_s cat, char t )
 	{
 		if ( cat->Cat[ t - 'A' ][i] )
 		{
-			used = cat->Cat[ t - 'A' ][i]->used;
+			used = getUsedBST(cat->Cat[ t - 'A' ][i]);
 			codes = inOrderBST(cat->Cat[ t - 'A'][i]);
 			for (j = 0; j < used; j++)
 			{
@@ -115,6 +122,39 @@ int getProductMetaData(Product pr)
 void *getProductMetaDataAddr(Product pr)
 {
 	if (!pr->data)
-		return -1;
+		return NULL;
 	return *pr->data;
+}
+
+
+int getProductDataSize(Product pr)
+{
+	if (pr)
+		return(pr->dataSize ? *pr->dataSize : 0);
+	return 0;
+}
+
+void allocProductMetaData(Product pr, int size)
+{
+	*(int**)pr->data = malloc(size);
+}
+
+void allocProductDataSize(Product pr, int size)
+{
+	pr->dataSize = malloc(size);
+	*pr->dataSize = size;
+}
+void setProductDataSize(Product pr, int size)
+{
+	*pr->dataSize = size;
+}
+
+void setProductMetaData(Product pr, int x)
+{
+	*(*(int**)pr->data) = x;
+}
+
+char *getProductName(Product pr)
+{
+	return pr->name;
 }
