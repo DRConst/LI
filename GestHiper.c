@@ -2,24 +2,24 @@
 
 void printMenu();
 
-void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc );
+void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales );
 void ProductsByPrefix( ProductCatalog prodCat );
 void ClientsByPrefix( ClientCatalog clientCat );
-void getProductSalesInfo( ProductCatalog prodCat, Accounting acc );
-void getUnboughtProducts( Accounting acc );
-void getClientSalesCount( Accounting acc, ClientCatalog clientCat );
-void getSalesInterval( Accounting acc );
-void getProductBuyers(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
-void getClientSales(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
-void getActiveClients(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
-void generateCSV( Accounting acc );
-void getMostWantedProducts(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
-void getClientMostWantedProducts( Accounting acc );
-void getAllInactive( Accounting acc );
+void getProductSalesInfo( ProductCatalog prodCat, Sales sales );
+void getUnboughtProducts( Sales sales );
+void getClientSalesCount( Sales sales, ClientCatalog clientCat );
+void getSalesInterval( Sales sales );
+void getProductBuyers(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
+void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
+void getActiveClients(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
+void generateCSV( Sales sales );
+void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
+void getClientMostWantedProducts( Sales sales );
+void getAllInactive( Sales sales );
 
 void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... );
 void genColumn( char *ret, char *s, int max );
-void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc );
+void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales );
 
 
 int main()
@@ -27,7 +27,7 @@ int main()
 	int op = 1;
     ProductCatalog prodCat = initProductCatalog();
     ClientCatalog clientCat = initClientCatalog();
-    Accounting acc = initAccounting();
+    Sales sales = initSales();
     int ret;
 
 
@@ -49,15 +49,15 @@ int main()
         if( ret ) {
             switch( op ) {
                 case 1:
-/*					freeData(prodCat, clientCat, acc);  */
+/*					freeData(prodCat, clientCat, sales);  */
 
 					prodCat = initProductCatalog();
 
 					clientCat = initClientCatalog();
 
-					acc = initAccounting();
+					sales = initSales();
 
-                    readFiles( prodCat, clientCat, acc );
+                    readFiles( prodCat, clientCat, sales );
                 break;
 
                 case 2:
@@ -65,15 +65,15 @@ int main()
                 break;
 
                 case 3:
-                    getProductSalesInfo( prodCat, acc );
+                    getProductSalesInfo( prodCat, sales );
                 break;
 
                 case 4:
-                    getUnboughtProducts( acc );
+                    getUnboughtProducts( sales );
                 break;
 
                 case 5:
-                    getClientSalesCount( acc, clientCat );
+                    getClientSalesCount( sales, clientCat );
                 break;
 
                 case 6:
@@ -81,35 +81,35 @@ int main()
                 break;
 
                 case 7:
-                    getSalesInterval( acc );
+                    getSalesInterval( sales );
                 break;
 
                 case 8:
-					getProductBuyers(acc, prodCat, clientCat);
+					getProductBuyers(sales, prodCat, clientCat);
                 break;
 
                 case 9:
-					getClientSales(acc, prodCat, clientCat);
+					getClientSales(sales, prodCat, clientCat);
                 break;
 
                 case 10:
-					getActiveClients(acc, prodCat, clientCat);
+					getActiveClients(sales, prodCat, clientCat);
                 break;
 
                 case 11:
-                    generateCSV( acc );
+                    generateCSV( sales );
                 break;
 
                 case 12:
-                    getMostWantedProducts( acc, prodCat, clientCat );
+                    getMostWantedProducts( sales, prodCat, clientCat );
                 break;
 
                 case 13:
-                    getClientMostWantedProducts( acc );
+                    getClientMostWantedProducts( sales );
                 break;
 
                 case 14:
-                    getAllInactive( acc );
+                    getAllInactive( sales );
                 break;
 
                 case 0:
@@ -148,12 +148,12 @@ void printMenu()
 
 
 
-
-void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc )
+/* Query 1 */
+void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales )
 {
 	char clients[MAX_PATH] = "";
 	char products[MAX_PATH] = "";
-	char sales[MAX_PATH] = "";
+	char salesFile[MAX_PATH] = "";
 	FILE *clientsFp, *productsFp, *salesFp;
 
     char type;
@@ -172,7 +172,7 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc 
 	fgets( products, MAX_PATH, stdin);
 
 	printf("\n Sales File: ");
-	fgets( sales, MAX_PATH, stdin);
+	fgets( salesFile, MAX_PATH, stdin);
 
 
     if( strlen( products ) == 1 )
@@ -193,10 +193,10 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc 
     }
 
 
-    if( strlen( sales ) == 1 )
-        strcpy( sales, "Compras.txt" );
+    if( strlen( salesFile ) == 1 )
+        strcpy( salesFile, "Compras.txt" );
 
-    if( ( salesFp = fopen( sales, "r" ) ) == NULL ) {
+    if( ( salesFp = fopen( salesFile, "r" ) ) == NULL ) {
         printf( "\nSales File Not Found");
         return;
     }
@@ -232,19 +232,19 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc 
         sale = createSale( month, qtd, price, prod, client, type );
 
         if( ret == 6 )
-            addSale( acc, clientCat, prodCat,
+            addSale( sales, clientCat, prodCat,
                     sale
             );
     }
-    printf("Done \n\t%d read", getSalesCount( acc ) );
+    printf("Done \n\t%d read", getSalesCount( sales ) );
     printf("\nOrdering Sales Catalog...");
-	orderAcc(acc, prodCat, clientCat);
+	orderAcc(sales, prodCat, clientCat);
     printf("Done \n");
     /*
         TODO:
             Process Sales File
 
-            Do Accounting
+            Do Sales
 
     */
 
@@ -253,7 +253,7 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc 
 
 }
 
-
+/* Query 2 */
 void ProductsByPrefix( ProductCatalog prodCat )
 {
 	char c;
@@ -285,8 +285,8 @@ void ProductsByPrefix( ProductCatalog prodCat )
 
 }
 
-
-void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
+/* Query 3 */
+void getProductSalesInfo( ProductCatalog prodCat, Sales sales )
 {
     int nMonth = 0;
     char prod[7] = "";
@@ -295,12 +295,12 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
     double total;
 
 	if( !getProductCount( prodCat ) ) {
-        printf("\nClients Catalog Not Initialized.");
+        printf("\nProducts Catalog Not Initialized.");
         return;
 	}
 
-    if( !getSalesCount( acc ) ) {
-        printf("\nAccounting Structure Not Initialized.");
+    if( !getSalesCount( sales ) ) {
+        printf("\nSales Structure Not Initialized.");
         return;
 	}
 
@@ -324,7 +324,7 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
         return;
     }
 
-    count = getProductSalesPerMonth( acc, (getProduct( prodCat, prod)), nMonth, &nSalesP, &nSalesN, &total );
+    count = getProductSalesPerMonth( sales, (getProduct( prodCat, prod)), nMonth, &nSalesP, &nSalesN, &total );
 
     if( !count ) {
         printf("\n No Sales found for given Product/Month");
@@ -336,16 +336,31 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
 
 }
 
-
-void getUnboughtProducts( Accounting acc )
+/* Query 4 */
+void getUnboughtProducts( Sales sales )
 {
+
+    if( !getSalesCount( sales ) ) {
+        printf("\nSales Structure Not Initialized.");
+        return;
+	}
 }
 
-
-void getClientSalesCount( Accounting acc, ClientCatalog clientCat )
+/* Query 5 */
+void getClientSalesCount( Sales sales, ClientCatalog clientCat )
 {
     char client[6] = "";
 
+
+	if( !getClientCount( clientCat ) ) {
+        printf("\nClients Catalog Not Initialized.");
+        return;
+	}
+
+    if( !getSalesCount( sales ) ) {
+        printf("\nSales Structure Not Initialized.");
+        return;
+	}
 
     printf("\nEnter Client Code: ");
     fgets( client, 6, stdin );
@@ -358,11 +373,17 @@ void getClientSalesCount( Accounting acc, ClientCatalog clientCat )
 
 }
 
-
+/* Query 6 */
 void ClientsByPrefix( ClientCatalog clientCat )
 {
 	char c;
 	StringList l;
+
+
+	if( !getClientCount( clientCat ) ) {
+        printf("\nClients Catalog Not Initialized.");
+        return;
+	}
 
 	fflush( stdin );
 
@@ -384,12 +405,17 @@ void ClientsByPrefix( ClientCatalog clientCat )
 
 }
 
-
-void getSalesInterval( Accounting acc )
+/* Query 7 */
+void getSalesInterval( Sales sales )
 {
     int ret;
     int startingMonth, endingMonth;
 
+
+    if( !getSalesCount( sales ) ) {
+        printf("\nSales Structure Not Initialized.");
+        return;
+	}
 
     printf("\n Enter Starting and Finishing Months[1,12]: ");
     ret = scanf("%d %d", &startingMonth, &endingMonth );
@@ -401,20 +427,38 @@ void getSalesInterval( Accounting acc )
     }
 }
 
-
-void getProductBuyers( Accounting acc , ProductCatalog pCat, ClientCatalog cCat )
+/* Query 8 */
+void getProductBuyers( Sales sales , ProductCatalog pCat, ClientCatalog cCat )
 {
 	char product[7];
 	int ret;
 	char **listN, **listP;
 	int cntN, cntP;
 	ProductBuyers pB;
+
+
+    if( !getSalesCount( sales ) ) {
+        printf("\nSales Structure Not Initialized.");
+        return;
+	}
+
+	if( !getProductCount( pCat ) ) {
+        printf("\nProducts Catalog Not Initialized.");
+        return;
+	}
+
+    if( !getClientCount( cCat ) ) {
+        printf("\nClients Catalog Not Initialized.");
+        return;
+	}
+
 	printf("\n Enter Product: ");
 	ret = scanf("%s", product);
+
 	if (ret == 0)
 		return;
-	
-	pB = productBuyers(acc, pCat, cCat, product);
+
+	pB = productBuyers(sales, pCat, cCat, product);
 
 	listN = getProductBuyersN(pB);
 	listP = getProductBuyersP(pB);
@@ -425,14 +469,32 @@ void getProductBuyers( Accounting acc , ProductCatalog pCat, ClientCatalog cCat 
 	paginateResults(1, cntP, 1, 0, 10, listP, "Type P");
 }
 
-
-void getClientSales(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
+/* Query 9 */
+void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 {
 	char client[6];
 	int month;
 	int ret;
 	char **lists; int *cnt, size;
 	Monthly_Purchases mp;
+
+
+    if( !getSalesCount( sales ) ) {
+        printf("\nSales Structure Not Initialized.");
+        return;
+	}
+
+	if( !getProductCount( pCat ) ) {
+        printf("\nProducts Catalog Not Initialized.");
+        return;
+	}
+
+    if( !getClientCount( cCat ) ) {
+        printf("\nClients Catalog Not Initialized.");
+        return;
+	}
+
+
 	do
 	{
 		printf("\n Enter Client: ");
@@ -451,7 +513,7 @@ void getClientSales(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
 		return;
 	}
 
-	mp = mostBoughtMonthlyProductsByClient(acc, pCat, cCat, client, month - 1);
+	mp = mostBoughtMonthlyProductsByClient(sales, pCat, cCat, client, month - 1);
 	lists = getMonthlyPurchasesList(mp);
 	cnt = getMonthlyPurchasesCounts(mp);
 	size = getMonthlyPurchasesSize(mp);
@@ -459,13 +521,33 @@ void getClientSales(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
 
 }
 
-
-void getActiveClients(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
+/* Query 10 */
+void getActiveClients(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 {
-	StringList sl = yearRoundClients(acc, pCat, cCat);
-	char **list = getStringList(sl);
-	int size = getCountStringList(sl);
+	StringList sl;
+	char **list;
+	int size;
 
+
+    if( !getSalesCount( sales ) ) {
+        printf("\nSales Structure Not Initialized.");
+        return;
+	}
+
+	if( !getProductCount( pCat ) ) {
+        printf("\nProducts Catalog Not Initialized.");
+        return;
+	}
+
+    if( !getClientCount( cCat ) ) {
+        printf("\nClients Catalog Not Initialized.");
+        return;
+	}
+
+
+	sl = yearRoundClients(sales, pCat, cCat);
+	list = getStringList(sl);
+	size = getCountStringList(sl);
 
     if( !size )
         printf("No Active Clients Found.");
@@ -473,18 +555,34 @@ void getActiveClients(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
         paginateResults( 1, size, 1, 0, 6, list, "Clients" );
 }
 
-
-void generateCSV( Accounting acc )
+/* Query 11 */
+void generateCSV( Sales sales )
 {
 
 }
 
-
-void getMostWantedProducts(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
+/* Query 12 */
+void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 {
-	StringList sl = mostSoldProducts(acc, pCat, cCat, 5);
+	StringList sl = mostSoldProducts(sales, pCat, cCat, 5);
 	char **list = getStringList(sl);
 	int size = getCountStringList(sl);
+
+
+    if( !getSalesCount( sales ) ) {
+        printf("\nSales Structure Not Initialized.");
+        return;
+	}
+
+	if( !getProductCount( pCat ) ) {
+        printf("\nProducts Catalog Not Initialized.");
+        return;
+	}
+
+    if( !getClientCount( cCat ) ) {
+        printf("\nClients Catalog Not Initialized.");
+        return;
+	}
 
 
     if( !size)
@@ -493,25 +591,39 @@ void getMostWantedProducts(Accounting acc, ProductCatalog pCat, ClientCatalog cC
         paginateResults( 1, size, 1, 0, 8, list, "Products" );
 }
 
-
-void getClientMostWantedProducts( Accounting acc )
+/* Query 13 */
+void getClientMostWantedProducts( Sales sales )
 {
 
 }
 
-
-void getAllInactive( Accounting acc )
+/* Query 14 */
+void getAllInactive( Sales sales )
 {
-	StringList s1 = productsWithoutPurchases(acc);
-	StringList s2 = clientsWithoutPurchases(acc);
-	char **l1 = getStringList(s1), **l2 = getStringList(s2);
-	int sz1 = getCountStringList(s1), sz2 = getCountStringList(s2);
+	StringList s1, s2;
+	int sz1, sz2;
 
+
+    if( !getSalesCount( sales ) ) {
+        printf("\nSales Structure Not Initialized.");
+        return;
+	}
+
+    s1 = productsWithoutPurchases(sales);
+    s2 = clientsWithoutPurchases(sales);
+
+    sz1 = getCountStringList( s1 );
+    sz2 = getCountStringList( s2 );
+
+    if( !sz1 && !sz2 ) {
+        printf("No Products or Clients Without Purchases.");
+        return;
+    }
 
 	paginateResults( 2, ( (sz1 > sz2) ? sz1 : sz2),
                  0, 0,
-                 8, l1, "Products",
-                 6, l2, "Clients"
+                 8, getStringList( s1 ), "Products",
+                 6, getStringList( s2 ), "Clients"
     );
 }
 
@@ -688,7 +800,7 @@ void genColumn( char *ret, char *s, int max )
 
 }
 
-void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc )
+void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales )
 {
 
     /*
@@ -697,7 +809,7 @@ void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc )
         freeProductCatalog( prodCat );
         freeClientCatalog( clientCat );
 /*
-        freeAccounting( &acc );
+        freeAccounting( &sales );
 
     */
 
