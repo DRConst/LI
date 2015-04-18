@@ -7,7 +7,7 @@
 #define LEFT(i) 2*i+1
 #define RIGHT(i) 2*i+2
 
-typedef struct intNode_stc
+struct intNode_stc
 {
 	int key, dataSize;
 	void *data;
@@ -15,7 +15,7 @@ typedef struct intNode_stc
 };
 
 
-typedef struct intBST_stc
+struct intBST_stc
 {
 	int used;
 	Node root;
@@ -138,13 +138,10 @@ intBST insertBST_it(intBST b, int elem, void *data, int dataSize)
 }*/
 int inOrderAux(Node n, int *toRet, int *i)
 {
-	int j, k;
 	if (!n)
 		return 0;
 	inOrderAux(n->l, toRet, i);
-	j = *i;
 	toRet[*i] = n->key;
-	k = toRet[*i];
 	*i += 1;
 	inOrderAux(n->r, toRet, i);
 	return 1;

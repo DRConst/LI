@@ -1,6 +1,6 @@
 #include "ClientCatalog.h"
 
-typedef struct client
+struct client
 {
 	char *name;
 	void **data;

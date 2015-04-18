@@ -17,9 +17,9 @@ typedef struct accounting *Accounting;
 
 typedef struct montly_purchases *Monthly_Purchases;
 
-int orderAcc(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
+Accounting orderAcc(Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
 Accounting initAccounting();
-int addSale(Accounting acc, ClientCatalog cat, ProductCatalog pr, Sale sale);
+Accounting addSale(Accounting acc, ClientCatalog cat, ProductCatalog pr, Sale sale);
 Sale createSale(int month, int amnt, double price, char *product, char *client, char type);
 int getSalesCount(Accounting acc);
 Entry *initEntry();
@@ -38,3 +38,9 @@ Monthly_Purchases registerMonthlyPurchase(Monthly_Purchases mp, char *product, i
 char **getMonthlyPurchasesList(Monthly_Purchases mp);
 int *getMonthlyPurchasesCounts(Monthly_Purchases mp);
 int getMonthlyPurchasesSize(Monthly_Purchases mp);
+
+
+char ** getProductBuyersN(ProductBuyers pb);
+char ** getProductBuyersP(ProductBuyers pb);
+int getProductBuyersCntN(ProductBuyers pb);
+int getProductBuyersCntP(ProductBuyers pb);

@@ -160,7 +160,7 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Accounting acc 
     int qtd, month, ret;
     char prod[7], client[6], buff[128];
     double price;
-    Sale *sale;
+    Sale sale;
 
 
 	printf("\n Optional file paths[Max: %d], enter for default\n", MAX_PATH);
@@ -406,11 +406,23 @@ void getProductBuyers( Accounting acc , ProductCatalog pCat, ClientCatalog cCat 
 {
 	char product[7];
 	int ret;
-
+	char **listN, **listP;
+	int cntN, cntP;
+	ProductBuyers pB;
 	printf("\n Enter Product: ");
 	ret = scanf("%s", product);
+	if (ret == 0)
+		return;
+	
+	pB = productBuyers(acc, pCat, cCat, product);
 
-	ProductBuyers pB = productBuyers(acc, pCat, cCat, product);
+	listN = getProductBuyersN(pB);
+	listP = getProductBuyersP(pB);
+	cntN = getProductBuyersCntN(pB);
+	cntP = getProductBuyersCntP(pB);
+
+	paginateResults(1, cntN, 1, 0, 10, listN, "Type N");
+	paginateResults(1, cntP, 1, 0, 10, listP, "Type P");
 }
 
 
@@ -418,7 +430,7 @@ void getClientSales(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
 {
 	char client[6];
 	int month;
-	int ret,i = 0;
+	int ret;
 	char **lists; int *cnt, size;
 	Monthly_Purchases mp;
 	do
@@ -443,8 +455,7 @@ void getClientSales(Accounting acc, ProductCatalog pCat, ClientCatalog cCat)
 	lists = getMonthlyPurchasesList(mp);
 	cnt = getMonthlyPurchasesCounts(mp);
 	size = getMonthlyPurchasesSize(mp);
-	/*TODO PAGINATE*/
-	/*placeholder*/
+	paginateResults(2, size, 1, 0, 10, lists, "Products", 10 , cnt, "Ammount");
 
 }
 

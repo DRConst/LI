@@ -7,7 +7,7 @@ typedef struct productCatalog
 	intBST **Cat;
 }*ProductCatalog_s;
 
-typedef struct product
+struct product
 {
 	char *name;
 	void **data;

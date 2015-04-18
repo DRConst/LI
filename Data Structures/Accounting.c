@@ -1,6 +1,6 @@
 #include "Accounting.h"
 
-typedef struct sale
+struct sale
 {
 	int month, amnt;
 	double price;
@@ -8,7 +8,7 @@ typedef struct sale
 	void **data; int dataS, dataC;
 };
 
-typedef struct productBuyers
+struct productBuyers
 {
 	char **listN, **listP;
 	int cntN, cntP;
@@ -98,7 +98,7 @@ void bindData(Sale s, int *i)
 	}
 	s->data[s->dataC++] = i;
 }
-int addSale(Accounting_s *acc, ClientCatalog cCat, ProductCatalog pCat, Sale sale)
+Accounting addSale(Accounting_s *acc, ClientCatalog cCat, ProductCatalog pCat, Sale sale)
 {
 	/*Misc vars*/
 	int i, monthIdx;
@@ -198,16 +198,16 @@ int addSale(Accounting_s *acc, ClientCatalog cCat, ProductCatalog pCat, Sale sal
 	/* First, get, if valid, Product/Client */
 	pr = getProduct(pCat, sale->product);
 	if (!pr)
-		return 0;
+		return acc;
 	cl = getClient(cCat, sale->client);
 	if (!cl)
-		return 0;
+		return acc;
 
 	monthIdx = sale->month - 1;
 
 	/*Next, add sale to the registry*/
 	if (!copySale(&acc->sales[acc->cntS], sale))
-		return 0;
+		return acc;
 
 	/*Now bind the sale to the product*/
 	/*Check if the product already has an entry bound by checking metadata*/
@@ -281,20 +281,19 @@ int addSale(Accounting_s *acc, ClientCatalog cCat, ProductCatalog pCat, Sale sal
 
 	acc->cntS++;
 
-	return 1;
+	return acc;
 }
 
 
 
-int orderAcc(Accounting_s *acc, ProductCatalog pCat, ClientCatalog cCat)
+Accounting orderAcc(Accounting_s *acc, ProductCatalog pCat, ClientCatalog cCat)
 {
 	minHeap h1 = newHeap(acc->cntEC), h2 = newHeap(acc->cntEC);
-	int letter, i, tI = 0, metaI, lSize, hUsed, hSize;
+	int letter, i, metaI, lSize, hUsed;
 	char **lists;
 	Client cl; Product pr;
 	Entry_s cliE, prE, *tCE, *tPE;
 	Elem e;
-	int cnt = 0;
 
 	StringList sl;
 	for (letter = 0; letter < 26; letter++)
@@ -346,7 +345,6 @@ int orderAcc(Accounting_s *acc, ProductCatalog pCat, ClientCatalog cCat)
 	hUsed = getUsed(h1);
 	acc->cntEC = hUsed;
 	tCE = malloc(sizeof *tCE * acc->cntEC);
-	hSize = getSize(h1);
 	for (i = 0; i < hUsed; i++)
 	{
 		e = extractMin(h1);
@@ -359,7 +357,6 @@ int orderAcc(Accounting_s *acc, ProductCatalog pCat, ClientCatalog cCat)
 	hUsed = getUsed(h2);
 	acc->cntEP = hUsed;
 	tPE = malloc(sizeof *tPE * acc->cntEP);
-	hSize = getSize(h2);
 	for (i = 0; i < hUsed; i++)
 	{
 		e = extractMin(h2);
@@ -368,7 +365,7 @@ int orderAcc(Accounting_s *acc, ProductCatalog pCat, ClientCatalog cCat)
 		setProductMetaData(pr,i);
 	}
 	acc->entriesPr = tPE;
-
+	return acc;
 }
 
 Entry_s initEntry()
@@ -491,19 +488,18 @@ Monthly_Purchases mostBoughtMonthlyProductsByClient(Accounting acc, ProductCatal
 	ProductCatalog tmp = initProductCatalog();	Product pr;
 	Client cl = getClient(cCat, client);
 	Entry_s e;
-	intBST b = initBST();
 	Sale s;
 	minHeap h;
 	int i, j, letter, lSize, cnt = 0, used, *tmpMP;
 	Elem el;
 	char **lists;
 	Monthly_Purchases mp = initMonthlyPurchases();
-
+	int metaI;
 
 
 	if (!cl)
 		return NULL;
-	int metaI = getClientMetaData(cl);
+	metaI = getClientMetaData(cl);
 	e = acc->entriesCli[metaI];
 	if (!e)
 		return NULL;
@@ -596,14 +592,14 @@ StringList yearRoundClients(Accounting acc, ProductCatalog pCat, ClientCatalog c
 StringList mostSoldProducts(Accounting acc, ProductCatalog pCat, ClientCatalog cCat, int N)
 {
 	StringList sl = initStringList();
-	int i = acc->cntEP - 1,j,k;
+	int i,j,k;
 	int cli = 0;
 	Entry_s ent;
 	ClientCatalog tmp = initClientCatalog();
 	Sale s;
 	char *buff = calloc(50, sizeof (char));
 	char b[10];
-	for (i, N; i > 0 && N > 0; i--, N--)
+	for (i = acc->cntEP - 1, N; i > 0 && N > 0; i--, N--)
 	{
 		ent = acc->entriesPr[i];
 		for (j = 0; j < 12; j++)
@@ -687,5 +683,22 @@ int *getMonthlyPurchasesCounts(Monthly_Purchases mp)
 int getMonthlyPurchasesSize(Monthly_Purchases mp)
 {
 	return mp->size;
+}
+
+char ** getProductBuyersN(ProductBuyers pb)
+{
+	return (pb->listN ? pb->listN : NULL);
+}
+char ** getProductBuyersP(ProductBuyers pb)
+{
+	return (pb->listP ? pb->listP : NULL);
+}
+int getProductBuyersCntN(ProductBuyers pb)
+{
+	return (pb->cntN ? pb->cntN : 0);
+}
+int getProductBuyersCntP(ProductBuyers pb)
+{
+	return (pb->cntP ? pb->cntN : 0);
 }
 /*END MONTHLY PURCHASES FUNCTIONS*/

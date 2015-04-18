@@ -36,25 +36,26 @@ void bubble_down(Elem *h, int size) {
 	}
 }
 
-typedef struct heap_str{
+struct heap_str{
 	int size;
 	int used;
 	Elem *values;
-} *minHeap;
+};
 
 minHeap newHeap(int size) {
+	minHeap res;
 	if (size <= 0)return NULL;
-
-	minHeap res = malloc(sizeof(struct heap_str));
+	res = malloc(sizeof(*res));
 	res->size = size;
 	res->used = 0;
-	res->values = (Elem*)calloc(size, sizeof(Elem));
+	res->values = calloc(size, sizeof(Elem));
 	return res;
 }
 
 int insertHeap(minHeap h, int key, void *data, int dataSize) {
+	Elem x;
 	if (h->used >= h->size) return 1;
-	Elem x = malloc(sizeof(*x));
+	x = malloc(sizeof(*x));
 	x->key = key;
 	x->data = data;
 	x->dataSize = dataSize;
@@ -65,8 +66,9 @@ int insertHeap(minHeap h, int key, void *data, int dataSize) {
 }
 
 Elem extractMin(minHeap h) {
-	if (h->used <= 0) return 1;
-	Elem x = malloc(sizeof(*x));
+	Elem x;
+	if (h->used <= 0) return NULL;
+	x = malloc(sizeof(*x));
 	x = h->values[0];
 	h->used--;
 	h->values[0] = h->values[h->used];
