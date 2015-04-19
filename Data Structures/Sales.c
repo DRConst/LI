@@ -55,9 +55,9 @@ void freeEntry(Entry_s e)
 		free(e->records[i]);
 	}
 	free(e->records);
-	//free(e->cnt);
-	//free(e->cntS);
-	//free(e->name);
+	/*free(e->cnt);
+	free(e->cntS);
+	free(e->name);*/
 	free(e);
 }
 
