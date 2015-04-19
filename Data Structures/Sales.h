@@ -7,6 +7,7 @@
 #include "minHeap.h"
 #include "StringList.h"
 #include "Sale.h"
+#include "ResultsList.h"
 typedef struct productBuyers *ProductBuyers;
 
 typedef struct sales *Sales;
@@ -22,10 +23,11 @@ int getSalesCount(Sales acc);
 int getProductSalesPerMonth(Sales acc, Product prod, int month, int *nSalesP, int *nSalesN, double *totalProfit);
 int getEntriesClientsCount(Sales acc);
 int getEntriesProductsCount(Sales acc);
-ProductBuyers productBuyers(Sales acc, ProductCatalog pCat, ClientCatalog cCat, char *product);
-Monthly_Purchases mostBoughtMonthlyProductsByClient(Sales acc, ProductCatalog pCat, ClientCatalog cCat, char *client, int month);
+StringList productBuyersN(Sales acc, ProductCatalog pCat, ClientCatalog cCat, char *product);
+StringList productBuyersP(Sales acc, ProductCatalog pCat, ClientCatalog cCat, char *product);
+ResultsList mostBoughtMonthlyProductsByClient(Sales acc, ProductCatalog pCat, ClientCatalog cCat, char *client, int month);
 StringList yearRoundClients(Sales acc, ProductCatalog pCat, ClientCatalog cCat);
-StringList mostSoldProducts(Sales acc, ProductCatalog pCat, ClientCatalog cCat, int N);
+ResultsList mostSoldProducts(Sales acc, ProductCatalog pCat, ClientCatalog cCat, int N);
 StringList productsWithoutPurchases(Sales acc);
 StringList clientsWithoutPurchases(Sales acc);
 

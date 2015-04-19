@@ -402,9 +402,9 @@ int getProductSalesPerMonth(Sales_s acc, Product prod, int month, int *nSalesP, 
 }
 
 
-ProductBuyers productBuyers(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, char *product)
+StringList productBuyersN(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, char *product)
 {
-	ProductBuyers toRet = malloc(sizeof *toRet);
+	StringList toRet = initStringList();
 	ClientCatalog tmpP = initClientCatalog();
 	ClientCatalog tmpN = initClientCatalog();
 	Product pr = getProduct(pCat, product);
@@ -412,31 +412,45 @@ ProductBuyers productBuyers(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat
 	int i = 0, j;
 	Entry_s p = acc->entriesPr[index];
 	Sale s;
-
-	toRet->cntN = 0; toRet->cntP = 0; toRet->listN = NULL; toRet->listP = NULL;
 	for (i = 0; i < 12; i++)
 	{
 		for (j = 0; j < p->cnt[i]; j++)
 		{
 			s = acc->sales[p->records[i][j]];
-			if ( getSaleType( s ) == 'N')
-			{
-				if (!existsClient(tmpN, getSaleClient( s ) ) )
-				{
-					insertClient(tmpN, getSaleClient( s ) );
-					toRet->listN = realloc(toRet->listN, sizeof(char*) * toRet->cntN + 1);
-					toRet->listN[toRet->cntN] = malloc(sizeof(char) * 6);
-					strcpy(toRet->listN[toRet->cntN++], getSaleClient( s ) );
-				}
-			}
+			
 			if ( getSaleType( s ) == 'P')
 			{
 				if (!existsClient(tmpP, getSaleClient( s ) ) )
 				{
 					insertClient(tmpP, getSaleClient( s ) );
-					toRet->listP = realloc(toRet->listP, sizeof(char*) * toRet->cntP + 1);
-					toRet->listP[toRet->cntP] = malloc(sizeof(char) * 6);
-					strcpy(toRet->listP[toRet->cntP++], getSaleClient( s ) );
+					insertStringList(toRet, getSaleClient(s), sizeof(getSaleClient(s)));
+				}
+			}
+		}
+	}
+	return toRet;
+}
+StringList productBuyersP(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, char *product)
+{
+	StringList toRet = initStringList();
+	ClientCatalog tmpP = initClientCatalog();
+	ClientCatalog tmpN = initClientCatalog();
+	Product pr = getProduct(pCat, product);
+	int index = getProductMetaData(pr);
+	int i = 0, j;
+	Entry_s p = acc->entriesPr[index];
+	Sale s;
+	for (i = 0; i < 12; i++)
+	{
+		for (j = 0; j < p->cnt[i]; j++)
+		{
+			s = acc->sales[p->records[i][j]];
+			if (getSaleType(s) == 'N')
+			{
+				if (!existsClient(tmpN, getSaleClient(s)))
+				{
+					insertClient(tmpN, getSaleClient(s));
+					insertStringList(toRet, getSaleClient(s), sizeof(getSaleClient(s)));
 				}
 			}
 		}
@@ -444,7 +458,7 @@ ProductBuyers productBuyers(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat
 	return toRet;
 }
 
-Monthly_Purchases mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, char *client, int month)
+ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, char *client, int month)
 {
 	StringList sl = initStringList();
 	ProductCatalog tmp = initProductCatalog();	Product pr;
@@ -455,7 +469,7 @@ Monthly_Purchases mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog 
 	int i, j, letter, lSize, cnt = 0, used, *tmpMP;
 	Elem el;
 	char **lists;
-	Monthly_Purchases mp = initMonthlyPurchases();
+	ResultsList mp = initResultsList();
 	int metaI;
 
 
@@ -525,8 +539,7 @@ Monthly_Purchases mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog 
 	}
 	for (i = cnt - 1; i > 0; i--)
 	{
-		registerMonthlyPurchase(mp, lists[i],tmpMP[i]);
-		printf("%s: %d\n", mp->list[mp->size - 1], mp->cnt[mp->size - 1]);
+		insertResultsList(mp, lists[i], tmpMP[i]);
 	}
 	return mp;
 
@@ -552,9 +565,9 @@ StringList yearRoundClients(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat
 	return toRet;
 }
 
-StringList mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, int N)
+ResultsList mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, int N)
 {
-	StringList sl = initStringList();
+	ResultsList sl = initResultsList();
 	int i,j,k;
 	int cli = 0;
 	Entry_s ent;
@@ -565,6 +578,7 @@ StringList mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat
 	for (i = acc->cntEP - 1, N; i > 0 && N > 0; i--, N--)
 	{
 		ent = acc->entriesPr[i];
+		/*
 		for (j = 0; j < 12; j++)
 			for (k = 0; k < ent->cnt[j]; k++)
 			{
@@ -575,6 +589,7 @@ StringList mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat
 					cli++;
 				}
 			}
+		
 		memset(buff, '\0', 50);
 		strcat(buff, ent->name);
 		strcat(buff, " for ");
@@ -585,7 +600,8 @@ StringList mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat
 		strcat(buff, b);
 		strcat(buff, " units\n");
 		insertStringList(sl, buff, 50);
-		cli = 0;
+		cli = 0;*/
+		insertResultsList(sl, ent->name, ent->units);
 	}
 	return sl;
 }
@@ -628,7 +644,7 @@ Monthly_Purchases initMonthlyPurchases()
 Monthly_Purchases registerMonthlyPurchase(Monthly_Purchases mp, char *product, int cnt)
 {
 	mp->list = realloc(mp->list, sizeof(char*) * mp->size + 1);
-	mp->list[mp->size] = malloc(sizeof(char) * 6);
+	mp->list[mp->size] = malloc(sizeof(char) * 7);
 	strcpy(mp->list[mp->size], product);
 	mp->cnt = realloc(mp->cnt, sizeof(int) * mp->size + 1);
 	mp->cnt[mp->size++] = cnt;

@@ -435,7 +435,7 @@ void getProductBuyers( Sales sales , ProductCatalog pCat, ClientCatalog cCat )
 	int ret;
 	char **listN, **listP;
 	int cntN, cntP;
-	ProductBuyers pB;
+	StringList sl1,sl2;
 
 
     if( !getSalesCount( sales ) ) {
@@ -459,12 +459,13 @@ void getProductBuyers( Sales sales , ProductCatalog pCat, ClientCatalog cCat )
 	if (ret == 0)
 		return;
 
-	pB = productBuyers(sales, pCat, cCat, product);
+	sl1 = productBuyersN(sales, pCat, cCat, product);
+	sl2 = productBuyersP(sales, pCat, cCat, product);
 
-	listN = getProductBuyersN(pB);
-	listP = getProductBuyersP(pB);
-	cntN = getProductBuyersCntN(pB);
-	cntP = getProductBuyersCntP(pB);
+	listN = getStringList(sl1);
+	listP = getStringList(sl2);
+	cntN = getCountStringList(sl1);
+	cntP = getCountStringList(sl2);
 
 	paginateResults(1, cntN, 1, 0, 10, listN, "Type N");
 	paginateResults(1, cntP, 1, 0, 10, listP, "Type P");
@@ -475,9 +476,9 @@ void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 {
 	char client[6];
 	int month;
-	int ret;
-	char **lists; int *cnt, size;
-	Monthly_Purchases mp;
+	int ret, i;
+	char **lists, **lists2; int *cnt, size;
+	ResultsList mp;
 
 
     if( !getSalesCount( sales ) ) {
@@ -515,11 +516,21 @@ void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 	}
 
 	mp = mostBoughtMonthlyProductsByClient(sales, pCat, cCat, client, month - 1);
-	lists = getMonthlyPurchasesList(mp);
-	cnt = getMonthlyPurchasesCounts(mp);
-	size = getMonthlyPurchasesSize(mp);
-	paginateResults(2, size, 1, 0, 10, lists, "Products", 10 , cnt, "Ammount");
+	lists = getDescsResultsList(mp);
+	cnt = getValuesResultsList(mp);
+	size = getCountResultsList(mp);
+	lists2 = malloc(sizeof(char*) * size);
+	for (i = 0; i < size; i++)
+	{
+		lists2[i] = malloc(10);
 
+		sprintf(lists2[i], "%d", cnt[i]);
+	}
+	paginateResults(2, size, 1, 0, 10, lists, "Products", 10 , lists2, "Ammount");
+	freeResultsList(mp);
+	for (i = 0; i < size; i++)
+		free(lists2[i]);
+	free(lists2);
 }
 
 /* Query 10 */
@@ -565,9 +576,9 @@ void generateCSV( Sales sales )
 /* Query 12 */
 void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 {
-	StringList sl = mostSoldProducts(sales, pCat, cCat, 5);
-	char **list = getStringList(sl);
-	int size = getCountStringList(sl);
+	ResultsList sl;
+	char **list, **list2;
+	int *iList,size, cnt, ret, i;
 
 
     if( !getSalesCount( sales ) ) {
@@ -586,10 +597,33 @@ void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 	}
 
 
+	do
+	{
+		printf("\n Enter Ammount: ");
+		ret = scanf("%d", &cnt);
+	} while (ret < 1);
+
+	sl = mostSoldProducts(sales, pCat, cCat, cnt);
+	list = getDescsResultsList(sl);
+	iList = getValuesResultsList(sl);
+	size = getCountResultsList(sl);
+	list2 = malloc(sizeof(char*)*size);
+	for (i = 0; i < size; i++)
+	{
+		list2[i] = malloc(8);
+
+		sprintf(list2[i], "%d", iList[i]);
+	}
     if( !size)
         printf("No Products Found.");
     else
-        paginateResults( 1, size, 1, 0, 8, list, "Products" );
+		paginateResults(2, size, 1, 0, 8, list, "Products", 8, list2, "Count");
+	freeStringList(sl);
+	for (i = 0; i < size; i++)
+	{
+		free(list2[i]);
+	}
+	free(list2);
 }
 
 /* Query 13 */
