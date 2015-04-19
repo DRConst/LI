@@ -48,9 +48,17 @@ int freeClientCatalog(ClientCatalog_s cat)
 	return 1;
 }
 
-int existsClient(ClientCatalog_s cat, char *Client)
+int matchClientPattern( char *c )
 {
-	return(getClient(cat, Client) != NULL);
+    return ( isalpha( c[0] ) && isalpha( c[1] ) &&
+          isdigit( c[2] ) && isdigit( c[3] ) &&
+          isdigit( c[4] ) );
+}
+
+int existsClient(ClientCatalog_s cat, char *client)
+{
+
+	return ( matchClientPattern(client) && ( getClient(cat, client) != NULL ) );
 }
 
 Client getClient(ClientCatalog_s cat, char *client)

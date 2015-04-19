@@ -13,6 +13,7 @@ typedef struct client *Client;
 
 ClientCatalog initClientCatalog();
 ClientCatalog insertClient(ClientCatalog cat, char *client);
+int matchClientPattern( char *c );
 int existsClient(ClientCatalog cat, char *client);
 int getClientCount( ClientCatalog clientCat );
 Client getClient(ClientCatalog cat, char *client);

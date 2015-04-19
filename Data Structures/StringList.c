@@ -35,7 +35,7 @@ StringList_s insertStringList( StringList_s l, char *s, int len )
     l->data = (char**)realloc( l->data, sizeof(char*)*(count + 1) );
 
     l->size[ count ] = len;
-    l->data[ count ] = (char*)malloc( len );
+    l->data[ count ] = (char*)malloc( len + 1 );
 
     strcpy( l->data[count], s );
 

@@ -35,7 +35,7 @@ ResultsList_s insertResultsList( ResultsList_s l, char *desc, int value )
     l->desc = (char**)realloc( l->desc, sizeof(char*)*(count + 1) );
 
     l->data[ count ] = value;
-    l->desc[ count ] = (char*)malloc( strlen( desc ) );
+    l->desc[ count ] = (char*)malloc( strlen( desc ) + 1 );
 
     strcpy( l->desc[count], desc );
 

@@ -31,9 +31,16 @@ ProductCatalog_s initProductCatalog()
 	return cat;
 }
 
+int matchProductPattern( char *p )
+{
+    return ( isalpha( p[0] ) && isalpha( p[1] ) &&
+          isdigit( p[2] ) && isdigit( p[3] ) &&
+          isdigit( p[4] ) && isdigit( p[5] ) );
+}
+
 int existsProduct( ProductCatalog_s cat, char *product )
 {
-	return(getProduct(cat, product) != NULL);
+	return ( matchProductPattern(product) && ( getProduct(cat, product) != NULL ) );
 }
 
 int getProductCount( ProductCatalog_s prodCat )

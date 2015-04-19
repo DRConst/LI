@@ -2,7 +2,7 @@
 
 void printMenu();
 
-void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales );
+void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Accounting acc );
 void ProductsByPrefix( ProductCatalog prodCat );
 void ClientsByPrefix( ClientCatalog clientCat );
 void getProductSalesInfo( ProductCatalog prodCat, Sales sales );
@@ -28,6 +28,7 @@ int main()
     ProductCatalog prodCat = initProductCatalog();
     ClientCatalog clientCat = initClientCatalog();
     Sales sales = initSales();
+    Accounting acc = initAccounting();
     int ret;
 
 
@@ -57,7 +58,9 @@ int main()
 
 					sales = initSales();
 
-                    readFiles( prodCat, clientCat, sales );
+					acc = initAccounting();
+
+                    readFiles( prodCat, clientCat, sales, acc );
                 break;
 
                 case 2:
@@ -149,7 +152,7 @@ void printMenu()
 
 
 /* Query 1 */
-void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales )
+void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Accounting acc )
 {
 	char clients[MAX_PATH] = "";
 	char products[MAX_PATH] = "";
@@ -174,6 +177,9 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales )
 	printf("\n Sales File: ");
 	fgets( salesFile, MAX_PATH, stdin);
 
+	strtok( clients, "\n" );
+	strtok( products, "\n" );
+	strtok( salesFile, "\n" );
 
     if( strlen( products ) == 1 )
         strcpy( products, "FichProdutos.txt" );
@@ -205,9 +211,7 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales )
     printf("\nReading Products Catalog...");
     while( fgets(buff, 8, productsFp ) )
     {
-        if( isalpha( buff[0] ) && isalpha( buff[1] ) &&
-          isdigit( buff[2] ) && isdigit( buff[3] ) &&
-          isdigit( buff[4] ) && isdigit( buff[5] ) )
+        if( matchProductPattern( buff ) )
 
             prodCat = insertProduct( prodCat, buff);
     }
@@ -216,9 +220,7 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales )
     printf("\nReading Clients Catalog...");
     while( fgets(buff, 7, clientsFp ) )
     {
-        if( isalpha( buff[0] ) && isalpha( buff[1] ) &&
-          isdigit( buff[2] ) && isdigit( buff[3] ) &&
-          isdigit( buff[4] ) )
+        if( matchClientPattern( buff ) )
 
             clientCat = insertClient( clientCat, buff);
     }
@@ -231,23 +233,23 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales )
 
         sale = createSale( month, qtd, price, prod, client, type );
 
-        if( ret == 6 )
+        if( ret == 6 ) {
             addSale( sales, clientCat, prodCat,
                     sale
             );
+            addAccounting( acc, clientCat, prodCat, sale );
+        }
     }
     printf("Done \n\t%d read", getSalesCount( sales ) );
+
     printf("\nOrdering Sales Catalog...");
-	orderAcc(sales, prodCat, clientCat);
+	orderSales(sales, prodCat, clientCat);
     printf("Done \n");
-    /*
-        TODO:
-            Process Sales File
-
-            Do Sales
-
-    */
-
+/*
+    printf("\nOrdering Accounting Catalog...");
+    orderAcc( acc, prodCat, clientCat );
+    printf("Done \n");
+*/
 
     getchar();
 
@@ -365,7 +367,7 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
     printf("\nEnter Client Code: ");
     fgets( client, 6, stdin );
 
-    if( ( strlen( client ) != 6 ) || ( !existsClient( clientCat, client ) ) ) {
+    if( ( strlen( client ) != 5 ) || ( !existsClient( clientCat, client ) ) ) {
         printf("\nInvalid Client Code");
         return;
     }
@@ -772,13 +774,6 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 	}
 
 
-	for( i = 0; i < nLists; i++ ) {
-
-        for( j = 0; j < listSize; j++ )
-            free( lists[i][j] );
-
-        free( lists[i] );
-    }
 
     free( lists );
 

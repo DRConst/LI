@@ -11,6 +11,7 @@ typedef struct product *Product;
 
 ProductCatalog initProductCatalog();
 ProductCatalog insertProduct(ProductCatalog cat, char *product);
+int matchProductPattern( char *p );
 int existsProduct( ProductCatalog cat, char *product );
 int getProductCount( ProductCatalog prodCat );
 Product getProduct(ProductCatalog cat, char* product);
