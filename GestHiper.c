@@ -1,5 +1,4 @@
 #include "GestHiper.h"
-
 void printMenu();
 
 void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Accounting acc );
@@ -28,7 +27,7 @@ int main()
     ProductCatalog prodCat = initProductCatalog();
     ClientCatalog clientCat = initClientCatalog();
     Sales sales = initSales();
-    Accounting acc = initAccounting();
+	Accounting acc = NULL;/* = initAccounting(); */
     int ret;
 
 
@@ -50,7 +49,7 @@ int main()
         if( ret ) {
             switch( op ) {
                 case 1:
-/*					freeData(prodCat, clientCat, sales);  */
+					freeData(prodCat, clientCat, sales);  
 
 					prodCat = initProductCatalog();
 
@@ -58,7 +57,7 @@ int main()
 
 					sales = initSales();
 
-					acc = initAccounting();
+					/*acc = initAccounting();*/
 
                     readFiles( prodCat, clientCat, sales, acc );
                 break;
@@ -237,7 +236,7 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
             addSale( sales, clientCat, prodCat,
                     sale
             );
-            addAccounting( acc, clientCat, prodCat, sale );
+            /*addAccounting( acc, clientCat, prodCat, sale );*/
         }
     }
     printf("Done \n\t%d read", getSalesCount( sales ) );
@@ -803,9 +802,9 @@ void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales )
 */
         freeProductCatalog( prodCat );
         freeClientCatalog( clientCat );
+		freeSales(sales);
 /*
         freeAccounting( &sales );
 
     */
-
 }

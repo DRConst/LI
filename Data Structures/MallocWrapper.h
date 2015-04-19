@@ -5,6 +5,8 @@
 void* wrp_malloc(size_t sz, const char* file, int line);
 void wrp_free(void* ptr, const char* file, int line);
 void wrp_mem_report();
+void wrp_mem_report_file(char* file);
+void wrp_init();
 //
 // wrap malloc and free
 #define malloc(sz) wrp_malloc(sz, __FILE__, __LINE__)

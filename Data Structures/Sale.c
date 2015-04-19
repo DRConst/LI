@@ -1,5 +1,4 @@
 #include "Sale.h"
-
 typedef struct sale
 {
 	int month, amnt;
@@ -17,9 +16,9 @@ Sale_s createSale(int month, int amnt, double price, char *product, char *client
 	s->month = month;
 	s->price = price;
 	s->type = type;
-	s->product = malloc(sizeof(char) * 70);
+	s->product = malloc(sizeof(char) * 10);
 	strcpy(s->product, product);
-	s->client = malloc(sizeof(char) * 60);
+	s->client = malloc(sizeof(char) * 10);
 	strcpy(s->client, client);
 	return s;
 }
@@ -71,5 +70,7 @@ char getSaleType( Sale_s s )
 
 void freeSale( Sale_s s )
 {
+	free(s->client);
+	free(s->product);
     free( s );
 }

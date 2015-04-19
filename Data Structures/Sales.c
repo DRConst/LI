@@ -47,6 +47,42 @@ Sales_s initSales()
 	return acc;
 }
 
+void freeEntry(Entry_s e)
+{
+	int  i, j;
+	for (i = 0; i < 12; i++)
+	{
+		free(e->records[i]);
+	}
+	free(e->records);
+	//free(e->cnt);
+	//free(e->cntS);
+	//free(e->name);
+	free(e);
+}
+
+Sales_s freeSales(Sales_s acc)
+{
+	int i;
+	for (i = 0; i < acc->cntS; i++)
+	{
+		freeSale(acc->sales[i]);
+	}
+	free(acc->sales);
+
+	for (i = 0; i < acc->cntEC; i++)
+	{
+		freeEntry(acc->entriesCli[i]);
+	}
+	free(acc->entriesCli);
+	for (i = 0; i < acc->cntEP; i++)
+	{
+		freeEntry(acc->entriesPr[i]);
+	}
+	free(acc->entriesPr);
+	free(acc);
+	return NULL;
+}
 
 Sales_s addSale(Sales_s acc, ClientCatalog cCat, ProductCatalog pCat, Sale sale)
 {
@@ -285,6 +321,8 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		setProductMetaData(pr,i);
 	}
 	acc->entriesPr = tPE;
+	free(h1);
+	free(h2);
 	return acc;
 }
 
@@ -444,6 +482,7 @@ Monthly_Purchases mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog 
 				insertProduct(tmp, getSaleProduct( s ) );
 				pr = getProduct(tmp, getSaleProduct( s ) );
 				allocProductDataSize(pr, sizeof(int));
+				allocProductMetaData(pr, sizeof(int));
 				setProductMetaData(pr, 1);
 				pr = getProduct(tmp, getSaleProduct( s ) );
 				cnt++;

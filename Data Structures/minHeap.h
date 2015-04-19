@@ -6,6 +6,7 @@ typedef struct heap_str *minHeap;
 typedef struct elem *Elem;
 int insertHeap(minHeap h, int key, void *data, int dataSize);
 minHeap newHeap(int size);
+minHeap freeHeap(minHeap h);
 Elem extractMin(minHeap h);
 int getMinHeapSize(minHeap h);
 int getMinHeapUsed(minHeap h);

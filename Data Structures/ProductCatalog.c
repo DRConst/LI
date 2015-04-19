@@ -88,6 +88,7 @@ int freeProductCatalog(ProductCatalog_s cat)
 		{
 			freeBST(cat->Cat[i][j]);
 		}
+		free(cat->Cat[i]);
 	}
 	free(cat->Cat);
 	free(cat);

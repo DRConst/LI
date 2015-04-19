@@ -41,7 +41,16 @@ struct heap_str{
 	int used;
 	Elem *values;
 };
-
+minHeap freeHeap(minHeap h)
+{
+	int  i;
+	for (i = 0; i < h->size; i++)
+	{
+		free(h->values[i]);
+	}
+	free(h);
+	return NULL;
+}
 minHeap newHeap(int size) {
 	minHeap res;
 	if (size <= 0)return NULL;
