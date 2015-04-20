@@ -495,7 +495,6 @@ ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog pCat, 
 			{
 				insertProduct(tmp, getSaleProduct( s ) );
 				pr = getProduct(tmp, getSaleProduct( s ) );
-				allocProductDataSize(pr, sizeof(int));
 				allocProductMetaData(pr, sizeof(int));
 				setProductMetaData(pr, 1);
 				pr = getProduct(tmp, getSaleProduct( s ) );

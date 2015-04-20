@@ -123,6 +123,11 @@ Slot setSlotData(Slot s, void *data, int dataSize)
 		free(s->data);
 	s->data = malloc(dataSize);
 	s->dataSize = dataSize; 
-	s->data = data;
+	memcpy(s->data, data, dataSize);
 	return s;
+}
+
+int getHashTableSize()
+{
+	return sizeof(struct hashTable);
 }

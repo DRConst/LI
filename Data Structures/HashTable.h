@@ -18,3 +18,5 @@ void *getSlotData(Slot e);
 int getSlotDataSize(Slot e);
 
 Slot setSlotData(Slot s, void *data, int dataSize);
+
+int getHashTableSize();

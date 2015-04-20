@@ -37,8 +37,9 @@ Node createNode(int elem, void *data, int dataSize, Node p)
 	toRet->dataSize = dataSize;
 	if (data)
 	{
-		toRet->data = malloc(dataSize);
-		memcpy(toRet->data, data, dataSize);
+		/*toRet->data = malloc(dataSize);
+		memcpy(toRet->data, data, dataSize);*/
+		toRet->data = data;
 	}
 	else
 		toRet->data = NULL;

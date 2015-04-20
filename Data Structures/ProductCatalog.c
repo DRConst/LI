@@ -10,8 +10,8 @@ typedef struct productCatalog
 struct product
 {
 	char *name;
-	void **data;
-	int *dataSize;
+	void *data;
+	int dataSize;
 };
 
 ProductCatalog_s initProductCatalog()
@@ -56,7 +56,7 @@ Product getProduct(ProductCatalog_s cat, char *product)
 
 	if (!n)
 		return NULL;
-
+	
 
 	pr->name = malloc(sizeof(char)* 7);
 	strcpy(pr->name, product);
@@ -64,6 +64,7 @@ Product getProduct(ProductCatalog_s cat, char *product)
 
 	pr->data = getDataAddr(n);
 	pr->dataSize = getDataSizeAddr(n);
+	HashTable t = (HashTable)pr->data;
 	return pr;
 }
 
@@ -72,8 +73,9 @@ ProductCatalog_s insertProduct(ProductCatalog_s cat, char *product)
 	char *idC = product + 2;
 	intBST b;
 	int id = atoi(idC);
+	HashTable t = initHashTable(2);
 	b = cat->Cat[toupper(product[0]) - 'A'][toupper(product[1]) - 'A'];
-	cat->Cat[toupper(product[0]) - 'A'][toupper(product[1]) - 'A'] = insertBST(b, id, NULL, 0);
+	cat->Cat[toupper(product[0]) - 'A'][toupper(product[1]) - 'A'] = insertBST(b, id, t, sizeof t);
 	cat->used++;
 	return cat;
 }
@@ -121,24 +123,28 @@ StringList getProductsByPrefix(ProductCatalog_s cat, char t )
 
 
 
-int getProductMetaData(Product pr)
+int getProductMetaData(Product pr, char *ID)
 {
+	HashTable t;
+	Slot s;
 	if (!pr->data)
 		return -1;
-	return *(*(int **)pr->data);
+	t = (HashTable)pr->data;
+	s = getSlot(t, ID);
+	return *(*(int **)getSlotData(s));
 }
 void *getProductMetaDataAddr(Product pr)
 {
 	if (!pr->data)
 		return NULL;
-	return *pr->data;
+	return pr->data;
 }
 
 
 int getProductDataSize(Product pr)
 {
 	if (pr)
-		return(pr->dataSize ? *pr->dataSize : 0);
+		return(pr->dataSize ? pr->dataSize : 0);
 	return 0;
 }
 
@@ -147,14 +153,9 @@ void allocProductMetaData(Product pr, int size)
 	*(int**)pr->data = malloc(size);
 }
 
-void allocProductDataSize(Product pr, int size)
-{
-	pr->dataSize = malloc(size);
-	*pr->dataSize = size;
-}
 void setProductDataSize(Product pr, int size)
 {
-	*pr->dataSize = size;
+	pr->dataSize = size;
 }
 
 void setProductMetaData(Product pr, int x)

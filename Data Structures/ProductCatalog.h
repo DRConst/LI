@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "StringList.h"
+#include "HashTable.h"
 
 typedef struct productCatalog *ProductCatalog;
 
