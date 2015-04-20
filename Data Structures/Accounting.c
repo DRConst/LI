@@ -115,7 +115,7 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 
 	/*Now bind the sale to the product*/
 	/*Check if the product already has an entry bound by checking metadata*/
-	if ( (getProductDataSize(pr) != 0) && ( acc->entriesPr[(i = getProductMetaData(pr) )] != NULL ) )
+	if ((getProductDataSize(pr) != 0) && (acc->entriesPr[(i = getProductMetaData(pr, "Accounting"))] != NULL))
 	{
 
 		tE = acc->entriesPr[i];
@@ -135,8 +135,7 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 	}/*Else create new Product Entry_s, update metadata*/else{
 
 	    if( i == -1 ) {
-            allocProductMetaData(pr,sizeof(int));
-            setProductMetaData(pr,acc->cntEP);
+			setProductMetaData(pr, acc->cntEP, "Accounting");
             setProductDataSize(pr,sizeof(int));
 
             i = acc->cntEP;
@@ -238,7 +237,7 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 			}
 			else
 			{
-				metaI = getProductMetaData(pr);
+				metaI = getProductMetaData(pr, "Accounting");
 				prE = acc->entriesPr[metaI];
 				insertHeap(h2, ( prE->cntSalesN[0] + prE->cntSalesP[0] ), prE, sizeof prE);
 			}
@@ -267,7 +266,7 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		e = extractMin(h2);
 		tPE[i] = (EntryAcc)getElemDataAddr(e);
 		pr = getProduct(pCat, tPE[i]->name);
-		setProductMetaData(pr,i);
+		setProductMetaData(pr, i, "Accounting");
 	}
 	acc->entriesPr = tPE;
 	return acc;

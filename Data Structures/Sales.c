@@ -49,7 +49,7 @@ Sales_s initSales()
 
 void freeEntry(Entry_s e)
 {
-	int  i, j;
+	int  i;
 	for (i = 0; i < 12; i++)
 	{
 		free(e->records[i]);
@@ -168,7 +168,7 @@ Sales_s addSale(Sales_s acc, ClientCatalog cCat, ProductCatalog pCat, Sale sale)
 	/*Check if the product already has an entry bound by checking metadata*/
 	if (getProductDataSize(pr) != 0)
 	{
-		i = getProductMetaData(pr); /*Index of entriePr where the product is bound*/
+		i = getProductMetaData(pr, "Sales"); /*Index of entriePr where the product is bound*/
 
 		tE = acc->entriesPr[i];
 
@@ -190,8 +190,7 @@ Sales_s addSale(Sales_s acc, ClientCatalog cCat, ProductCatalog pCat, Sale sale)
 		tE->records[monthIdx][0] = acc->cntS;
 		tE->units += getSaleQtd( sale );
 
-		allocProductMetaData(pr,sizeof(int));
-		setProductMetaData(pr,acc->cntEP);
+		setProductMetaData(pr, acc->cntEP, "Sales");
 		setProductDataSize(pr,sizeof(int));
 		strcpy(tE->name, getProductName(pr));
 		/*copyEntry(&tE, tE);*/
@@ -289,7 +288,7 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 			}
 			else
 			{
-				metaI = getProductMetaData(pr);
+				metaI = getProductMetaData(pr, "Sales");
 				prE = acc->entriesPr[metaI];
 				insertHeap(h2, prE->units, prE, sizeof prE);
 			}
@@ -318,7 +317,7 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		e = extractMin(h2);
 		tPE[i] = (Entry_s)getElemDataAddr(e);
 		pr = getProduct(pCat, tPE[i]->name);
-		setProductMetaData(pr,i);
+		setProductMetaData(pr, i, "Sales");
 	}
 	acc->entriesPr = tPE;
 	free(h1);
@@ -371,7 +370,7 @@ int getProductSalesPerMonth(Sales_s acc, Product prod, int month, int *nSalesP, 
 	if (!(acc->cntEP) || !getProductDataSize(prod))
 		return 0;
 
-	idx = getProductMetaData(prod);
+	idx = getProductMetaData(prod, "Sales");
 
 	e = acc->entriesPr[idx];
 
@@ -408,7 +407,7 @@ StringList productBuyersN(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, 
 	ClientCatalog tmpP = initClientCatalog();
 	ClientCatalog tmpN = initClientCatalog();
 	Product pr = getProduct(pCat, product);
-	int index = getProductMetaData(pr);
+	int index = getProductMetaData(pr, "Sales");
 	int i = 0, j;
 	Entry_s p = acc->entriesPr[index];
 	Sale s;
@@ -436,7 +435,7 @@ StringList productBuyersP(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, 
 	ClientCatalog tmpP = initClientCatalog();
 	ClientCatalog tmpN = initClientCatalog();
 	Product pr = getProduct(pCat, product);
-	int index = getProductMetaData(pr);
+	int index = getProductMetaData(pr, "Sales");
 	int i = 0, j;
 	Entry_s p = acc->entriesPr[index];
 	Sale s;
@@ -489,14 +488,13 @@ ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog pCat, 
 			{
 				pr = getProduct(tmp, getSaleProduct( s ) );
 				/*letter = *(*(int**)pr->data);*/
-				setProductMetaData(pr, getProductMetaData(pr) + 1);
+				setProductMetaData(pr, getProductMetaData(pr, "Sales") + 1, "Sales");
 			}
 			else
 			{
 				insertProduct(tmp, getSaleProduct( s ) );
 				pr = getProduct(tmp, getSaleProduct( s ) );
-				allocProductMetaData(pr, sizeof(int));
-				setProductMetaData(pr, 1);
+				setProductMetaData(pr, 1, "Sales");
 				pr = getProduct(tmp, getSaleProduct( s ) );
 				cnt++;
 			}
@@ -517,7 +515,7 @@ ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog pCat, 
 			}
 			else
 			{
-				j = getProductMetaData(pr);
+				j = getProductMetaData(pr, "Sales");
 				insertHeap(h, j, getProductName(pr), sizeof(char) * 6);
 			}
 			/*free(lists[i]);*/

@@ -618,7 +618,7 @@ void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
         printf("No Products Found.");
     else
 		paginateResults(2, size, 1, 0, 8, list, "Products", 8, list2, "Count");
-	freeStringList(sl);
+	freeResultsList(sl);
 	for (i = 0; i < size; i++)
 	{
 		free(list2[i]);

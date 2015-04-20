@@ -76,8 +76,8 @@ Client getClient(ClientCatalog_s cat, char *client)
 	strcpy(cl->name, client);
 
 
-	cl->data = getDataAddr(n);
-	cl->dataSize = getDataSizeAddr(n);
+	cl->data = getNodeData(n);
+	cl->dataSize = getDataSize(n);
 	return cl;
 }
 

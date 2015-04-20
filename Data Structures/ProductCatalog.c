@@ -53,7 +53,8 @@ Product getProduct(ProductCatalog_s cat, char *product)
 	Product pr = malloc(sizeof(struct product));
 	int key = atoi(product + 2);
 	Node n = getNode(cat->Cat[product[0] - 'A'][product[1] - 'A'], key);
-
+	void **test = getNodeData(n);
+	HashTable df = (HashTable)*test;
 	if (!n)
 		return NULL;
 	
@@ -62,8 +63,8 @@ Product getProduct(ProductCatalog_s cat, char *product)
 	strcpy(pr->name, product);
 
 
-	pr->data = getDataAddr(n);
-	pr->dataSize = getDataSizeAddr(n);
+	pr->data = getNodeData(n);
+	pr->dataSize = getDataSize(n);
 	HashTable t = (HashTable)pr->data;
 	return pr;
 }
@@ -131,26 +132,14 @@ int getProductMetaData(Product pr, char *ID)
 		return -1;
 	t = (HashTable)pr->data;
 	s = getSlot(t, ID);
-	return *(*(int **)getSlotData(s));
+	return *(int *)getSlotData(s);
 }
-void *getProductMetaDataAddr(Product pr)
-{
-	if (!pr->data)
-		return NULL;
-	return pr->data;
-}
-
 
 int getProductDataSize(Product pr)
 {
 	if (pr)
-		return(pr->dataSize ? pr->dataSize : 0);
+		return pr->dataSize;
 	return 0;
-}
-
-void allocProductMetaData(Product pr, int size)
-{
-	*(int**)pr->data = malloc(size);
 }
 
 void setProductDataSize(Product pr, int size)
@@ -158,9 +147,16 @@ void setProductDataSize(Product pr, int size)
 	pr->dataSize = size;
 }
 
-void setProductMetaData(Product pr, int x)
+void setProductMetaData(Product pr, int x, char *ID)
 {
-	*(*(int**)pr->data) = x;
+	HashTable t;
+	Slot s;
+	if (!pr->data)
+		return;
+	t = (HashTable)pr->data;
+	s = getSlot(t, ID);
+	setSlotData(s, &x, sizeof x);
+	return;
 }
 
 char *getProductName(Product pr)
