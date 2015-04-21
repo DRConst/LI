@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "HashTable.h"
 
 #define UP(i) (i-1)/2
 #define LEFT(i) 2*i+1
@@ -39,6 +40,7 @@ Node createNode(int elem, void *data, int dataSize, Node p)
 	{
 		/*toRet->data = malloc(dataSize);
 		memcpy(toRet->data, data, dataSize);*/
+		/*HashTable t = (HashTable)data;*/
 		toRet->data = data;
 	}
 	else
@@ -214,14 +216,14 @@ Node getNode(intBST b, int key)
 	return getNodeAux(b->root,key);
 
 }
-
+/*
 int getNodeData(Node n,void **data, int *dataSize)
 {
 	*dataSize = n->dataSize;
 	*data = malloc(n->dataSize);
 	memcpy(*data, n->data, n->dataSize);
 	return 1;
-}
+}*/
 
 void freeBSTAux(Node n)
 {
@@ -250,12 +252,25 @@ int getUsedBST(intBST b)
 	return (!b ? 0 : b->used);
 }
 
-void *getDataAddr(Node n)
+void *getNodeDataAddr(Node n)
 {
 	return (!n ? NULL : &n->data);
 }
 
-void *getDataSizeAddr(Node n)
+void *getNodeData(Node n)
 {
-	return (!n ? NULL : &n->dataSize);
+	return (!n ? NULL : n->data);
+}
+
+void setNodeData(Node n, void *data, int dataSize)
+{
+	if (n->data)
+		free(n->data);
+	n->data = data;
+	n->dataSize = dataSize;
+}
+
+int getDataSize(Node n)
+{
+	return (!n ? NULL : n->dataSize);
 }

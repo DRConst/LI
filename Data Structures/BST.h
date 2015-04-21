@@ -6,7 +6,7 @@ typedef struct intNode_stc *Node;
 
 typedef struct intBST_stc *intBST;
 
-int getNodeData(Node n, void **data, int *dataSize);
+void *getNodeDataAddr(Node n);
 intBST initBST();
 intBST insertBST(intBST b, int elem, void *data, int dataSize);
 /*intBST insertBST_it(intBST b, int elem, void *data, int dataSize);*/
@@ -16,4 +16,6 @@ Node getNode(intBST b, int key);
 int freeBST(intBST b);
 int getUsedBST(intBST b);
 void *getDataAddr(Node n);
-void *getDataSizeAddr(Node n);
+int getDataSize(Node n);
+void *getNodeData(Node n);
+void setNodeData(Node n, void *data, int dataSize);

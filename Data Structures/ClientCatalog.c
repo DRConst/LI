@@ -3,8 +3,8 @@
 struct client
 {
 	char *name;
-	void **data;
-	int *dataSize;
+	void *data;
+	int dataSize;
 };
 
 typedef struct clientCatalog
@@ -30,7 +30,7 @@ ClientCatalog_s initClientCatalog()
 	return cat;
 }
 
-int freeClientCatalog(ClientCatalog_s cat)
+ClientCatalog_s freeClientCatalog(ClientCatalog_s cat)
 {
 	int i, j;
 
@@ -46,7 +46,7 @@ int freeClientCatalog(ClientCatalog_s cat)
 	free(cat->Cat);
 	free(cat);
 	cat = NULL;
-	return 1;
+	return cat;
 }
 
 int matchClientPattern( char *c )
@@ -67,7 +67,6 @@ Client getClient(ClientCatalog_s cat, char *client)
 	Client cl = malloc(sizeof(struct client));
 	int key = atoi(client + 2);
 	Node n = getNode(cat->Cat[client[0] - 'A'][client[1] - 'A'], key);
-
 	if (!n)
 		return NULL;
 
@@ -76,8 +75,8 @@ Client getClient(ClientCatalog_s cat, char *client)
 	strcpy(cl->name, client);
 
 
-	cl->data = getDataAddr(n);
-	cl->dataSize = getDataSizeAddr(n);
+	cl->data = getNodeData(n);
+	cl->dataSize = getDataSize(n);
 	return cl;
 }
 
@@ -92,8 +91,9 @@ ClientCatalog_s insertClient(ClientCatalog_s cat, char *client)
 	char *idC = client + 2;
 	intBST b;
 	int id = atoi(idC);
+	HashTable t = initHashTable(2);
 	b = cat->Cat[toupper(client[0]) - 'A'][toupper(client[1]) - 'A'];
-	cat->Cat[toupper(client[0]) - 'A'][toupper(client[1]) - 'A'] = insertBST(b, id, NULL, 0);
+	cat->Cat[toupper(client[0]) - 'A'][toupper(client[1]) - 'A'] = insertBST(b, id, t, sizeof t);
 	b = cat->Cat[toupper(client[0]) - 'A'][toupper(client[1]) - 'A'];
 	cat->used++;
 	return cat;
@@ -125,48 +125,66 @@ StringList getClientsByPrefix(ClientCatalog_s cat, char t )
 
 
 
-int getClientMetaData(Client cli)
+int getClientMetaData(Client cli, char *ID)
 {
+	HashTable t;
+	Slot s;
 	if (!cli->data)
 		return -1;
-	return *(*(int **)cli->data);
+	t = (HashTable)cli->data;
+	s = getSlot(t, ID);
+	if (!s)
+		return;
+	return *(int *)getSlotData(s);
 }
-void *getClientMetaDataAddr(Client cli)
-{
-	if (!cli->data)
-		return NULL;
-	return *cli->data;
-}
-
-
 int getClientDataSize(Client cli)
 {
 	if (cli)
-		return(cli->dataSize ? *cli->dataSize : 0);
+		return cli->dataSize;
 	return 0;
 }
 
-void allocClientMetaData(Client cli, int size)
-{
-	*(int**)cli->data = malloc(size);
-}
-
-void allocClientDataSize(Client cli, int size)
-{
-	cli->dataSize = malloc(size);
-	*cli->dataSize = size;
-}
 void setClientDataSize(Client cli, int size)
 {
-	*cli->dataSize = size;
+	cli->dataSize = size;
 }
 
-void setClientMetaData(Client cli, int x)
+void setClientMetaData(Client cli, int x, char *ID)
 {
-	*(*(int**)cli->data) = x;
+	HashTable t;
+	Slot s;
+	if (!cli->data)
+		return;
+	t = (HashTable)cli->data;
+	s = getSlot(t, ID);
+
+	if (!s)
+	{
+		insertHashTable(t, ID, &x, sizeof x);
+	}
+	else
+		setSlotData(s, &x, sizeof x);
+	return;
 }
 
 char *getClientName(Client cli)
 {
 	return cli->name;
+}
+
+int clientHasMetaData(Client cli, char *ID)
+{
+	HashTable t;
+	Slot s;
+	if (!cli->data)
+		return 0;
+	t = (HashTable)cli->data;
+	s = getSlot(t, ID);
+
+	if (!s)
+	{
+		return 0;
+	}
+	else
+		return 1;
 }
