@@ -281,7 +281,7 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		for (i = 0; i < lSize; i++)
 		{
 			pr = getProduct(pCat, lists[i]);
-			if (!getProductDataSize(pr))
+			if (!productHasMetaData(pr, "Sales"))
 			{
 				/*Client has no records*/
 			}
