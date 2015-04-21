@@ -261,13 +261,16 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 			if (!clientHasMetaData(cl, "Sales"))
 			{
 				/*Client has no records*/
+				cliE = initEntry();
+				strcpy( cliE->name, getClientName( cl) );
+
 			}
 			else
 			{
 				metaI = getClientMetaData(cl, "Sales");
 				cliE = acc->entriesCli[metaI];
-				insertHeap(h1, cliE->units, cliE, sizeof cliE);
 			}
+			insertHeap(h1, cliE->units, cliE, sizeof cliE);
 			/*free(lists[i]);*/
 		}
 		/*free(lists);*/
@@ -284,13 +287,16 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 			if (!productHasMetaData(pr, "Sales"))
 			{
 				/*Client has no records*/
+				prE = initEntry();
+				strcpy( prE->name, getProductName( pr ) );
 			}
 			else
 			{
 				metaI = getProductMetaData(pr, "Sales");
 				prE = acc->entriesPr[metaI];
-				insertHeap(h2, prE->units, prE, sizeof prE);
 			}
+
+            insertHeap(h2, prE->units, prE, sizeof prE);
 			/*free(lists[i]);*/
 		}
 		/*free(lists);*/
@@ -415,7 +421,7 @@ StringList productBuyersN(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, 
 		for (j = 0; j < p->cnt[i]; j++)
 		{
 			s = acc->sales[p->records[i][j]];
-			
+
 			if ( getSaleType( s ) == 'P')
 			{
 				if (!existsClient(tmpP, getSaleClient( s ) ) )
@@ -583,7 +589,7 @@ ResultsList mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCa
 					cli++;
 				}
 			}
-		
+
 		memset(buff, '\0', 50);
 		strcat(buff, ent->name);
 		strcat(buff, " for ");

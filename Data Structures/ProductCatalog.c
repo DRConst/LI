@@ -55,7 +55,7 @@ Product getProduct(ProductCatalog_s cat, char *product)
 	Node n = getNode(cat->Cat[product[0] - 'A'][product[1] - 'A'], key);
 	if (!n)
 		return NULL;
-	
+
 
 	pr->name = malloc(sizeof(char)* 7);
 	strcpy(pr->name, product);
@@ -63,7 +63,7 @@ Product getProduct(ProductCatalog_s cat, char *product)
 
 	pr->data = getNodeData(n);
 	pr->dataSize = getDataSize(n);
-	HashTable t = (HashTable)pr->data;
+
 	return pr;
 }
 
@@ -156,7 +156,7 @@ void setProductMetaData(Product pr, int x, char *ID)
 		return;
 	t = (HashTable)pr->data;
 	s = getSlot(t, ID);
-	
+
 	if (!s)
 	{
 		insertHashTable(t, ID, &x, sizeof x);

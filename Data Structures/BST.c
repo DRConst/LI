@@ -185,7 +185,7 @@ int *inOrderBST_it(intBST b)
 
 	return toRet;
 
-	
+
 }*/
 Node getNodeAux(Node n,int key)
 {
@@ -272,5 +272,5 @@ void setNodeData(Node n, void *data, int dataSize)
 
 int getDataSize(Node n)
 {
-	return (!n ? NULL : n->dataSize);
+	return (!n ? 0 : n->dataSize);
 }

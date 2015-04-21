@@ -38,7 +38,7 @@ EntryAcc initEntryAcc()
 
 Accounting_s initAccounting()
 {
-	Accounting_s acc = malloc(sizeof(Accounting_s));
+	Accounting_s acc = malloc(sizeof(*acc));
 
 	acc->cntEC = 0;
 	acc->cntEP = 0;
@@ -74,7 +74,7 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 			acc->sizeEC += acc->sizeEC;
 
         acc->entriesCli = realloc( acc->entriesCli,
-                            ( sizeof(*acc->entriesCli) * acc->sizeEC ) );
+                            ( sizeof( struct entryAcc ) * acc->sizeEC ) );
 
 		for (i = acc->sizeEC / 2; i < acc->sizeEC; i++)
 			acc->entriesCli[i] = NULL;
@@ -90,7 +90,7 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 			acc->sizeEP += acc->sizeEP;
 
         acc->entriesPr = realloc( acc->entriesPr,
-                            ( sizeof(*acc->entriesPr) * acc->sizeEP ) );
+                            ( sizeof( struct entryAcc ) * acc->sizeEP ) );
 
 		for (i = acc->sizeEP / 2; i < acc->sizeEP; i++)
 			acc->entriesPr[i] = NULL;
@@ -134,12 +134,11 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 		/*copyEntry(&tE, tE);*/
 	}/*Else create new Product Entry_s, update metadata*/else{
 
-	    if( i == -1 ) {
-			setProductMetaData(pr, acc->cntEP, "Accounting");
-            setProductDataSize(pr,sizeof(int));
+        setProductMetaData(pr, acc->cntEP, "Accounting");
+        setProductDataSize(pr,sizeof(int));
 
-            i = acc->cntEP;
-	    }
+        i = acc->cntEP;
+
 	    tE = acc->entriesPr[ i ] = initEntryAcc();
 
 	    strcpy(tE->name, getProductName(pr));
@@ -170,12 +169,11 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 		/*copyEntry(&tE, tE);*/
 	}/*Else create new Product Entry_s, update metadata*/else{
 
-	    if( i == -1 ) {
-            setClientMetaData(cl,acc->cntEC, "Accounting");
-            setClientDataSize(cl,sizeof(int));
+        setClientMetaData(cl,acc->cntEC, "Accounting");
+        setClientDataSize(cl,sizeof(int));
 
-            i = acc->cntEC;
-	    }
+        i = acc->cntEC;
+
 	    tE = acc->entriesCli[ i ] = initEntryAcc();
 
 	    strcpy(tE->name, getClientName(cl));
@@ -210,13 +208,16 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 			if (!clientHasMetaData(cl, "Accounting"))
 			{
 				/*Client has no records*/
+				cliE = initEntryAcc();
+				strcpy( cliE->name, getClientName( cl ) );
 			}
 			else
 			{
 				metaI = getClientMetaData(cl, "Accounting");
 				cliE = acc->entriesCli[metaI];
-				insertHeap(h1,( cliE->cntSalesN[0] + cliE->cntSalesP[0] ), cliE, sizeof cliE);
 			}
+
+			insertHeap(h1,( cliE->cntSalesN[0] + cliE->cntSalesP[0] ), cliE, sizeof cliE);
 			/*free(lists[i]);*/
 		}
 		/*free(lists);*/
@@ -233,13 +234,16 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 			if (!productHasMetaData(pr, "Accounting"))
 			{
 				/*Client has no records*/
+				prE = initEntryAcc();
+				strcpy( prE->name, getProductName( pr ) );
 			}
 			else
 			{
 				metaI = getProductMetaData(pr, "Accounting");
 				prE = acc->entriesPr[metaI];
-				insertHeap(h2, ( prE->cntSalesN[0] + prE->cntSalesP[0] ), prE, sizeof prE);
 			}
+
+			insertHeap(h2, ( prE->cntSalesN[0] + prE->cntSalesP[0] ), prE, sizeof prE);
 			/*free(lists[i]);*/
 		}
 		/*free(lists);*/
@@ -269,4 +273,33 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 	}
 	acc->entriesPr = tPE;
 	return acc;
+}
+
+int getTotalSalesPByProduct( Accounting_s acc, Product pr )
+{
+    int salesP;
+    EntryAcc tE;
+    int i;
+
+
+    if( !acc )
+        return 0;
+
+    tE = acc->entriesPr[ getProductMetaData( pr, "Accounting" ) ];
+
+    printf("name: %s", tE->name );
+
+    for( i = 0; i < 13; i++ )
+        printf("\n for month %d : salesP: %d, salesN: %d, money: %.2f", i, tE->cntSalesP[i], tE->cntSalesN[i], tE->profit[i] );
+
+    return salesP;
+}
+
+int getAccountingCount( Accounting_s acc )
+{
+
+    if( !acc )
+        return 0;
+
+    return ( acc->cntEC + acc->cntEP );
 }

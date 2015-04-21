@@ -134,7 +134,7 @@ int getClientMetaData(Client cli, char *ID)
 	t = (HashTable)cli->data;
 	s = getSlot(t, ID);
 	if (!s)
-		return;
+		return -1;
 	return *(int *)getSlotData(s);
 }
 int getClientDataSize(Client cli)

@@ -13,3 +13,5 @@ typedef struct accounting *Accounting;
 Accounting initAccounting();
 Accounting addAccounting( Accounting acc, ClientCatalog cCat, ProductCatalog pCat,  Sale sale );
 Accounting orderAcc( Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
+int getTotalSalesPByProduct( Accounting acc, Product pr );
+int getAccountingCount( Accounting acc );
