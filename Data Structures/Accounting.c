@@ -116,23 +116,9 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 	/*Now bind the sale to the product*/
 	/*Check if the product already has an entry bound by checking metadata*/
 	if ((productHasMetaData(pr, "Accounting") != 0) && (acc->entriesPr[(i = getProductMetaData(pr, "Accounting"))] != NULL))
-	{
-
 		tE = acc->entriesPr[i];
 
-        if( getSaleType( sale ) == 'P' ) {
-            tE->cntSalesP[ monthIdx ]++;
-            tE->cntSalesP[ 0 ]++;
-        }else {
-            tE->cntSalesN[ 0 ]++;
-            tE->cntSalesN[ monthIdx ]++;
-        }
-
-        tE->profit[ 0 ] += getSalePrice( sale );
-        tE->profit[ monthIdx ] += getSalePrice( sale );
-
-		/*copyEntry(&tE, tE);*/
-	}/*Else create new Product Entry_s, update metadata*/else{
+    else { /*Else create new Product Entry_s, update metadata*/
 
         setProductMetaData(pr, acc->cntEP, "Accounting");
         setProductDataSize(pr,sizeof(int));
@@ -149,25 +135,21 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 		acc->cntEP++;
 	}
 
-	if ((clientHasMetaData(cl, "Accounting") != 0) && acc->entriesCli[(i = getClientMetaData(cl, "Accounting"))] != NULL)
-	{
-		i = getClientMetaData(cl, "Accounting"); /*Index of entrieCl where the client is bound*/
+    if( getSaleType( sale ) == 'P' ) {
+        tE->cntSalesP[ monthIdx ]++;
+        tE->cntSalesP[ 0 ]++;
+    }else {
+        tE->cntSalesN[ 0 ]++;
+        tE->cntSalesN[ monthIdx ]++;
+    }
 
+    tE->profit[ 0 ] += getSalePrice( sale );
+    tE->profit[ monthIdx ] += getSalePrice( sale );
+
+	if ((clientHasMetaData(cl, "Accounting") != 0) && acc->entriesCli[(i = getClientMetaData(cl, "Accounting"))] != NULL)
 		tE = acc->entriesCli[i];
 
-        if( getSaleType( sale ) == 'P' ) {
-            tE->cntSalesP[ monthIdx ]++;
-            tE->cntSalesP[ 0 ]++;
-        }else {
-            tE->cntSalesN[ 0 ]++;
-            tE->cntSalesN[ monthIdx ]++;
-        }
-
-        tE->profit[ 0 ] += getSalePrice( sale );
-        tE->profit[ monthIdx ] += getSalePrice( sale );
-
-		/*copyEntry(&tE, tE);*/
-	}/*Else create new Product Entry_s, update metadata*/else{
+    else { /*Else create new Client EntryAcc, update metadata*/
 
         setClientMetaData(cl,acc->cntEC, "Accounting");
         setClientDataSize(cl,sizeof(int));
@@ -179,10 +161,21 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 	    strcpy(tE->name, getClientName(cl));
 
 
-
 		/*copyEntry(&tE, tE);*/
 		acc->cntEC++;
 	}
+
+    if( getSaleType( sale ) == 'P' ) {
+        tE->cntSalesP[ monthIdx ]++;
+        tE->cntSalesP[ 0 ]++;
+    }else {
+        tE->cntSalesN[ 0 ]++;
+        tE->cntSalesN[ monthIdx ]++;
+    }
+
+    tE->profit[ 0 ] += getSalePrice( sale );
+    tE->profit[ monthIdx ] += getSalePrice( sale );
+
 
     return acc;
 }
@@ -275,24 +268,114 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 	return acc;
 }
 
-int getTotalSalesPByProduct( Accounting_s acc, Product pr )
+int getMonthSalesPByProduct( Accounting_s acc, Product pr, int month )
 {
-    int salesP;
-    EntryAcc tE;
-    int i;
-
 
     if( !acc )
-        return 0;
+        return -1;
 
-    tE = acc->entriesPr[ getProductMetaData( pr, "Accounting" ) ];
+    return acc->entriesPr[ getProductMetaData( pr, "Accounting" ) ]->cntSalesP[ month ];
+}
 
-    printf("name: %s", tE->name );
+int getTotalSalesPByProduct( Accounting_s acc, Product pr )
+{
 
-    for( i = 0; i < 13; i++ )
-        printf("\n for month %d : salesP: %d, salesN: %d, money: %.2f", i, tE->cntSalesP[i], tE->cntSalesN[i], tE->profit[i] );
+    if( !acc )
+        return -1;
 
-    return salesP;
+    return acc->entriesPr[ getProductMetaData( pr, "Accounting" ) ]->cntSalesP[ 0 ];
+}
+
+int getMonthSalesPByClient( Accounting_s acc, Client cl, int month )
+{
+
+    if( !acc )
+        return -1;
+
+    return acc->entriesCli[ getClientMetaData( cl, "Accounting" ) ]->cntSalesP[ month ];
+}
+
+
+int getTotalSalesPByClient( Accounting_s acc, Client cl )
+{
+
+    if( !acc )
+        return -1;
+
+    return acc->entriesCli[ getClientMetaData( cl, "Accounting" ) ]->cntSalesP[ 0 ];
+}
+
+
+double getMonthProfitByProduct( Accounting acc, Product pr, int month )
+{
+    if( !acc )
+        return (double)-1;
+
+    return acc->entriesPr[ getProductMetaData( pr, "Accounting" ) ]->profit[ month ];
+}
+
+
+double getTotalProfitByProduct( Accounting acc, Product pr )
+{
+    if( !acc )
+        return (double)-1;
+
+    return acc->entriesPr[ getProductMetaData( pr, "Accounting" ) ]->profit[ 0 ];
+}
+
+
+double getMonthProfitByClient( Accounting acc, Client cl, int month )
+{
+    if( !acc )
+        return (double)-1;
+
+    return acc->entriesCli[ getClientMetaData( cl, "Accounting" ) ]->profit[ month ];
+}
+
+
+double getTotalProfitByClient( Accounting acc, Client cl )
+{
+    if( !acc )
+        return (double)-1;
+
+    return acc->entriesCli[ getClientMetaData( cl, "Accounting" ) ]->profit[ 0 ];
+}
+
+
+int getTotalSalesNByProduct( Accounting acc, Product pr )
+{
+
+    if( !acc )
+        return -1;
+
+    return acc->entriesPr[ getProductMetaData( pr, "Accounting" ) ]->cntSalesN[ 0 ];
+}
+
+int getMonthSalesNByProduct( Accounting acc, Product pr, int month )
+{
+
+    if( !acc )
+        return -1;
+
+    return acc->entriesPr[ getProductMetaData( pr, "Accounting" ) ]->cntSalesN[ month ];
+}
+
+int getMonthSalesNByClient( Accounting acc, Client cl, int month )
+{
+
+    if( !acc )
+        return -1;
+
+    return acc->entriesCli[ getClientMetaData( cl, "Accounting" ) ]->cntSalesN[ month ];
+}
+
+int getTotalSalesNByClient( Accounting acc, Client cl )
+{
+
+    if( !acc )
+        return -1;
+
+    return acc->entriesCli[ getClientMetaData( cl, "Accounting" ) ]->cntSalesN[ 0 ];
 }
 
 int getAccountingCount( Accounting_s acc )

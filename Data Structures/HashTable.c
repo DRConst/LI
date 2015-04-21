@@ -47,7 +47,7 @@ HashTable insertHashTable(HashTable h, char *key, void* data, int dataSize)
 {
 	int i = hash(key) % h->size;
 	Slot s;
-	
+
 	if (!h->slots[i])
 	{
 		h->slots[i] = malloc(sizeof(struct slot));
@@ -63,6 +63,7 @@ HashTable insertHashTable(HashTable h, char *key, void* data, int dataSize)
 			s = s->n;
 		}
 		s->n = malloc(sizeof(struct slot));
+		s = s->n;
 	}
 	s->key = malloc(sizeof(char) * (strlen(key) + 1));
 	strcpy(s->key, key);
@@ -76,7 +77,7 @@ HashTable insertHashTable(HashTable h, char *key, void* data, int dataSize)
 		s->data = NULL;
 		s->dataSize = 0;
 	}
-	
+
 	s->n = NULL;
 	return h;
 
@@ -122,7 +123,7 @@ Slot setSlotData(Slot s, void *data, int dataSize)
 	if (s->data)
 		free(s->data);
 	s->data = malloc(dataSize);
-	s->dataSize = dataSize; 
+	s->dataSize = dataSize;
 	memcpy(s->data, data, dataSize);
 	return s;
 }

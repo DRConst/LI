@@ -291,6 +291,7 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
 {
     int nMonth = 0;
     char prod[7] = "";
+    Product pr;
     int ret;
     int nSalesP, nSalesN, count;
     double total;
@@ -325,17 +326,21 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
         return;
     }
 
-/*    count = getProductSalesPerMonth( sales, (getProduct( prodCat, prod)), nMonth, &nSalesP, &nSalesN, &total );
-*/
-    count = getTotalSalesPByProduct( acc, getProduct( prodCat, prod ) );
+    pr = getProduct( prodCat, prod );
+
+    nSalesP = getMonthSalesPByProduct( acc, pr, nMonth );
+    nSalesN = getMonthSalesNByProduct( acc, pr, nMonth );
+    total = getMonthProfitByProduct( acc, pr, nMonth );
+
+    count = nSalesP + nSalesN;
 
     if( !count ) {
         printf("\n No Sales found for given Product/Month");
         return;
     }
 
-/*  printf("Product: %s\n\t Normal: %d\n\t Promo: %d\n\t Total: %d\n\tProfit: %.2f", prod, nSalesN, nSalesP, count, total );
-*/    getchar();
+    printf("Product: %s\n\t Normal: %d\n\t Promo: %d\n\t Total: %d\n\tProfit: %.2f", prod, nSalesN, nSalesP, count, total );
+    getchar();
 
 }
 
