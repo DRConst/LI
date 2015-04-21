@@ -275,6 +275,7 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		}
 		/*free(lists);*/
 	}
+	int unboughtProducts = 0;
 	freeStringList(sl);
 	for (letter = 0; letter < 26; letter++)
 	{
@@ -287,6 +288,7 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 			if (!productHasMetaData(pr, "Sales"))
 			{
 				/*Client has no records*/
+				unboughtProducts++;
 				prE = initEntry();
 				strcpy( prE->name, getProductName( pr ) );
 			}
@@ -635,7 +637,79 @@ StringList clientsWithoutPurchases(Sales_s acc)
 
 }
 
+char **getMonthFromInt(int i)
+{
+	char **month = calloc(10, sizeof (char));
+	switch (i)
+	{
+	case 1:
+		strcpy(month, "January");
+		break;
+	case 2:
+		strcpy(month, "February");
+		break;
+	case 3:
+		strcpy(month, "March");
+		break;
+	case 4:
+		strcpy(month, "April");
+		break;
+	case 5:
+		strcpy(month, "May");
+		break;
+	case 6:
+		strcpy(month, "June");
+		break;
+	case 7:
+		strcpy(month, "July");
+		break;
+	case 8:
+		strcpy(month, "August");
+		break;
+	case 9:
+		strcpy(month, "September");
+		break;
+	case 10:
+		strcpy(month, "October");
+		break;
+	case 11:
+		strcpy(month, "November");
+		break;
+	case 12:
+		strcpy(month, "December");
+		break;
+	default:
+		break;
+	}
+	return month;
+}
+ResultsList ProductsBoughtByClient(Sales_s sales, Client cli)
+{
+	ProductCatalog tmp = initProductCatalog();
+	ResultsList rl = initResultsList();
+	Entry_s ent;
+	int i, j, cnt;
+	Sale s;
+	if (!clientHasMetaData(cli, "Sales"))
+		return NULL;
+	ent = sales->entriesCli[getClientMetaData(cli, "Sales")];
 
+	for (i = 0; i < 12; i++)
+	{
+		cnt = 0;
+		for (j = 0; j < ent->cnt[i]; j++)
+		{
+			s = sales->sales[ent->records[i][j]];
+			if (!existsProduct(tmp,getSaleProduct(s)))
+			{
+				insertProduct(tmp, getSaleProduct(s));
+				cnt++;
+			}
+		}
+		rl = insertResultsList(rl, getMonthFromInt(i + 1), cnt);
+	}
+	return rl;
+}
 /*MONTHLY PURCHASES FUNCTIONS*/
 
 Monthly_Purchases initMonthlyPurchases()
