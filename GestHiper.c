@@ -11,7 +11,7 @@ void getSalesInterval( Sales sales );
 void getProductBuyers(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
 void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
 void getActiveClients(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
-void generateCSV( Sales sales );
+void generateCSV( Sales sales, Accounting acc );
 void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
 void getClientMostWantedProducts( Sales sales );
 void getAllInactive( Sales sales );
@@ -99,7 +99,7 @@ int main()
                 break;
 
                 case 11:
-                    generateCSV( sales );
+                    generateCSV( sales, acc );
                 break;
 
                 case 12:
@@ -347,13 +347,18 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
 /* Query 4 */
 void getUnboughtProducts( Sales sales )
 {
+    StringList sl;
 
     if( !getSalesCount( sales ) ) {
         printf("\nSales Structure Not Initialized.");
         return;
 	}
 
+    sl = productsWithoutPurchases( sales );
 
+    paginateResults( 1, getCountStringList( sl), 1, 0, 8, getStringList( sl ), "Products" );
+
+    freeStringList( sl );
 }
 
 /* Query 5 */
@@ -535,7 +540,7 @@ void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 
 		sprintf(lists2[i], "%d", cnt[i]);
 	}
-	paginateResults(2, size, 1, 0, 10, lists, "Products", 10 , lists2, "Ammount");
+	paginateResults(2, size, 1, 0, 10, lists, "Products", 10 , lists2, "Amount");
 	freeResultsList(mp);
 	for (i = 0; i < size; i++)
 		free(lists2[i]);
@@ -577,7 +582,7 @@ void getActiveClients(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 }
 
 /* Query 11 */
-void generateCSV( Sales sales )
+void generateCSV( Sales sales, Accounting acc)
 {
 
 }

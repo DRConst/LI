@@ -32,4 +32,12 @@ int getMonthSalesPByProduct( Accounting acc, Product pr, int month );
 int getMonthSalesPByClient( Accounting acc, Client cl, int month );
 int getTotalSalesPByClient( Accounting acc, Client cl );
 
+int getTotalUnitsByClient( Accounting acc, Client cl );
+int getMonthUnitsByClient( Accounting acc, Client cl, int month );
+
+int getTotalUnitsByProduct( Accounting acc, Product pr );
+int getMonthUnitsByProduct( Accounting acc, Product pr, int month );
+
 int getAccountingCount( Accounting acc );
+
+StringList getAccountingUnboughtProducts( Accounting acc );

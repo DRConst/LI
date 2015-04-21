@@ -5,6 +5,7 @@ typedef struct entryAcc
     int cntSalesP[13];  /* Month Array, idx0 is total */
     int cntSalesN[13];  /* Month Array, idx0 is total */
     double profit[13];  /* Month Array, idx0 is total */
+    int units[13];
 	char name[8];/*debug only*/
 }*EntryAcc;
 
@@ -143,6 +144,9 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
         tE->cntSalesN[ monthIdx ]++;
     }
 
+    tE->units[ 0 ] += getSaleQtd( sale );
+    tE->units[ monthIdx ] += getSaleQtd( sale );
+
     tE->profit[ 0 ] += getSalePrice( sale );
     tE->profit[ monthIdx ] += getSalePrice( sale );
 
@@ -172,6 +176,9 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
         tE->cntSalesN[ 0 ]++;
         tE->cntSalesN[ monthIdx ]++;
     }
+
+    tE->units[ 0 ] += getSaleQtd( sale );
+    tE->units[ monthIdx ] += getSaleQtd( sale );
 
     tE->profit[ 0 ] += getSalePrice( sale );
     tE->profit[ monthIdx ] += getSalePrice( sale );
@@ -306,7 +313,7 @@ int getTotalSalesPByClient( Accounting_s acc, Client cl )
 }
 
 
-double getMonthProfitByProduct( Accounting acc, Product pr, int month )
+double getMonthProfitByProduct( Accounting_s acc, Product pr, int month )
 {
     if( !acc )
         return (double)-1;
@@ -315,7 +322,7 @@ double getMonthProfitByProduct( Accounting acc, Product pr, int month )
 }
 
 
-double getTotalProfitByProduct( Accounting acc, Product pr )
+double getTotalProfitByProduct( Accounting_s acc, Product pr )
 {
     if( !acc )
         return (double)-1;
@@ -324,7 +331,7 @@ double getTotalProfitByProduct( Accounting acc, Product pr )
 }
 
 
-double getMonthProfitByClient( Accounting acc, Client cl, int month )
+double getMonthProfitByClient( Accounting_s acc, Client cl, int month )
 {
     if( !acc )
         return (double)-1;
@@ -333,7 +340,7 @@ double getMonthProfitByClient( Accounting acc, Client cl, int month )
 }
 
 
-double getTotalProfitByClient( Accounting acc, Client cl )
+double getTotalProfitByClient( Accounting_s acc, Client cl )
 {
     if( !acc )
         return (double)-1;
@@ -342,7 +349,7 @@ double getTotalProfitByClient( Accounting acc, Client cl )
 }
 
 
-int getTotalSalesNByProduct( Accounting acc, Product pr )
+int getTotalSalesNByProduct( Accounting_s acc, Product pr )
 {
 
     if( !acc )
@@ -351,7 +358,7 @@ int getTotalSalesNByProduct( Accounting acc, Product pr )
     return acc->entriesPr[ getProductMetaData( pr, "Accounting" ) ]->cntSalesN[ 0 ];
 }
 
-int getMonthSalesNByProduct( Accounting acc, Product pr, int month )
+int getMonthSalesNByProduct( Accounting_s acc, Product pr, int month )
 {
 
     if( !acc )
@@ -360,7 +367,7 @@ int getMonthSalesNByProduct( Accounting acc, Product pr, int month )
     return acc->entriesPr[ getProductMetaData( pr, "Accounting" ) ]->cntSalesN[ month ];
 }
 
-int getMonthSalesNByClient( Accounting acc, Client cl, int month )
+int getMonthSalesNByClient( Accounting_s acc, Client cl, int month )
 {
 
     if( !acc )
@@ -369,13 +376,46 @@ int getMonthSalesNByClient( Accounting acc, Client cl, int month )
     return acc->entriesCli[ getClientMetaData( cl, "Accounting" ) ]->cntSalesN[ month ];
 }
 
-int getTotalSalesNByClient( Accounting acc, Client cl )
+int getTotalSalesNByClient( Accounting_s acc, Client cl )
 {
 
     if( !acc )
         return -1;
 
     return acc->entriesCli[ getClientMetaData( cl, "Accounting" ) ]->cntSalesN[ 0 ];
+}
+
+
+int getMonthUnitsByProduct( Accounting_s acc, Product pr, int month )
+{
+    if( !acc )
+        return -1;
+
+    return acc->entriesPr[ getProductMetaData( pr, "Accounting") ]->units[ month ];
+}
+
+int getTotalUnitsByProduct( Accounting_s acc, Product pr )
+{
+    if( !acc )
+        return -1;
+
+    return acc->entriesPr[ getProductMetaData( pr, "Accounting" ) ]->units[ 0 ];
+}
+
+int getMonthUnitsByClient( Accounting_s acc, Client cl, int month )
+{
+    if( !acc )
+        return -1;
+
+    return acc->entriesCli[ getClientMetaData( cl, "Accounting" ) ]->units[ month ];
+}
+
+int getTotalUnitsByClient( Accounting_s acc, Client cl )
+{
+    if( !acc )
+        return -1;
+
+    return acc->entriesCli[ getClientMetaData( cl, "Accounting" ) ]->units[ 0 ];
 }
 
 int getAccountingCount( Accounting_s acc )
@@ -385,4 +425,28 @@ int getAccountingCount( Accounting_s acc )
         return 0;
 
     return ( acc->cntEC + acc->cntEP );
+}
+
+StringList getAccountingUnboughtProducts( Accounting_s acc )
+{
+    StringList sl = initStringList();
+    int i;
+    EntryAcc tE;
+
+
+    i = acc->cntEP;
+/*
+    for( tE = acc->entriesPr[ i = acc->cntEP - 1 ];
+        i && ( tE->cntSalesN[0] + tE->cntSalesP[0]  ) ;
+    tE = acc->entriesPr[i], i-- )
+        insertStringList( sl, tE->name, 7 );
+*/
+    for( i = 0; i < acc->cntEP; i++ ) {
+        tE = acc->entriesPr[i];
+
+        if( !( tE->cntSalesN[0] + tE->cntSalesP[0] ) )
+            insertStringList( sl, tE->name, 7 );
+    }
+
+    return sl;
 }

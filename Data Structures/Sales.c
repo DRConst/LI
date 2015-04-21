@@ -609,11 +609,15 @@ ResultsList mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCa
 
 StringList productsWithoutPurchases(Sales_s acc)
 {
-	int i;
+	int i,j,ret;
 	StringList sl = initStringList();
-	for (i = 0; i < acc->cntEP && acc->entriesPr[i]->units == 0; i++)
+	for (i = 0; i < acc->cntEP; i++)
 	{
-		insertStringList(sl, acc->entriesPr[i]->name, 7);
+	    for( ret = j = 0; j < 12; j++ )
+            ret += acc->entriesPr[i]->cnt[j];
+
+        if( !ret )
+            insertStringList(sl, acc->entriesPr[i]->name, 7);
 	}
 	return sl;
 
@@ -630,6 +634,8 @@ StringList clientsWithoutPurchases(Sales_s acc)
 	return sl;
 
 }
+
+
 /*MONTHLY PURCHASES FUNCTIONS*/
 
 Monthly_Purchases initMonthlyPurchases()
