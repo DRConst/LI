@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-
+#include "HashTable.h"
 #include "StringList.h"
 
 typedef struct clientCatalog *ClientCatalog;
@@ -13,18 +13,20 @@ typedef struct client *Client;
 
 ClientCatalog initClientCatalog();
 ClientCatalog insertClient(ClientCatalog cat, char *client);
+ClientCatalog freeClientCatalog(ClientCatalog cat);
+
 int matchClientPattern( char *c );
+
 int existsClient(ClientCatalog cat, char *client);
 int getClientCount( ClientCatalog clientCat );
+
 Client getClient(ClientCatalog cat, char *client);
-int freeClientCatalog(ClientCatalog cat);
+
 StringList getClientsByPrefix(ClientCatalog cat, char t );
 
-int getClientMetaData(Client cli);
-void *getClientMetaDataAddr(Client cli);
-void allocClientMetaData(Client cli, int size);
-void allocClientDataSize(Client cli, int size);
+int getClientMetaData(Client cli, char *ID);
 void setClientDataSize(Client cli, int size);
-void setClientMetaData(Client cli, int x);
+void setClientMetaData(Client cli, int x, char *ID);
 char *getClientName(Client cli);
 int getClientDataSize(Client cli);
+int clientHasMetaData(Client pr, char *ID);

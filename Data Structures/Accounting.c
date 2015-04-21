@@ -115,7 +115,7 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 
 	/*Now bind the sale to the product*/
 	/*Check if the product already has an entry bound by checking metadata*/
-	if ((getProductDataSize(pr) != 0) && (acc->entriesPr[(i = getProductMetaData(pr, "Accounting"))] != NULL))
+	if ((productHasMetaData(pr, "Accounting") != 0) && (acc->entriesPr[(i = getProductMetaData(pr, "Accounting"))] != NULL))
 	{
 
 		tE = acc->entriesPr[i];
@@ -150,9 +150,9 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 		acc->cntEP++;
 	}
 
-	if ( (getClientDataSize(cl) != 0) && acc->entriesCli[(i = getClientMetaData(cl) )] != NULL )
+	if ((clientHasMetaData(cl, "Accounting") != 0) && acc->entriesCli[(i = getClientMetaData(cl, "Accounting"))] != NULL)
 	{
-		i = getClientMetaData(cl); /*Index of entrieCl where the client is bound*/
+		i = getClientMetaData(cl, "Accounting"); /*Index of entrieCl where the client is bound*/
 
 		tE = acc->entriesCli[i];
 
@@ -171,8 +171,7 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 	}/*Else create new Product Entry_s, update metadata*/else{
 
 	    if( i == -1 ) {
-            allocClientMetaData(cl,sizeof(int));
-            setClientMetaData(cl,acc->cntEC);
+            setClientMetaData(cl,acc->cntEC, "Accounting");
             setClientDataSize(cl,sizeof(int));
 
             i = acc->cntEC;
@@ -208,13 +207,13 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		for (i = 0; i < lSize; i++)
 		{
 			cl = getClient(cCat, lists[i]);
-			if (!getClientMetaDataAddr(cl))
+			if (!clientHasMetaData(cl, "Accounting"))
 			{
 				/*Client has no records*/
 			}
 			else
 			{
-				metaI = getClientMetaData(cl);
+				metaI = getClientMetaData(cl, "Accounting");
 				cliE = acc->entriesCli[metaI];
 				insertHeap(h1,( cliE->cntSalesN[0] + cliE->cntSalesP[0] ), cliE, sizeof cliE);
 			}
@@ -231,7 +230,7 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		for (i = 0; i < lSize; i++)
 		{
 			pr = getProduct(pCat, lists[i]);
-			if (!getProductMetaDataAddr(pr))
+			if (!productHasMetaData(pr, "Accounting"))
 			{
 				/*Client has no records*/
 			}
@@ -254,7 +253,7 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		e = extractMin(h1);
 		tCE[i] = (EntryAcc)getElemDataAddr(e);
 		cl = getClient(cCat, tCE[i]->name);
-		setClientMetaData(cl,i);
+		setClientMetaData(cl, i, "Accounting");
 	}
 	acc->entriesCli = tCE;
 

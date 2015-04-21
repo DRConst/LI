@@ -53,8 +53,6 @@ Product getProduct(ProductCatalog_s cat, char *product)
 	Product pr = malloc(sizeof(struct product));
 	int key = atoi(product + 2);
 	Node n = getNode(cat->Cat[product[0] - 'A'][product[1] - 'A'], key);
-	void **test = getNodeData(n);
-	HashTable df = (HashTable)*test;
 	if (!n)
 		return NULL;
 	
@@ -81,7 +79,7 @@ ProductCatalog_s insertProduct(ProductCatalog_s cat, char *product)
 	return cat;
 }
 
-int freeProductCatalog(ProductCatalog_s cat)
+ProductCatalog_s freeProductCatalog(ProductCatalog_s cat)
 {
 	int i, j;
 
@@ -95,7 +93,8 @@ int freeProductCatalog(ProductCatalog_s cat)
 	}
 	free(cat->Cat);
 	free(cat);
-	return 1;
+	cat = NULL;
+	return cat;
 }
 
 StringList getProductsByPrefix(ProductCatalog_s cat, char t )
@@ -132,6 +131,8 @@ int getProductMetaData(Product pr, char *ID)
 		return -1;
 	t = (HashTable)pr->data;
 	s = getSlot(t, ID);
+	if (!s)
+		return -1;
 	return *(int *)getSlotData(s);
 }
 
@@ -155,11 +156,33 @@ void setProductMetaData(Product pr, int x, char *ID)
 		return;
 	t = (HashTable)pr->data;
 	s = getSlot(t, ID);
-	setSlotData(s, &x, sizeof x);
+	
+	if (!s)
+	{
+		insertHashTable(t, ID, &x, sizeof x);
+	}else
+		setSlotData(s, &x, sizeof x);
 	return;
 }
 
 char *getProductName(Product pr)
 {
 	return pr->name;
+}
+
+int productHasMetaData(Product pr, char *ID)
+{
+	HashTable t;
+	Slot s;
+	if (!pr->data)
+		return 0;
+	t = (HashTable)pr->data;
+	s = getSlot(t, ID);
+
+	if (!s)
+	{
+		return 0;
+	}
+	else
+		return 1;
 }

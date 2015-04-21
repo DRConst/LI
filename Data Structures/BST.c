@@ -262,6 +262,14 @@ void *getNodeData(Node n)
 	return (!n ? NULL : n->data);
 }
 
+void setNodeData(Node n, void *data, int dataSize)
+{
+	if (n->data)
+		free(n->data);
+	n->data = data;
+	n->dataSize = dataSize;
+}
+
 int getDataSize(Node n)
 {
 	return (!n ? NULL : n->dataSize);

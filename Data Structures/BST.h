@@ -18,3 +18,4 @@ int getUsedBST(intBST b);
 void *getDataAddr(Node n);
 int getDataSize(Node n);
 void *getNodeData(Node n);
+void setNodeData(Node n, void *data, int dataSize);
