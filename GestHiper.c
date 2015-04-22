@@ -490,7 +490,7 @@ void getSalesInterval( Accounting acc )
 		l2[i] = l[2 * i + 1];
 		l3[i] = getMonthFromInt(startingMonth + i);
 	}
-	paginateResults(3, 0, 0, 10, l3, "Month", size, 10, l1, "Count", size, 10, l2, "Profit", size);
+	paginateResults(3, 0, 0, 10, l3, "Month", size, 10, l1, "Profit", size, 10, l2, "Count", size);
 }
 
 /* Query 8 */
