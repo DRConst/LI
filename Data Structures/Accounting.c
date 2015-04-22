@@ -309,12 +309,34 @@ csv_Stats_s getMonthsStats(Accounting_s acc)
 		sprintf(buff, "%d", cntCli[i]);
 		sl1 = insertStringList(sl1, buff, sizeof buff);
 		sprintf(buff, "%d", cntRecords[i]);
-		sl2 = insertStringList(sl2, buff, sizeof buff);
+		sl2 = insertStringList(sl2, buff, sizeof buff);		
 	}
 	toRet->sl1 = sl1;
 	toRet->sl2 = sl2;
 
 	return toRet;
+}
+
+StringList getIntervalStats(Accounting_s acc, int s, int f)
+{
+	StringList sl = initStringList();
+	int  i, j, profit, cnt;
+	char buff[64];
+	for (i = s; i <= f; i++)
+	{
+		profit = 0;
+		cnt = 0;
+		for (j = 0; j < acc->cntEC; j++)
+		{
+			profit += acc->entriesCli[i]->profit[i];
+			cnt += acc->entriesCli[i]->cntSalesN[i] + acc->entriesCli[i]->cntSalesP[i];
+		}
+		sprintf(buff, "%d", profit);
+		sl = insertStringList(sl, buff, strlen(buff));
+		sprintf(buff, "%d", cnt);
+		sl = insertStringList(sl, buff, strlen(buff));
+	}
+	return sl;
 }
 
 char **getList1CsvStats(csv_Stats_s s)
@@ -330,6 +352,12 @@ int getCntCsvStats(csv_Stats_s s)
 	return getCountStringList(s->sl1);
 }
 
+void freeCsvStats(csv_Stats_s c)
+{
+	freeStringList(c->sl1);
+	freeStringList(c->sl2);
+	free(c);
+}
 int getMonthSalesPByProduct( Accounting_s acc, Product pr, int month )
 {
 

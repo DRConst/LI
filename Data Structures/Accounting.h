@@ -7,6 +7,7 @@
 #include "minHeap.h"
 #include "StringList.h"
 #include "Sale.h"
+#include "ResultsList.h"
 
 typedef struct accounting *Accounting;
 
@@ -17,10 +18,16 @@ Accounting addAccounting( Accounting acc, ClientCatalog cCat, ProductCatalog pCa
 Accounting orderAcc( Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
 
 CSV_Stats getMonthsStats(Accounting acc);
+void freeCsvStats(CSV_Stats c);
 
 char **getList1CsvStats(CSV_Stats s);
 char **getList2CsvStats(CSV_Stats s);
 int getCntCsvStats(CSV_Stats s);
+
+
+StringList getIntervalStats(Accounting acc, int s, int f);
+
+
 
 double getMonthProfitByProduct( Accounting acc, Product pr, int month );
 double getMonthProfitByClient( Accounting acc, Client cl, int month );

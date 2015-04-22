@@ -7,7 +7,7 @@ void ClientsByPrefix( ClientCatalog clientCat );
 void getProductSalesInfo( ProductCatalog prodCat, Accounting acc );
 void getUnboughtProducts( Accounting acc );
 void getClientSalesCount( Sales sales, ClientCatalog clientCat );
-void getSalesInterval( Sales sales );
+void getSalesInterval( Accounting acc );
 void getProductBuyers(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
 void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
 void getActiveClients(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
@@ -85,7 +85,7 @@ int main()
                 break;
 
                 case 7:
-                    getSalesInterval( sales );
+                    getSalesInterval( acc );
                 break;
 
                 case 8:
@@ -456,14 +456,16 @@ void ClientsByPrefix( ClientCatalog clientCat )
 }
 
 /* Query 7 */
-void getSalesInterval( Sales sales )
+void getSalesInterval( Accounting acc )
 {
     int ret;
     int startingMonth, endingMonth;
+	StringList sl;
+	int i, size;
+	char **l, **l1, **l2, **l3;
 
-
-    if( !getSalesCount( sales ) ) {
-        printf("\nSales Structure Not Initialized.");
+    if( !getAccountingCount( acc ) ) {
+        printf("\nAccounting Structure Not Initialized.");
         return;
 	}
 
@@ -475,6 +477,20 @@ void getSalesInterval( Sales sales )
         printf("\nInvalid Month");
         return;
     }
+
+	sl = getIntervalStats(acc, startingMonth, endingMonth);
+	size = getCountStringList(sl) / 2;
+	l = getStringList(sl);
+	l1 = malloc(sizeof(char*) * size);
+	l2 = malloc(sizeof(char*) * size);
+	l3 = malloc(sizeof(char*) * size);
+	for (i = 0; i < size; i++)
+	{
+		l1[i] = l[2 * i];
+		l2[i] = l[2 * i + 1];
+		l3[i] = getMonthFromInt(startingMonth + i);
+	}
+	paginateResults(3, 0, 0, 10, l3, "Month", size, 10, l1, "Count", size, 10, l2, "Uniques", size);
 }
 
 /* Query 8 */
@@ -870,6 +886,7 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... )
 
 	if (!(csvFile = fopen(file, "w")))
        return 0;
+	fputs("sep=,\n", csvFile);
 
     /* Settings Titles */
     for( j = 0; j < nLists; j++ ) {

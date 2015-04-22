@@ -8,6 +8,7 @@
 #include "StringList.h"
 #include "Sale.h"
 #include "ResultsList.h"
+
 typedef struct productBuyers *ProductBuyers;
 
 typedef struct sales *Sales;
@@ -54,3 +55,6 @@ char ** getProductBuyersN(ProductBuyers pb);
 char ** getProductBuyersP(ProductBuyers pb);
 int getProductBuyersCntN(ProductBuyers pb);
 int getProductBuyersCntP(ProductBuyers pb);
+
+
+char *getMonthFromInt(int i);
