@@ -6,6 +6,12 @@ struct productBuyers
 	int cntN, cntP;
 };
 
+struct q12
+{
+	StringList sl;
+	int *uniqueCli, *cnt;
+};
+
 typedef struct entry
 {
 	int cnt[12]/*Number of Index entries per Month (width of matrix at that row)*/, cntS[12];
@@ -567,18 +573,23 @@ StringList yearRoundClients(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat
 	return toRet;
 }
 
-ResultsList mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, int N)
+Query12 mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, int N)
 {
-	ResultsList sl = initResultsList();
-	int i;
+	Query12 q = malloc(sizeof(*q));
+	q->sl = initStringList();
+	q->uniqueCli = malloc(sizeof(int) * N);
+	q->cnt = malloc(sizeof(int) * N);
+	int i, j, k, counter = 0;
 	int cli = 0;
 	Entry_s ent;
-	ClientCatalog tmp = initClientCatalog();
+	ClientCatalog tmp;
+	Sale s;
 	char *buff = calloc(50, sizeof (char));
 	for (i = acc->cntEP - 1, N; i >= 0 && N > 0; i--, N--)
 	{
+		tmp = initClientCatalog();
+		cli = 0;
 		ent = acc->entriesPr[i];
-		/*
 		for (j = 0; j < 12; j++)
 			for (k = 0; k < ent->cnt[j]; k++)
 			{
@@ -589,21 +600,12 @@ ResultsList mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCa
 					cli++;
 				}
 			}
-
-		memset(buff, '\0', 50);
-		strcat(buff, ent->name);
-		strcat(buff, " for ");
-		sprintf( b, "%d", cli );
-		strcat(buff, b);
-		strcat(buff, " clients and ");
-		sprintf( b, "%d", ent->units );
-		strcat(buff, b);
-		strcat(buff, " units\n");
-		insertStringList(sl, buff, 50);
-		cli = 0;*/
-		insertResultsList(sl, ent->name, ent->units);
+		q->uniqueCli[counter] = cli;
+		q->cnt[counter++] = ent->units;
+		insertStringList(q->sl, ent->name, strlen(ent->name));
+		free(tmp);
 	}
-	return sl;
+	return q;
 }
 
 
@@ -805,6 +807,32 @@ char *getMonthFromInt(int i)
 		break;
 	}
 	return month;
+}
+
+
+char **getQ12StringList(Query12 q)
+{
+	return getStringList(q->sl);
+}
+int *getQ12UniqueCli(Query12 q)
+{
+	return q->uniqueCli;
+}
+int* getQ12Units(Query12 q)
+{
+	return q->cnt;
+}
+int getQ12Count(Query12 q)
+{
+	return getCountStringList(q->sl);
+}
+void freeQ12(Query12 q)
+{
+	freeStringList(q->sl);
+	free(q->cnt);
+	free(q->uniqueCli);
+	free(q);
+	return;
 }
 
 /*MONTHLY PURCHASES FUNCTIONS*/

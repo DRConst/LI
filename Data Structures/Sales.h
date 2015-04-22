@@ -14,6 +14,8 @@ typedef struct sales *Sales;
 
 typedef struct montly_purchases *Monthly_Purchases;
 
+typedef struct q12 *Query12;
+
 Sales orderSales(Sales acc, ProductCatalog pCat, ClientCatalog cCat);
 Sales initSales();
 Sales addSale(Sales acc, ClientCatalog cat, ProductCatalog pr, Sale sale);
@@ -27,11 +29,19 @@ StringList productBuyersN(Sales acc, ProductCatalog pCat, ClientCatalog cCat, ch
 StringList productBuyersP(Sales acc, ProductCatalog pCat, ClientCatalog cCat, char *product);
 ResultsList mostBoughtMonthlyProductsByClient(Sales acc, ProductCatalog pCat, ClientCatalog cCat, char *client, int month);
 StringList yearRoundClients(Sales acc, ProductCatalog pCat, ClientCatalog cCat);
-ResultsList mostSoldProducts(Sales acc, ProductCatalog pCat, ClientCatalog cCat, int N);
+Query12 mostSoldProducts(Sales acc, ProductCatalog pCat, ClientCatalog cCat, int N);
 StringList productsWithoutPurchases(Sales acc);
 StringList clientsWithoutPurchases(Sales acc);
 ResultsList ProductsBoughtByClient(Sales sales, Client cli);
 ResultsList Top3ProductsForClient(Sales sales, Client cli);
+
+
+char **getQ12StringList(Query12 q);
+int *getQ12UniqueCli(Query12 q);
+int* getQ12Units(Query12 q);
+int getQ12Count(Query12 q);
+void freeQ12(Query12 q);
+
 
 Monthly_Purchases initMonthlyPurchases();
 Monthly_Purchases registerMonthlyPurchase(Monthly_Purchases mp, char *product, int cnt);

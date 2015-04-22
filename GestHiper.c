@@ -626,9 +626,9 @@ void generateCSV( Sales sales, Accounting acc)
 /* Query 12 */
 void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 {
-	ResultsList sl;
-	char **list, **list2;
-	int *iList,size, cnt, ret, i;
+	Query12 q;
+	char **list, **list2, **list3;
+	int *iList, *iList2, size, cnt, ret, i;
 
 
     if( !getSalesCount( sales ) ) {
@@ -653,10 +653,11 @@ void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 		ret = scanf("%d", &cnt);
 	} while (ret < 1);
 
-	sl = mostSoldProducts(sales, pCat, cCat, cnt);
-	list = getDescsResultsList(sl);
-	iList = getValuesResultsList(sl);
-	size = getCountResultsList(sl);
+	q = mostSoldProducts(sales, pCat, cCat, cnt);
+	list = getQ12StringList(q);
+	iList = getQ12UniqueCli(q);
+	iList2 = getQ12Units(q);
+	size = getQ12Count(q);
 	list2 = malloc(sizeof(char*)*size);
 	for (i = 0; i < size; i++)
 	{
@@ -664,16 +665,28 @@ void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 
 		sprintf(list2[i], "%d", iList[i]);
 	}
+	list3 = malloc(sizeof(char*)*size);
+	for (i = 0; i < size; i++)
+	{
+		list3[i] = malloc(8);
+
+		sprintf(list3[i], "%d", iList2[i]);
+	}
     if( !size)
         printf("No Products Found.");
     else
-		paginateResults(2, size, 1, 0, 8, list, "Products", 8, list2, "Count");
-	freeResultsList(sl);
+		paginateResults(3, size, 1, 0, 8, list, "Products", 8, list3, "Count", 8, list2, "Uniques");
+	freeQ12(q);
 	for (i = 0; i < size; i++)
 	{
 		free(list2[i]);
 	}
 	free(list2);
+	for (i = 0; i < size; i++)
+	{
+		free(list3[i]);
+	}
+	free(list3);
 }
 
 /* Query 13 */
