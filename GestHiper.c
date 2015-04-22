@@ -490,7 +490,7 @@ void getSalesInterval( Accounting acc )
 		l2[i] = l[2 * i + 1];
 		l3[i] = getMonthFromInt(startingMonth + i);
 	}
-	paginateResults(3, 0, 0, 10, l3, "Month", size, 10, l1, "Count", size, 10, l2, "Uniques", size);
+	paginateResults(3, 0, 0, 10, l3, "Month", size, 10, l1, "Count", size, 10, l2, "Profit", size);
 }
 
 /* Query 8 */
@@ -1044,7 +1044,7 @@ void paginateResults( int nLists, int showIdx, int postArgs, ... )
 
 
 
-        sprintf( buf, "|%.*s|", strlen( header ) - 3, MAX_SEPARATOR );
+        sprintf( buf, "|%.*s|", (int)(strlen( header ) - 3), MAX_SEPARATOR );
 /*
         strcat( header, buf );
         strcat( body, buf );
@@ -1096,9 +1096,9 @@ void genColumn( char *ret, char *s, int max )
     n = 1 + (max/2);
 
     sprintf( ret, "|%*s%*s",
-        n + strlen(s)/2,
+		(int)n + strlen(s) / 2,
         s,
-        n - strlen(s)/2,
+		(int)n - strlen(s) / 2,
     "");
 
 }
