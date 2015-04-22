@@ -5,7 +5,7 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
 void ProductsByPrefix( ProductCatalog prodCat );
 void ClientsByPrefix( ClientCatalog clientCat );
 void getProductSalesInfo( ProductCatalog prodCat, Accounting acc );
-void getUnboughtProducts( Sales sales );
+void getUnboughtProducts( Accounting acc );
 void getClientSalesCount( Sales sales, ClientCatalog clientCat );
 void getSalesInterval( Sales sales );
 void getProductBuyers(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
@@ -15,6 +15,8 @@ void generateCSV( Sales sales, Accounting acc );
 void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
 void getClientMostWantedProducts( Sales sales );
 void getAllInactive( Sales sales );
+
+int listsToCSV( char *fileName, int nLists, int listSize, ... );
 
 void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... );
 void genColumn( char *ret, char *s, int max );
@@ -71,7 +73,7 @@ int main()
                 break;
 
                 case 4:
-                    getUnboughtProducts( sales );
+                    getUnboughtProducts( acc );
                 break;
 
                 case 5:
@@ -233,20 +235,20 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
         sale = createSale( month, qtd, price, prod, client, type );
 
         if( ret == 6 ) {
-            addSale( sales, clientCat, prodCat,
+            sales = addSale( sales, clientCat, prodCat,
                     sale
             );
-            addAccounting( acc, clientCat, prodCat, sale );
+            acc = addAccounting( acc, clientCat, prodCat, sale );
         }
     }
     printf("Done \n\t%d read", getSalesCount( sales ) );
 
     printf("\nOrdering Sales Catalog...");
-	orderSales(sales, prodCat, clientCat);
+	sales = orderSales(sales, prodCat, clientCat);
     printf("Done \n");
 
     printf("\nOrdering Accounting Catalog...");
-    orderAcc( acc, prodCat, clientCat );
+    acc = orderAcc( acc, prodCat, clientCat );
     printf("Done \n");
 
 
@@ -345,16 +347,16 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
 }
 
 /* Query 4 */
-void getUnboughtProducts( Sales sales )
+void getUnboughtProducts( Accounting acc )
 {
     StringList sl;
 
-    if( !getSalesCount( sales ) ) {
-        printf("\nSales Structure Not Initialized.");
+    if( !getAccountingCount( acc ) ) {
+        printf("\nAccounting Structure Not Initialized.");
         return;
 	}
 
-	sl = productsWithoutPurchases( sales );
+    sl = getAccountingUnboughtProducts( acc );
 
     paginateResults( 1, getCountStringList( sl), 1, 0, 8, getStringList( sl ), "Products" );
 
@@ -397,6 +399,16 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
 		sprintf(lists2[i], "%d", cnt[i]);
 	}
 	paginateResults(2, size, 0, 0, 10, getDescsResultsList(rl), "Month", 10, lists2, "Count");
+
+	printf("Save to File?(Y/N): ");
+	if( getchar() == 'Y' ) {
+        if( listsToCSV( client, 2, size, getDescsResultsList(rl), "Month", lists2, "Count" ) )
+            printf("\n\tFile Successfully created.");
+        else
+            printf("\n\tError Creating File.");
+
+        getchar();
+	}
 }
 
 /* Query 6 */
@@ -687,6 +699,70 @@ void getAllInactive( Sales sales )
     );
 }
 
+/*
+    usage:
+    listsToCSV( "file.txt", 2, 50,
+               list1, "titleL1", list2, "titleL2" );
+*/
+int listsToCSV( char *fileName, int nLists, int listSize, ... )
+{
+    va_list args;
+    char ***lists;
+    char **titles;
+    char buff[200];
+    int i, j;
+    FILE *csvFile;
+
+    if( !strlen( fileName ) )
+        return 0;
+
+    strcat( fileName, ".csv" );
+
+	lists = (char***)malloc( sizeof( char ** ) * nLists );
+	titles = (char**)malloc( sizeof(char*) * nLists );
+
+	va_start( args, listSize );
+
+    /* Grabbing Lists and their titles */
+	for( i = 0; i < nLists; i ++) {
+        lists[i] = va_arg( args, char** );
+        titles[i] = va_arg( args, char* );
+	}
+
+    if( !(csvFile = fopen( fileName, "w" ) ) )
+       return 0;
+
+    /* Settings Titles */
+    for( j = 0; j < nLists; j++ ) {
+        if( !j )
+            strcpy( buff, titles[j] );
+        else
+            sprintf( buff, "%s,%s", buff, titles[j] );
+    }
+    strcat( buff, "\n" );
+    fputs( buff, csvFile );
+
+    /* Outputting lines */
+    for( i = 0; i < listSize; i++ ) {
+        for( j = 0; j < nLists; j++ ) {
+            if( !j )
+                strcpy( buff, lists[j][i] );
+            else
+                sprintf( buff, "%s,%s", buff, lists[j][i] );
+        }
+        strcat( buff, "\n" );
+        fputs( buff, csvFile );
+    }
+
+    for( i = 0; i < nLists; i++ )
+        free( titles[i] );
+
+    free( titles );
+
+    fclose( csvFile );
+
+    return 1;
+}
 
 /* args: nLists, nPostArgs
 

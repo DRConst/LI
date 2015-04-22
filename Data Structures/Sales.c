@@ -31,6 +31,7 @@ typedef struct sales
 }*Sales_s;
 
 Entry_s initEntry();
+char *getMonthFromInt(int i);
 
 Sales_s initSales()
 {
@@ -242,7 +243,7 @@ Sales_s addSale(Sales_s acc, ClientCatalog cCat, ProductCatalog pCat, Sale sale)
 
 Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 {
-	minHeap h1 = newHeap(acc->cntEC), h2 = newHeap(acc->cntEP);
+	minHeap h1 = newHeap( getClientCount(cCat) ), h2 = newHeap( getProductCount( pCat ) );
 	int letter, i, metaI, lSize, hUsed;
 	char **lists;
 	Client cl; Product pr;
@@ -275,7 +276,6 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		}
 		/*free(lists);*/
 	}
-	int unboughtProducts = 0;
 	freeStringList(sl);
 	for (letter = 0; letter < 26; letter++)
 	{
@@ -288,7 +288,6 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 			if (!productHasMetaData(pr, "Sales"))
 			{
 				/*Client has no records*/
-				unboughtProducts++;
 				prE = initEntry();
 				strcpy( prE->name, getProductName( pr ) );
 			}
@@ -397,7 +396,7 @@ int getProductSalesPerMonth(Sales_s acc, Product prod, int month, int *nSalesP, 
 			countN++;
 		else
 			countP++;
-		total += getSalePrice( acc->sales[e->records[month][i]] );
+		total += getSalePrice( acc->sales[e->records[month][i]] ) * getSaleQtd( acc->sales[e->records[month][i]] );
 	}
 
 	*nSalesN = countN;
@@ -611,15 +610,12 @@ ResultsList mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCa
 
 StringList productsWithoutPurchases(Sales_s acc)
 {
-	int i,j,ret;
+	int i;
 	StringList sl = initStringList();
 	for (i = 0; i < acc->cntEP; i++)
 	{
-	    for( ret = j = 0; j < 12; j++ )
-            ret += acc->entriesPr[i]->cnt[j];
-
-        if( !ret )
-            insertStringList(sl, acc->entriesPr[i]->name, 7);
+	    if( acc->entriesPr[i]->units == 0 )
+            sl = insertStringList(sl, acc->entriesPr[i]->name, 7);
 	}
 	return sl;
 
@@ -637,9 +633,37 @@ StringList clientsWithoutPurchases(Sales_s acc)
 
 }
 
-char **getMonthFromInt(int i)
+ResultsList ProductsBoughtByClient(Sales_s sales, Client cli)
 {
-	char **month = calloc(10, sizeof (char));
+	ProductCatalog tmp = initProductCatalog();
+	ResultsList rl = initResultsList();
+	Entry_s ent;
+	int i, j, cnt;
+	Sale s;
+	if (!clientHasMetaData(cli, "Sales"))
+		return NULL;
+	ent = sales->entriesCli[getClientMetaData(cli, "Sales")];
+
+	for (i = 0; i < 12; i++)
+	{
+		cnt = 0;
+		for (j = 0; j < ent->cnt[i]; j++)
+		{
+			s = sales->sales[ent->records[i][j]];
+			if (!existsProduct(tmp,getSaleProduct(s)))
+			{
+				insertProduct(tmp, getSaleProduct(s));
+				cnt += getSaleQtd( s );
+			}
+		}
+		rl = insertResultsList(rl, getMonthFromInt(i + 1), cnt);
+	}
+	return rl;
+}
+
+char *getMonthFromInt(int i)
+{
+	char *month = calloc(10, sizeof (char));
 	switch (i)
 	{
 	case 1:
@@ -683,33 +707,7 @@ char **getMonthFromInt(int i)
 	}
 	return month;
 }
-ResultsList ProductsBoughtByClient(Sales_s sales, Client cli)
-{
-	ProductCatalog tmp = initProductCatalog();
-	ResultsList rl = initResultsList();
-	Entry_s ent;
-	int i, j, cnt;
-	Sale s;
-	if (!clientHasMetaData(cli, "Sales"))
-		return NULL;
-	ent = sales->entriesCli[getClientMetaData(cli, "Sales")];
 
-	for (i = 0; i < 12; i++)
-	{
-		cnt = 0;
-		for (j = 0; j < ent->cnt[i]; j++)
-		{
-			s = sales->sales[ent->records[i][j]];
-			if (!existsProduct(tmp,getSaleProduct(s)))
-			{
-				insertProduct(tmp, getSaleProduct(s));
-				cnt++;
-			}
-		}
-		rl = insertResultsList(rl, getMonthFromInt(i + 1), cnt);
-	}
-	return rl;
-}
 /*MONTHLY PURCHASES FUNCTIONS*/
 
 Monthly_Purchases initMonthlyPurchases()

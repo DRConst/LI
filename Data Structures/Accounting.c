@@ -147,8 +147,8 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
     tE->units[ 0 ] += getSaleQtd( sale );
     tE->units[ monthIdx ] += getSaleQtd( sale );
 
-    tE->profit[ 0 ] += getSalePrice( sale );
-    tE->profit[ monthIdx ] += getSalePrice( sale );
+    tE->profit[ 0 ] += getSalePrice( sale ) * getSaleQtd( sale );
+    tE->profit[ monthIdx ] += getSalePrice( sale ) * getSaleQtd( sale );
 
 	if ((clientHasMetaData(cl, "Accounting") != 0) && acc->entriesCli[(i = getClientMetaData(cl, "Accounting"))] != NULL)
 		tE = acc->entriesCli[i];
@@ -180,8 +180,8 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
     tE->units[ 0 ] += getSaleQtd( sale );
     tE->units[ monthIdx ] += getSaleQtd( sale );
 
-    tE->profit[ 0 ] += getSalePrice( sale );
-    tE->profit[ monthIdx ] += getSalePrice( sale );
+    tE->profit[ 0 ] += getSalePrice( sale ) * getSaleQtd( sale );
+    tE->profit[ monthIdx ] += getSalePrice( sale ) * getSaleQtd( sale );
 
 
     return acc;
@@ -189,7 +189,7 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 
 Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 {
-	minHeap h1 = newHeap(acc->cntEC), h2 = newHeap(acc->cntEP);
+	minHeap h1 = newHeap( getClientCount(cCat) ), h2 = newHeap( getProductCount( pCat ) );
 	int letter, i, metaI, lSize, hUsed;
 	char **lists;
 	Client cl; Product pr;
@@ -221,8 +221,9 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 			/*free(lists[i]);*/
 		}
 		/*free(lists);*/
+		freeStringList( sl );
 	}
-	freeStringList(sl);
+
 	for (letter = 0; letter < 26; letter++)
 	{
 		sl = getProductsByPrefix(pCat, 'A' + letter);
@@ -247,8 +248,8 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 			/*free(lists[i]);*/
 		}
 		/*free(lists);*/
+		freeStringList( sl );
 	}
-	freeStringList(sl);
 	hUsed = getUsed(h1);
 	acc->cntEC = hUsed;
 	tCE = malloc(sizeof *tCE * acc->cntEC);
@@ -441,9 +442,9 @@ StringList getAccountingUnboughtProducts( Accounting_s acc )
     tE = acc->entriesPr[i], i-- )
         insertStringList( sl, tE->name, 7 );
 */
+
     for( i = 0; i < acc->cntEP; i++ ) {
         tE = acc->entriesPr[i];
-
         if( !( tE->cntSalesN[0] + tE->cntSalesP[0] ) )
             insertStringList( sl, tE->name, 7 );
     }

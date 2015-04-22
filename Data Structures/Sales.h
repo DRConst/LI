@@ -31,6 +31,7 @@ ResultsList mostSoldProducts(Sales acc, ProductCatalog pCat, ClientCatalog cCat,
 StringList productsWithoutPurchases(Sales acc);
 StringList clientsWithoutPurchases(Sales acc);
 ResultsList ProductsBoughtByClient(Sales sales, Client cli);
+
 Monthly_Purchases initMonthlyPurchases();
 Monthly_Purchases registerMonthlyPurchase(Monthly_Purchases mp, char *product, int cnt);
 char **getMonthlyPurchasesList(Monthly_Purchases mp);
