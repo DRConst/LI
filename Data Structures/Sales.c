@@ -613,8 +613,10 @@ StringList productsWithoutPurchases(Sales_s acc)
 	StringList sl = initStringList();
 	for (i = 0; i < acc->cntEP; i++)
 	{
-	    if( acc->entriesPr[i]->units == 0 )
-            sl = insertStringList(sl, acc->entriesPr[i]->name, 7);
+		if (acc->entriesPr[i]->units == 0)
+			sl = insertStringList(sl, acc->entriesPr[i]->name, 7);
+		else
+			break;
 	}
 	return sl;
 
@@ -673,11 +675,13 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 	Product pr;
 	Elem e;
 	char **lists;
+	char *name;
 	for (i = 0; i < 12; i++)
 	{
 		for (j = 0; j < ent->cnt[i]; j++)
 		{
 			s = sales->sales[ent->records[i][j]];
+			
 			if (!existsProduct(tmp, getSaleProduct(s)))
 			{
 				insertProduct(tmp, getSaleProduct(s));
@@ -703,16 +707,19 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 		{
 			pr = getProduct(tmp, lists[i]);
 			
+	
 			if (!productHasMetaData(pr, "Sales"))
 			{
 				/*Client has no records*/
 			}
 			else
 			{
-				ent = sales->entriesPr[getProductMetaData(pr, "Sales")];
+				/*ent = sales->entriesPr[getProductMetaData(pr, "Sales")];*/
+				
+				insertHeap(h, getProductMetaData(pr, "Sales"), getProductName(pr), sizeof getProductName(pr));
 			}
 
-			insertHeap(h, ent->units, ent, sizeof ent);
+			
 						
 			/*free(lists[i]);*/
 		}
@@ -720,12 +727,11 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 	}
 	freeStringList(sl);
 	hUsed = getUsed(h);
-	for (i = 0; i < hUsed && i < 4; i++)
+	for (i = hUsed - 1; i >= 0 && i > hUsed - 4; i--)
 	{
 		e = extractMin(h);
-		ent = (Entry_s)getElemDataAddr(e);
-		pr = getProduct(tmp, ent->name);
-		rl = insertResultsList(rl, getProductName(pr), getProductMetaData(pr, "Sales"));
+		name = (char*)getElemDataAddr(e);
+		rl = insertResultsList(rl, name, getProductMetaData(getProduct(tmp,name), "Sales"));
 	}
 	return rl;
 }

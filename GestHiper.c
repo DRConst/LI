@@ -618,7 +618,7 @@ void generateCSV( Sales sales, Accounting acc)
 		month[i] = malloc(2);
 		sprintf(month[i], "%d", i + 1);
 	}
-	//paginateResults(2, cnt, 1, 0, 10, l1, "", 10, l2, "");
+	/*paginateResults(2, cnt, 1, 0, 10, l1, "", 10, l2, "");*/
 	listsToCSV("YearlyStats", 3, cnt,month, "Month", l1, "Clients", l2, "Records");
 	printf("\nFile writen to YearlyStats.csv\n");
 }
@@ -695,7 +695,7 @@ void getClientMostWantedProducts( Sales sales , ClientCatalog cCat )
 		return;
 	}
 
-	printf("\n Enter Product: ");
+	printf("\n Enter Client: ");
 	ret = scanf("%s", client);
 
 	if (ret == 0)
