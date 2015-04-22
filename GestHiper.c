@@ -354,7 +354,7 @@ void getUnboughtProducts( Sales sales )
         return;
 	}
 
-    sl = productsWithoutPurchases( sales );
+	sl = productsWithoutPurchases( sales );
 
     paginateResults( 1, getCountStringList( sl), 1, 0, 8, getStringList( sl ), "Products" );
 
@@ -365,8 +365,9 @@ void getUnboughtProducts( Sales sales )
 void getClientSalesCount( Sales sales, ClientCatalog clientCat )
 {
     char client[6] = "";
-
-
+	ResultsList rl;
+	char **lists2;
+	int size, i, *cnt;
 	if( !getClientCount( clientCat ) ) {
         printf("\nClients Catalog Not Initialized.");
         return;
@@ -385,7 +386,17 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
         return;
     }
 
+	rl = ProductsBoughtByClient(sales, getClient(clientCat, client));
+	size = getCountResultsList(rl);
+	lists2 = malloc(sizeof(char*) * size);
+	cnt = getValuesResultsList(rl);
+	for (i = 0; i < size; i++)
+	{
+		lists2[i] = malloc(10);
 
+		sprintf(lists2[i], "%d", cnt[i]);
+	}
+	paginateResults(2, size, 0, 0, 10, getDescsResultsList(rl), "Month", 10, lists2, "Count");
 }
 
 /* Query 6 */
