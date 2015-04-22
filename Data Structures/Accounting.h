@@ -10,9 +10,17 @@
 
 typedef struct accounting *Accounting;
 
+typedef struct csv_stats *CSV_Stats;
+
 Accounting initAccounting();
 Accounting addAccounting( Accounting acc, ClientCatalog cCat, ProductCatalog pCat,  Sale sale );
 Accounting orderAcc( Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
+
+CSV_Stats getMonthsStats(Accounting acc);
+
+char **getList1CsvStats(CSV_Stats s);
+char **getList2CsvStats(CSV_Stats s);
+int getCntCsvStats(CSV_Stats s);
 
 double getMonthProfitByProduct( Accounting acc, Product pr, int month );
 double getMonthProfitByClient( Accounting acc, Client cl, int month );

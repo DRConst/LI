@@ -607,7 +607,20 @@ void getActiveClients(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 /* Query 11 */
 void generateCSV( Sales sales, Accounting acc)
 {
+	CSV_Stats stats = getMonthsStats(acc);
+	char **l1 = getList1CsvStats(stats);
+	char **l2 = getList2CsvStats(stats);
+	char **month = malloc(sizeof(char *) * 12);
+	int cnt = getCntCsvStats(stats), i;
 
+	for (i = 0; i < 12; i++)
+	{
+		month[i] = malloc(2);
+		sprintf(month[i], "%d", i + 1);
+	}
+	//paginateResults(2, cnt, 1, 0, 10, l1, "", 10, l2, "");
+	listsToCSV("YearlyStats", 3, cnt,month, "Month", l1, "Clients", l2, "Records");
+	printf("\nFile writen to YearlyStats.csv\n");
 }
 
 /* Query 12 */

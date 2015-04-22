@@ -16,6 +16,10 @@ typedef struct accounting
 	EntryAcc *entriesCli, *entriesPr;
 }*Accounting_s;
 
+typedef struct csv_stats
+{
+	StringList sl1, sl2;
+}*csv_Stats_s;
 
 EntryAcc initEntryAcc()
 {
@@ -274,6 +278,56 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 	}
 	acc->entriesPr = tPE;
 	return acc;
+}
+
+csv_Stats_s getMonthsStats(Accounting_s acc)
+{
+	int  i, j;
+	int cntCli[12], cntRecords[12], k;
+	csv_Stats_s toRet = malloc(sizeof(*toRet));
+	StringList sl1 = initStringList(), sl2 = initStringList();
+	char buff[64];
+	for (i = 0; i < 12; i++)
+	{
+		cntCli[i] = 0;
+		cntRecords[i] = 0;
+	}
+	for (i = 0; i < acc->cntEC; i++)
+	{
+		for (j = 0; j < 12; j++)
+		{
+			k = acc->entriesCli[i]->cntSalesN[j+1] + acc->entriesCli[i]->cntSalesP[j+1];
+			if (k)
+			{
+				cntRecords[j] += k;
+				cntCli[j]++;
+			}
+		}
+	}
+	for (i = 0; i < 12; i++)
+	{
+		sprintf(buff, "%d", cntCli[i]);
+		sl1 = insertStringList(sl1, buff, sizeof buff);
+		sprintf(buff, "%d", cntRecords[i]);
+		sl2 = insertStringList(sl2, buff, sizeof buff);		
+	}
+	toRet->sl1 = sl1;
+	toRet->sl2 = sl2;
+
+	return toRet;
+}
+
+char **getList1CsvStats(csv_Stats_s s)
+{
+	return getStringList(s->sl1);
+}
+char **getList2CsvStats(csv_Stats_s s)
+{
+	return getStringList(s->sl2);
+}
+int getCntCsvStats(csv_Stats_s s)
+{
+	return getCountStringList(s->sl1);
 }
 
 int getMonthSalesPByProduct( Accounting_s acc, Product pr, int month )
