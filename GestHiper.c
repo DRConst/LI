@@ -1044,7 +1044,7 @@ void paginateResults( int nLists, int showIdx, int postArgs, ... )
 
 
 
-        sprintf( buf, "|%.*s|", strlen( header ) - 3, MAX_SEPARATOR );
+        sprintf( buf, "|%.*s|", (int)(strlen( header ) - 3), MAX_SEPARATOR );
 /*
         strcat( header, buf );
         strcat( body, buf );
@@ -1096,9 +1096,9 @@ void genColumn( char *ret, char *s, int max )
     n = 1 + (max/2);
 
     sprintf( ret, "|%*s%*s",
-        n + strlen(s)/2,
+		(int)n + strlen(s) / 2,
         s,
-        n - strlen(s)/2,
+		(int)n - strlen(s) / 2,
     "");
 
 }
