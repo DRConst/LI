@@ -504,7 +504,7 @@ ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog pCat, 
 			cnt++;
 		}
 	}
-	
+
 
 	for (letter = 0; letter < 26; letter++)
 	{
@@ -575,7 +575,7 @@ ResultsList mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCa
 	Entry_s ent;
 	ClientCatalog tmp = initClientCatalog();
 	char *buff = calloc(50, sizeof (char));
-	for (i = acc->cntEP - 1, N; i > 0 && N > 0; i--, N--)
+	for (i = acc->cntEP - 1, N; i >= 0 && N > 0; i--, N--)
 	{
 		ent = acc->entriesPr[i];
 		/*
@@ -673,7 +673,7 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 	Entry_s ent = sales->entriesCli[index];
 	Sale s;
 	Product pr;
-	Elem e;
+	Elem *e;
 	char **lists;
 	char *name;
 	for (i = 0; i < 12; i++)
@@ -681,7 +681,7 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 		for (j = 0; j < ent->cnt[i]; j++)
 		{
 			s = sales->sales[ent->records[i][j]];
-			
+
 			if (!existsProduct(tmp, getSaleProduct(s)))
 			{
 				insertProduct(tmp, getSaleProduct(s));
@@ -706,8 +706,8 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 		for (i = 0; i < lSize; i++)
 		{
 			pr = getProduct(tmp, lists[i]);
-			
-	
+
+
 			if (!productHasMetaData(pr, "Sales"))
 			{
 				/*Client has no records*/
@@ -715,24 +715,49 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 			else
 			{
 				/*ent = sales->entriesPr[getProductMetaData(pr, "Sales")];*/
-				
+
 				insertHeap(h, getProductMetaData(pr, "Sales"), getProductName(pr), sizeof getProductName(pr));
 			}
 
-			
-						
+
+
 			/*free(lists[i]);*/
 		}
 		/*free(lists);*/
 	}
 	freeStringList(sl);
 	hUsed = getUsed(h);
-	for (i = hUsed - 1; i >= 0 && i > hUsed - 4; i--)
+	e = (Elem*)malloc( sizeof(*e) * hUsed );
+
+	for( i = 0; i < hUsed; i++ )
+        e[i] = extractMin( h );
+
+    name = (char*)getElemDataAddr( e [ hUsed - 1] );
+    rl = insertResultsList( rl, name, getProductMetaData( getProduct( tmp, name ), "Sales" ) );
+
+    name = (char*)getElemDataAddr( e [ hUsed - 2] );
+    rl = insertResultsList( rl, name, getProductMetaData( getProduct( tmp, name ), "Sales" ) );
+
+    name = (char*)getElemDataAddr( e [ hUsed - 3] );
+    rl = insertResultsList( rl, name, getProductMetaData( getProduct( tmp, name ), "Sales" ) );
+    /*
+	for ( j = 0; i = hUsed - 1; i >= 0; i--, j++)
 	{
-		e = extractMin(h);
+		e[j] = extractMin(h);
+
 		name = (char*)getElemDataAddr(e);
 		rl = insertResultsList(rl, name, getProductMetaData(getProduct(tmp,name), "Sales"));
 	}
+	*/
+
+    for( i = 0; i < hUsed; i++ )
+        free( e[i] );
+
+    free( e );
+
+    h = freeHeap( h );
+
+
 	return rl;
 }
 char *getMonthFromInt(int i)
