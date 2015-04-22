@@ -413,11 +413,10 @@ int getProductSalesPerMonth(Sales_s acc, Product prod, int month, int *nSalesP, 
 }
 
 
-StringList productBuyersN(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, char *product)
+StringList productBuyersN(Sales_s acc, ProductCatalog pCat, char *product)
 {
 	StringList toRet = initStringList();
 	ClientCatalog tmpP = initClientCatalog();
-	ClientCatalog tmpN = initClientCatalog();
 	Product pr = getProduct(pCat, product);
 	int index = getProductMetaData(pr, "Sales");
 	int i = 0, j;
@@ -441,10 +440,9 @@ StringList productBuyersN(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, 
 	}
 	return toRet;
 }
-StringList productBuyersP(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, char *product)
+StringList productBuyersP(Sales_s acc, ProductCatalog pCat, char *product)
 {
 	StringList toRet = initStringList();
-	ClientCatalog tmpP = initClientCatalog();
 	ClientCatalog tmpN = initClientCatalog();
 	Product pr = getProduct(pCat, product);
 	int index = getProductMetaData(pr, "Sales");
@@ -469,7 +467,7 @@ StringList productBuyersP(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, 
 	return toRet;
 }
 
-ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, char *client, int month)
+ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ClientCatalog cCat, char *client, int month)
 {
 	StringList sl = initStringList();
 	ProductCatalog tmp = initProductCatalog();	Product pr;
@@ -553,7 +551,7 @@ ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog pCat, 
 
 }
 
-StringList yearRoundClients(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
+StringList yearRoundClients( Sales_s acc )
 {
 	StringList toRet = initStringList();
 	int i = acc->cntEC - 1, j,k;
@@ -573,14 +571,13 @@ StringList yearRoundClients(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat
 	return toRet;
 }
 
-Query12 mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, int N)
+Query12 mostSoldProducts(Sales_s acc, int N)
 {
     int i, j, k, counter = 0;
 	int cli = 0;
 	Entry_s ent;
 	ClientCatalog tmp;
 	Sale s;
-	char *buff = calloc(50, sizeof (char));
 	Query12 q = malloc(sizeof(*q));
 	q->sl = initStringList();
 	q->uniqueCli = malloc(sizeof(int) * N);
@@ -671,7 +668,6 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 	StringList sl;
 	ResultsList rl = initResultsList();
 	minHeap h;
-	ResultsList toRet = initResultsList();
 	int index = getClientMetaData(cli, "Sales"), cnt, i, j, letter, lSize, hUsed;
 	Entry_s ent = sales->entriesCli[index];
 	Sale s;
