@@ -52,7 +52,7 @@ Product getProduct(ProductCatalog_s cat, char *product)
 {
 	Product pr = malloc(sizeof(struct product));
 	int key = atoi(product + 2);
-	Node n = getNode(cat->Cat[product[0] - 'A'][product[1] - 'A'], key);
+	Node n = getNode(cat->Cat[toupper(product[0]) - 'A'][toupper(product[1]) - 'A'], key);
 	if (!n)
 		return NULL;
 

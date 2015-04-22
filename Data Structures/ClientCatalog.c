@@ -66,7 +66,7 @@ Client getClient(ClientCatalog_s cat, char *client)
 {
 	Client cl = malloc(sizeof(struct client));
 	int key = atoi(client + 2);
-	Node n = getNode(cat->Cat[client[0] - 'A'][client[1] - 'A'], key);
+	Node n = getNode(cat->Cat[toupper(client[0]) - 'A'][toupper(client[1]) - 'A'], key);
 	if (!n)
 		return NULL;
 

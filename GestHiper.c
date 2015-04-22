@@ -710,13 +710,14 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... )
     char ***lists;
     char **titles;
     char buff[200];
+	char *file;
     int i, j;
     FILE *csvFile;
 
     if( !strlen( fileName ) )
         return 0;
-
-    strcat( fileName, ".csv" );
+	file = malloc(strlen(fileName) + 5);
+	sprintf(file, "%s.csv", fileName);
 
 	lists = (char***)malloc( sizeof( char ** ) * nLists );
 	titles = (char**)malloc( sizeof(char*) * nLists );
@@ -729,7 +730,7 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... )
         titles[i] = va_arg( args, char* );
 	}
 
-    if( !(csvFile = fopen( fileName, "w" ) ) )
+	if (!(csvFile = fopen(file, "w")))
        return 0;
 
     /* Settings Titles */
@@ -754,10 +755,12 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... )
         fputs( buff, csvFile );
     }
 
-    for( i = 0; i < nLists; i++ )
-        free( titles[i] );
 
     free( titles );
+
+	free(lists);
+
+	free(file);
 
     fclose( csvFile );
 
