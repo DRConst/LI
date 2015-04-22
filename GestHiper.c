@@ -11,14 +11,14 @@ void getSalesInterval( Sales sales );
 void getProductBuyers(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
 void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
 void getActiveClients(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
-void generateCSV( Sales sales, Accounting acc );
+void generateCSV( Accounting acc );
 void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
 void getClientMostWantedProducts( Sales sales, ClientCatalog cCat );
 void getAllInactive( Sales sales );
 
 int listsToCSV( char *fileName, int nLists, int listSize, ... );
 
-void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... );
+void paginateResults( int nLists, int showIdx, int postArgs, ... );
 void genColumn( char *ret, char *s, int max );
 void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales );
 
@@ -101,7 +101,7 @@ int main()
                 break;
 
                 case 11:
-                    generateCSV( sales, acc );
+                    generateCSV( acc );
                 break;
 
                 case 12:
@@ -277,7 +277,7 @@ void ProductsByPrefix( ProductCatalog prodCat )
 	if( c >= 'A' && c <= 'Z' ) {
         l = getProductsByPrefix( prodCat, c );
         if( getCountStringList( l ) )
-            paginateResults( 1, getCountStringList( l ), 1, 0, 8, getStringList( l ), "Produtos" );
+            paginateResults( 1, 1, 0, 8, getStringList( l ), "Produtos", getCountStringList( l ) );
         else
             printf( "\nNo Products By That Prefix" );
 
@@ -358,7 +358,10 @@ void getUnboughtProducts( Accounting acc )
 
     sl = getAccountingUnboughtProducts( acc );
 
-    paginateResults( 1, getCountStringList( sl), 1, 0, 8, getStringList( sl ), "Products" );
+    if( !getCountStringList( sl ) )
+        printf( "\nNo Unbought Products Found." );
+    else
+        paginateResults( 1, 1, 0, 8, getStringList( sl ), "Products", getCountStringList( sl) );
 
     freeStringList( sl );
 }
@@ -390,6 +393,13 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
 
 	rl = ProductsBoughtByClient(sales, getClient(clientCat, client));
 	size = getCountResultsList(rl);
+
+    if( !size ) {
+        printf("\nNo Products Found for that Client.");
+        freeResultsList( rl );
+        return;
+    }
+
 	lists2 = malloc(sizeof(char*) * size);
 	cnt = getValuesResultsList(rl);
 	for (i = 0; i < size; i++)
@@ -398,7 +408,7 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
 
 		sprintf(lists2[i], "%d", cnt[i]);
 	}
-	paginateResults(2, size, 0, 0, 10, getDescsResultsList(rl), "Month", 10, lists2, "Count");
+	paginateResults(2, 0, 0, 10, getDescsResultsList(rl), "Month", size, 10, lists2, "Count", size );
 
 	printf("Save to File?(Y/N): ");
 	if( getchar() == 'Y' ) {
@@ -409,6 +419,8 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
 
         getchar();
 	}
+
+	freeResultsList( rl );
 }
 
 /* Query 6 */
@@ -433,7 +445,7 @@ void ClientsByPrefix( ClientCatalog clientCat )
 	if( c >= 'A' && c <= 'Z' ) {
         l = getClientsByPrefix( clientCat, c );
 		if( getCountStringList( l ) )
-            paginateResults( 1, getCountStringList( l ), 1, 0, 8, getStringList( l ), "Clientes" );
+            paginateResults( 1, 1, 0, 8, getStringList( l ), "Clientes", getCountStringList( l ) );
         else
             printf("\nNo Clients By That Prefix");
 
@@ -493,8 +505,10 @@ void getProductBuyers( Sales sales , ProductCatalog pCat, ClientCatalog cCat )
 	printf("\n Enter Product: ");
 	ret = scanf("%s", product);
 
-	if (ret == 0)
+	if ( !existsProduct( pCat, product ) ) {
+        printf("\nNo Product by that Name.");
 		return;
+	}
 
 	sl1 = productBuyersN(sales, pCat, cCat, product);
 	sl2 = productBuyersP(sales, pCat, cCat, product);
@@ -504,8 +518,13 @@ void getProductBuyers( Sales sales , ProductCatalog pCat, ClientCatalog cCat )
 	cntN = getCountStringList(sl1);
 	cntP = getCountStringList(sl2);
 
-	paginateResults(1, cntN, 1, 0, 10, listN, "Type N");
-	paginateResults(1, cntP, 1, 0, 10, listP, "Type P");
+    if( !cntN && !cntP )
+        printf("\nNo Buyers Found for that Product");
+    else
+        paginateResults(2, 1, 0, 10, listN, "Type N", cntN, 10, listP, "Type P", cntP );
+
+    freeStringList( sl1 );
+    freeStringList( sl2 );
 }
 
 /* Query 9 */
@@ -556,6 +575,13 @@ void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 	lists = getDescsResultsList(mp);
 	cnt = getValuesResultsList(mp);
 	size = getCountResultsList(mp);
+
+	if( !cnt ) {
+        printf("\nNo Products Found by that Client.");
+        freeResultsList( mp );
+        return;
+	}
+
 	lists2 = malloc(sizeof(char*) * size);
 	for (i = 0; i < size; i++)
 	{
@@ -563,7 +589,7 @@ void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 
 		sprintf(lists2[i], "%d", cnt[i]);
 	}
-	paginateResults(2, size, 1, 0, 10, lists, "Products", 10 , lists2, "Amount");
+	paginateResults(2, 1, 0, 10, lists, "Products", size, 10 , lists2, "Amount", size);
 	freeResultsList(mp);
 	for (i = 0; i < size; i++)
 		free(lists2[i]);
@@ -601,25 +627,49 @@ void getActiveClients(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
     if( !size )
         printf("No Active Clients Found.");
     else
-        paginateResults( 1, size, 1, 0, 6, list, "Clients" );
+        paginateResults( 1, 1, 0, 6, list, "Clients", size );
+
+    freeStringList( sl );
 }
 
 /* Query 11 */
-void generateCSV( Sales sales, Accounting acc)
+void generateCSV( Accounting acc )
 {
-	CSV_Stats stats = getMonthsStats(acc);
-	char **l1 = getList1CsvStats(stats);
-	char **l2 = getList2CsvStats(stats);
-	char **month = malloc(sizeof(char *) * 12);
-	int cnt = getCntCsvStats(stats), i;
+	CSV_Stats stats;
+	char **l1;
+	char **l2;
+	char **month;
+	int cnt, i;
+
+
+    if( !acc ) {
+        printf("\nAccounting Structure Not Initialized.");
+        return;
+    }
+
+    stats = getMonthsStats( acc );
+    cnt = getCntCsvStats( stats );
+
+    if( !cnt ) {
+        printf("\nAccounting Structure is Empty.");
+        freeCsvStats( stats );
+        return;
+    }
+
+    l1 = getList1CsvStats( stats );
+    l2 = getList2CsvStats( stats );
+
+    month = malloc( sizeof(char*) * 12 );
 
 	for (i = 0; i < 12; i++)
 	{
 		month[i] = malloc(2);
 		sprintf(month[i], "%d", i + 1);
 	}
-	/*paginateResults(2, cnt, 1, 0, 10, l1, "", 10, l2, "");*/
+
 	listsToCSV("YearlyStats", 3, cnt,month, "Month", l1, "Clients", l2, "Records");
+	freeCsvStats( stats );
+
 	printf("\nFile writen to YearlyStats.csv\n");
 }
 
@@ -649,15 +699,23 @@ void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 
 	do
 	{
-		printf("\n Enter Ammount: ");
+		printf("\n Enter Amount: ");
 		ret = scanf("%d", &cnt);
 	} while (ret < 1);
 
 	q = mostSoldProducts(sales, pCat, cCat, cnt);
+	size = getQ12Count(q);
+
+	if( !size ) {
+        printf("\nNo Sold Products Registered on Accounting.");
+        freeQ12( q );
+        return;
+	}
+
 	list = getQ12StringList(q);
 	iList = getQ12UniqueCli(q);
 	iList2 = getQ12Units(q);
-	size = getQ12Count(q);
+
 	list2 = malloc(sizeof(char*)*size);
 	for (i = 0; i < size; i++)
 	{
@@ -675,7 +733,8 @@ void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
     if( !size)
         printf("No Products Found.");
     else
-		paginateResults(3, size, 1, 0, 8, list, "Products", 8, list3, "Count", 8, list2, "Uniques");
+		paginateResults(3, 1, 0, 8, list, "Products", size, 8, list3, "Count", size, 8, list2, "Uniques", size);
+
 	freeQ12(q);
 	for (i = 0; i < size; i++)
 	{
@@ -687,6 +746,7 @@ void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 		free(list3[i]);
 	}
 	free(list3);
+
 }
 
 /* Query 13 */
@@ -714,11 +774,22 @@ void getClientMostWantedProducts( Sales sales , ClientCatalog cCat )
 	if (ret == 0)
 		return;
 	cli = getClient(cCat, client);
-	if (!cli)
+
+	if (!cli) {
+        printf("\nNo Client by that Name.");
 		return;
+	}
+
 	rl = Top3ProductsForClient(sales, cli);
-	list = getDescsResultsList(rl);
 	cnt = getCountResultsList(rl);
+
+	if( !cnt ) {
+        printf("\nNo Products Found for that Client.");
+        freeResultsList( rl );
+        return;
+	}
+
+	list = getDescsResultsList(rl);
 	res = getValuesResultsList(rl);
 	cntL = malloc(sizeof(char*)* cnt);
 	for (i = 0; i < 12; i++)
@@ -726,7 +797,14 @@ void getClientMostWantedProducts( Sales sales , ClientCatalog cCat )
 		cntL[i] = malloc(10);
 		sprintf(cntL[i], "%d", res[i]);
 	}
-	paginateResults(2, cnt, 1, 0, 10, list, "Product", 10, cntL, "Count");
+	paginateResults(2, 1, 0, 10, list, "Product", cnt, 10, cntL, "Count", cnt);
+
+	for( i = 0; i < 12; i++ )
+        free( cntL[i] );
+
+    free( cntL );
+
+	freeResultsList( rl );
 }
 
 /* Query 14 */
@@ -752,10 +830,10 @@ void getAllInactive( Sales sales )
         return;
     }
 
-	paginateResults( 2, ( (sz1 > sz2) ? sz1 : sz2),
+	paginateResults( 2,
                  0, 0,
-                 8, getStringList( s1 ), "Products",
-                 6, getStringList( s2 ), "Clients"
+                 8, getStringList( s1 ), "Products", sz1,
+                 6, getStringList( s2 ), "Clients", sz2
     );
 }
 
@@ -831,16 +909,17 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... )
 
 	paginateResults(
 		2, // nLists
-		50, // eachListSize
 		0, // showIdx
 		2, // nPostArgs, shown on footer
             columnSize1, // Max number of chars per entry, title included, works best for pairs
 			results1, // firstList
 			r1Title, // firstList's title shown on header
+			countR1  // n lines in results1
 
             columnSize2, // Max numbe....
 			results2, // secondList
 			r2Title, // secondList's title shown on header
+			countR2, // n lines in results2
 
 			postArg1, // string, shown on footer
 			postArg2, // string, shown on footer
@@ -850,7 +929,7 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... )
 
 #define CEILING_POS( X, Y ) (1+((X - 1) / Y) )
 
-void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
+void paginateResults( int nLists, int showIdx, int postArgs, ... )
 {
 	char header[300] = "";
 	char line[300] = "";
@@ -860,15 +939,16 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 	int i, j, nPage;
 	va_list args;
 	int curPage = 0;
-/*	int maxPage = ceil( (listSize / (float)PER_PAGE ) ); */
-	int maxPage = CEILING_POS( listSize, (float)PER_PAGE );
+	int maxPage = 0;
+	int maxLen = 0;
 	char input[10] = "";
 	char buf[500] = "";
 	char idx[6] = "";
-	int *columnSize;
+	int *columnSize, *listSize;
 
 
     columnSize = (int*)malloc( sizeof(int) * nLists );
+    listSize = (int*)malloc( sizeof(int) * nLists );
 	lists = (char***)malloc( sizeof( char ** ) * nLists );
 
     fflush( stdin );
@@ -887,8 +967,15 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 
         genColumn( buf, va_arg( args, char*), columnSize[i] );
 
+        listSize[i] = va_arg( args, int );
+
+        if( listSize[i] > maxLen )
+            maxLen = listSize[i];
+
         sprintf( header, "%s%s", header, buf );
 	}
+
+	maxPage = CEILING_POS( maxLen, (float)PER_PAGE );
 
 	strcat( header, "|\n");
 
@@ -904,7 +991,7 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 		strcpy( body, "" );
 		strcpy( footer, "" );
 		for( i = curPage * PER_PAGE;
-			i < listSize && i < ( ( curPage + 1 ) * PER_PAGE ) ; i++ )
+			i < maxLen && i < ( ( curPage + 1 ) * PER_PAGE ) ; i++ )
 			{
             strcpy( line, "" );
 			if( showIdx ) {
@@ -915,13 +1002,18 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
 
 			for( j = 0; j < nLists; j++ ) {
                 strcpy( buf, "");
-                genColumn( buf, lists[j][i], columnSize[j] );
+
+                if( i < listSize[j] )
+                    genColumn( buf, lists[j][i], columnSize[j] );
+                else
+                    genColumn( buf, "-", columnSize[j] );
+
                 strcat( line, buf );
 			}
 			strcat( line, "|\n" );
 			strcat( body, line );
 
-        sprintf( footer, " page %d/%d | %d/%d shown | %d per page", curPage+1, maxPage, i + 1, listSize, PER_PAGE );
+        sprintf( footer, " page %d/%d | %d/%d shown | %d per page", curPage+1, maxPage, i + 1, maxLen, PER_PAGE );
 
 		}
 
@@ -975,6 +1067,8 @@ void paginateResults( int nLists, int listSize, int showIdx, int postArgs, ... )
     free( lists );
 
 	free( columnSize );
+
+	free( listSize );
 
 }
 

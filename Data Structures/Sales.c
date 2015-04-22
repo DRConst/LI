@@ -575,16 +575,17 @@ StringList yearRoundClients(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat
 
 Query12 mostSoldProducts(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat, int N)
 {
-	Query12 q = malloc(sizeof(*q));
-	q->sl = initStringList();
-	q->uniqueCli = malloc(sizeof(int) * N);
-	q->cnt = malloc(sizeof(int) * N);
-	int i, j, k, counter = 0;
+    int i, j, k, counter = 0;
 	int cli = 0;
 	Entry_s ent;
 	ClientCatalog tmp;
 	Sale s;
 	char *buff = calloc(50, sizeof (char));
+	Query12 q = malloc(sizeof(*q));
+	q->sl = initStringList();
+	q->uniqueCli = malloc(sizeof(int) * N);
+	q->cnt = malloc(sizeof(int) * N);
+
 	for (i = acc->cntEP - 1, N; i >= 0 && N > 0; i--, N--)
 	{
 		tmp = initClientCatalog();

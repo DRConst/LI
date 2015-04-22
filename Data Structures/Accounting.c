@@ -309,7 +309,7 @@ csv_Stats_s getMonthsStats(Accounting_s acc)
 		sprintf(buff, "%d", cntCli[i]);
 		sl1 = insertStringList(sl1, buff, sizeof buff);
 		sprintf(buff, "%d", cntRecords[i]);
-		sl2 = insertStringList(sl2, buff, sizeof buff);		
+		sl2 = insertStringList(sl2, buff, sizeof buff);
 	}
 	toRet->sl1 = sl1;
 	toRet->sl2 = sl2;
@@ -490,12 +490,6 @@ StringList getAccountingUnboughtProducts( Accounting_s acc )
 
 
     i = acc->cntEP;
-/*
-    for( tE = acc->entriesPr[ i = acc->cntEP - 1 ];
-        i && ( tE->cntSalesN[0] + tE->cntSalesP[0]  ) ;
-    tE = acc->entriesPr[i], i-- )
-        insertStringList( sl, tE->name, 7 );
-*/
 
     for( i = 0; i < acc->cntEP; i++ ) {
         tE = acc->entriesPr[i];
