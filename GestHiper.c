@@ -13,7 +13,7 @@ void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
 void getActiveClients(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
 void generateCSV( Sales sales, Accounting acc );
 void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
-void getClientMostWantedProducts( Sales sales );
+void getClientMostWantedProducts( Sales sales, ClientCatalog cCat );
 void getAllInactive( Sales sales );
 
 int listsToCSV( char *fileName, int nLists, int listSize, ... );
@@ -109,7 +109,7 @@ int main()
                 break;
 
                 case 13:
-                    getClientMostWantedProducts( sales );
+                    getClientMostWantedProducts( sales , clientCat);
                 break;
 
                 case 14:
@@ -677,9 +677,43 @@ void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 }
 
 /* Query 13 */
-void getClientMostWantedProducts( Sales sales )
+void getClientMostWantedProducts( Sales sales , ClientCatalog cCat )
 {
+	char client[8];
+	int ret;
+	char **list, **cntL;
+	int cnt, *res, i;
+	ResultsList rl;
+	Client cli;
+	if (!getSalesCount(sales)) {
+		printf("\nSales Structure Not Initialized.");
+		return;
+	}
 
+	if (!getClientCount(cCat)) {
+		printf("\nClients Catalog Not Initialized.");
+		return;
+	}
+
+	printf("\n Enter Product: ");
+	ret = scanf("%s", client);
+
+	if (ret == 0)
+		return;
+	cli = getClient(cCat, client);
+	if (!cli)
+		return;
+	rl = Top3ProductsForClient(sales, cli);
+	list = getDescsResultsList(rl);
+	cnt = getCountResultsList(rl);
+	res = getValuesResultsList(rl);
+	cntL = malloc(sizeof(char*)* cnt);
+	for (i = 0; i < 12; i++)
+	{
+		cntL[i] = malloc(10);
+		sprintf(cntL[i], "%d", res[i]);
+	}
+	paginateResults(2, cnt, 1, 0, 10, list, "Product", 10, cntL, "Count");
 }
 
 /* Query 14 */

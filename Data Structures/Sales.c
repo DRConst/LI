@@ -485,27 +485,26 @@ ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog pCat, 
 	if (!e)
 		return NULL;
 	h = newHeap(acc->cntEP);
-	for (i = 0; i < 12; i++)
+	i = month;
+	for (j = 0; j < e->cnt[i]; j++)
 	{
-		for (j = 0; j < e->cnt[i]; j++)
+		s = acc->sales[e->records[i][j]];
+		if (existsProduct(tmp, getSaleProduct( s ) ))
 		{
-			s = acc->sales[e->records[i][j]];
-			if (existsProduct(tmp, getSaleProduct( s ) ))
-			{
-				pr = getProduct(tmp, getSaleProduct( s ) );
-				/*letter = *(*(int**)pr->data);*/
-				setProductMetaData(pr, getProductMetaData(pr, "Sales") + 1, "Sales");
-			}
-			else
-			{
-				insertProduct(tmp, getSaleProduct( s ) );
-				pr = getProduct(tmp, getSaleProduct( s ) );
-				setProductMetaData(pr, 1, "Sales");
-				pr = getProduct(tmp, getSaleProduct( s ) );
-				cnt++;
-			}
+			pr = getProduct(tmp, getSaleProduct( s ) );
+			/*letter = *(*(int**)pr->data);*/
+			setProductMetaData(pr, getProductMetaData(pr, "Sales") + getSaleQtd(s), "Sales");
+		}
+		else
+		{
+			insertProduct(tmp, getSaleProduct( s ) );
+			pr = getProduct(tmp, getSaleProduct( s ) );
+			setProductMetaData(pr, getSaleQtd(s), "Sales");
+			pr = getProduct(tmp, getSaleProduct( s ) );
+			cnt++;
 		}
 	}
+	
 
 	for (letter = 0; letter < 26; letter++)
 	{
@@ -540,7 +539,7 @@ ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ProductCatalog pCat, 
 		lists[cnt] = getElemDataAddr(el);
 		tmpMP[cnt++] = getElemKey(el);
 	}
-	for (i = cnt - 1; i > 0; i--)
+	for (i = cnt - 1; i >= 0; i--)
 	{
 		insertResultsList(mp, lists[i], tmpMP[i]);
 	}
@@ -661,6 +660,75 @@ ResultsList ProductsBoughtByClient(Sales_s sales, Client cli)
 	return rl;
 }
 
+ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
+{
+	ProductCatalog tmp = initProductCatalog();
+	StringList sl;
+	ResultsList rl = initResultsList();
+	minHeap h;
+	ResultsList toRet = initResultsList();
+	int index = getClientMetaData(cli, "Sales"), cnt, i, j, letter, lSize, hUsed;
+	Entry_s ent = sales->entriesCli[index];
+	Sale s;
+	Product pr;
+	Elem e;
+	char **lists;
+	for (i = 0; i < 12; i++)
+	{
+		for (j = 0; j < ent->cnt[i]; j++)
+		{
+			s = sales->sales[ent->records[i][j]];
+			if (!existsProduct(tmp, getSaleProduct(s)))
+			{
+				insertProduct(tmp, getSaleProduct(s));
+				pr = getProduct(tmp, getSaleProduct(s));
+				setProductMetaData(pr, getSaleQtd(s), "Sales");
+			}
+			else
+			{
+				pr = getProduct(tmp, getSaleProduct(s));
+				cnt = getProductMetaData(pr, "Sales");
+				cnt += getSaleQtd(s);
+				setProductMetaData(pr, cnt, "Sales");
+			}
+		}
+	}
+	h = newHeap(getProductCount(tmp));
+	for (letter = 0; letter < 26; letter++)
+	{
+		sl = getProductsByPrefix(tmp, 'A' + letter);
+		lSize = getCountStringList(sl);
+		lists = getStringList(sl);
+		for (i = 0; i < lSize; i++)
+		{
+			pr = getProduct(tmp, lists[i]);
+			
+			if (!productHasMetaData(pr, "Sales"))
+			{
+				/*Client has no records*/
+			}
+			else
+			{
+				ent = sales->entriesPr[getProductMetaData(pr, "Sales")];
+			}
+
+			insertHeap(h, ent->units, ent, sizeof ent);
+						
+			/*free(lists[i]);*/
+		}
+		/*free(lists);*/
+	}
+	freeStringList(sl);
+	hUsed = getUsed(h);
+	for (i = 0; i < hUsed && i < 4; i++)
+	{
+		e = extractMin(h);
+		ent = (Entry_s)getElemDataAddr(e);
+		pr = getProduct(tmp, ent->name);
+		rl = insertResultsList(rl, getProductName(pr), getProductMetaData(pr, "Sales"));
+	}
+	return rl;
+}
 char *getMonthFromInt(int i)
 {
 	char *month = calloc(10, sizeof (char));
