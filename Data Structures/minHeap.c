@@ -44,10 +44,11 @@ struct heap_str{
 minHeap freeHeap(minHeap h)
 {
 	int  i;
-	for (i = 0; i < h->size; i++)
+	for (i = 0; i < h->size && i < h->used; i++)
 	{
 		free(h->values[i]);
 	}
+	free(h->values);
 	free(h);
 	return NULL;
 }

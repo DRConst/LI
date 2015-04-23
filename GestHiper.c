@@ -936,14 +936,14 @@ void getClientMostWantedProducts( Sales sales , ClientCatalog cCat )
 	list = getDescsResultsList(rl);
 	res = getValuesResultsList(rl);
 	cntL = malloc(sizeof(char*)* cnt);
-	for (i = 0; i < 12; i++)
+	for (i = 0; i < cnt; i++)
 	{
 		cntL[i] = malloc(10);
 		sprintf(cntL[i], "%d", res[i]);
 	}
 	paginateResults(2, 1, 1, 10, list, "Product", cnt, 10, cntL, "Count", cnt, timeS );
 
-	for( i = 0; i < 12; i++ )
+	for( i = 0; i < cnt; i++ )
         free( cntL[i] );
 
     free( cntL );
