@@ -12,7 +12,7 @@ void getProductBuyers(Sales sales, ProductCatalog pCat );
 void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
 void getActiveClients( Sales sales );
 void generateCSV( Accounting acc );
-void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat);
+void getMostWantedProducts(Sales sales );
 void getClientMostWantedProducts( Sales sales, ClientCatalog cCat );
 void getAllInactive( Sales sales );
 
@@ -106,7 +106,7 @@ int main()
                 break;
 
                 case 12:
-                    getMostWantedProducts( sales, prodCat, clientCat );
+                    getMostWantedProducts( sales );
                 break;
 
                 case 13:
@@ -273,7 +273,7 @@ void ProductsByPrefix( ProductCatalog prodCat )
 	char c;
 	StringList l;
 	clock_t tStart;
-	char timeS[20] = "asd";
+	char timeS[20] = "";
 
 
 	fflush( stdin );
@@ -288,15 +288,17 @@ void ProductsByPrefix( ProductCatalog prodCat )
 
 	c = toupper( c );
 
-    /* Time Start */
-    tStart = clock();
 
 	if( c >= 'A' && c <= 'Z' ) {
+
+        /* Time Start */
+        tStart = clock();
+
         l = getProductsByPrefix( prodCat, c );
 
-        /* Time End
+        /* Time End */
         parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
-*/
+
         if( getCountStringList( l ) )
             paginateResults( 1, 1, 1, 8, getStringList( l ), "Produtos", getCountStringList( l ), timeS );
         else
@@ -319,6 +321,10 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
     int nSalesP, nSalesN, count;
     double total;
 
+    clock_t tStart;
+    char timeS[20] = "";
+
+
 	if( !getProductCount( prodCat ) ) {
         printf("\nProducts Catalog Not Initialized.");
         return;
@@ -339,6 +345,7 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
     printf("\n Enter Month[1,12]: ");
     ret = scanf("%d", &nMonth );
 
+
     if( !ret || ( ( nMonth < 1 ) || ( nMonth > 12 ) ) ) {
         printf("\nInvalid Month");
         return;
@@ -351,11 +358,17 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
 
     pr = getProduct( prodCat, prod );
 
+    /* Time Start */
+    tStart = clock();
+
     nSalesP = getMonthSalesPByProduct( acc, pr, nMonth );
     nSalesN = getMonthSalesNByProduct( acc, pr, nMonth );
     total = getMonthProfitByProduct( acc, pr, nMonth );
 
     count = nSalesP + nSalesN;
+
+    /* Time End */
+    parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) );
 
     if( !count ) {
         printf("\n No Sales found for given Product/Month");
@@ -363,6 +376,8 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
     }
 
     printf("Product: %s\n\t Normal: %d\n\t Promo: %d\n\t Total: %d\n\tProfit: %.2f", prod, nSalesN, nSalesP, count, total );
+    printf("\nCompleted in %s", timeS );
+
     getchar();
 
 }
@@ -371,18 +386,26 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
 void getUnboughtProducts( Accounting acc )
 {
     StringList sl;
+    clock_t tStart;
+    char timeS[20] = "";
 
     if( !getAccountingCount( acc ) ) {
         printf("\nAccounting Structure Not Initialized.");
         return;
 	}
 
+	/* Time Start */
+	tStart = clock();
+
     sl = getAccountingUnboughtProducts( acc );
+
+    /* Time End */
+    parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
 
     if( !getCountStringList( sl ) )
         printf( "\nNo Unbought Products Found." );
     else
-        paginateResults( 1, 1, 0, 8, getStringList( sl ), "Products", getCountStringList( sl) );
+        paginateResults( 1, 1, 1, 8, getStringList( sl ), "Products", getCountStringList( sl), timeS );
 
     freeStringList( sl );
 }
@@ -394,6 +417,11 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
 	ResultsList rl;
 	char **lists2;
 	int size, i, *cnt;
+
+	clock_t tStart;
+	char timeS[20] = "";
+
+
 	if( !getClientCount( clientCat ) ) {
         printf("\nClients Catalog Not Initialized.");
         return;
@@ -412,7 +440,14 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
         return;
     }
 
+    /* Time Start */
+    tStart = clock();
+
 	rl = ProductsBoughtByClient(sales, getClient(clientCat, client));
+
+    /* Time End */
+    parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
+
 	size = getCountResultsList(rl);
 
     if( !size ) {
@@ -429,13 +464,23 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
 
 		sprintf(lists2[i], "%d", cnt[i]);
 	}
-	paginateResults(2, 0, 0, 10, getDescsResultsList(rl), "Month", size, 10, lists2, "Count", size );
+
+	paginateResults(2, 0, 1, 10, getDescsResultsList(rl), "Month", size, 10, lists2, "Count", size, timeS );
 
 	printf("Save to File?(Y/N): ");
+
+
 	if( getchar() == 'Y' ) {
-        if( listsToCSV( client, 2, size, getDescsResultsList(rl), "Month", lists2, "Count" ) )
-            printf("\n\tFile Successfully created.");
-        else
+
+        /* Time Start */
+        tStart = clock();
+
+        if( listsToCSV( client, 2, size, getDescsResultsList(rl), "Month", lists2, "Count" ) ) {
+            /* Time End */
+            parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
+
+            printf("\n\tFile Successfully created, %s", timeS );
+        }else
             printf("\n\tError Creating File.");
 
         getchar();
@@ -450,6 +495,8 @@ void ClientsByPrefix( ClientCatalog clientCat )
 	char c;
 	StringList l;
 
+    clock_t tStart;
+    char timeS[20] = "";
 
 	if( !getClientCount( clientCat ) ) {
         printf("\nClients Catalog Not Initialized.");
@@ -463,10 +510,17 @@ void ClientsByPrefix( ClientCatalog clientCat )
 
 	c = toupper( c );
 
+
 	if( c >= 'A' && c <= 'Z' ) {
+        /* Time Start */
+        tStart = clock();
         l = getClientsByPrefix( clientCat, c );
+
+        /* Time End */
+        parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
+
 		if( getCountStringList( l ) )
-            paginateResults( 1, 1, 0, 8, getStringList( l ), "Clientes", getCountStringList( l ) );
+            paginateResults( 1, 1, 1, 8, getStringList( l ), "Clientes", getCountStringList( l ), timeS );
         else
             printf("\nNo Clients By That Prefix");
 
@@ -485,6 +539,10 @@ void getSalesInterval( Accounting acc )
 	int i, size;
 	char **l, **l1, **l2, **l3;
 
+	clock_t tStart;
+	char timeS[20] = "";
+
+
     if( !getAccountingCount( acc ) ) {
         printf("\nAccounting Structure Not Initialized.");
         return;
@@ -499,7 +557,14 @@ void getSalesInterval( Accounting acc )
         return;
     }
 
+    /* Time Start */
+    tStart = clock();
+
 	sl = getIntervalStats(acc, startingMonth, endingMonth);
+
+    /* Time End */
+    parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
+
 	size = getCountStringList(sl) / 2;
 	l = getStringList(sl);
 	l1 = malloc(sizeof(char*) * size);
@@ -511,7 +576,9 @@ void getSalesInterval( Accounting acc )
 		l2[i] = l[2 * i + 1];
 		l3[i] = getMonthFromInt(startingMonth + i);
 	}
-	paginateResults(3, 0, 0, 10, l3, "Month", size, 10, l1, "Profit", size, 10, l2, "Count", size);
+
+
+	paginateResults(3, 0, 1, 10, l3, "Month", size, 10, l1, "Profit", size, 10, l2, "Count", size, timeS );
 }
 
 /* Query 8 */
@@ -521,6 +588,9 @@ void getProductBuyers( Sales sales , ProductCatalog pCat )
 	char **listN, **listP;
 	int cntN, cntP;
 	StringList sl1,sl2;
+
+	clock_t tStart;
+	char timeS[20] = "";
 
 
     if( !getSalesCount( sales ) ) {
@@ -541,18 +611,25 @@ void getProductBuyers( Sales sales , ProductCatalog pCat )
 		return;
 	}
 
+    /* Time Start */
+    tStart = clock();
+
 	sl1 = productBuyersN(sales, pCat, product);
 	sl2 = productBuyersP(sales, pCat, product);
+
+    /* Time End */
+    parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
 
 	listN = getStringList(sl1);
 	listP = getStringList(sl2);
 	cntN = getCountStringList(sl1);
 	cntP = getCountStringList(sl2);
 
+
     if( !cntN && !cntP )
         printf("\nNo Buyers Found for that Product");
     else
-        paginateResults(2, 1, 0, 10, listN, "Type N", cntN, 10, listP, "Type P", cntP );
+        paginateResults(2, 1, 1, 10, listN, "Type N", cntN, 10, listP, "Type P", cntP, timeS );
 
     freeStringList( sl1 );
     freeStringList( sl2 );
@@ -566,6 +643,9 @@ void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 	int ret, i;
 	char **lists, **lists2; int *cnt, size;
 	ResultsList mp;
+
+    clock_t tStart;
+    char timeS[20] = "";
 
 
     if( !getSalesCount( sales ) ) {
@@ -602,7 +682,14 @@ void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 		return;
 	}
 
+    /* Time Start */
+    tStart = clock();
+
 	mp = mostBoughtMonthlyProductsByClient(sales, cCat, client, month - 1);
+
+    /* Time End */
+    parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
+
 	lists = getDescsResultsList(mp);
 	cnt = getValuesResultsList(mp);
 	size = getCountResultsList(mp);
@@ -620,8 +707,11 @@ void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 
 		sprintf(lists2[i], "%d", cnt[i]);
 	}
-	paginateResults(2, 1, 0, 10, lists, "Products", size, 10 , lists2, "Amount", size);
+
+	paginateResults(2, 1, 1, 10, lists, "Products", size, 10 , lists2, "Amount", size, timeS );
+
 	freeResultsList(mp);
+
 	for (i = 0; i < size; i++)
 		free(lists2[i]);
 	free(lists2);
@@ -634,21 +724,29 @@ void getActiveClients(Sales sales)
 	char **list;
 	int size;
 
+	clock_t tStart;
+	char timeS[20] = "";
 
     if( !getSalesCount( sales ) ) {
         printf("\nSales Structure Not Initialized.");
         return;
 	}
 
+    /* Time Start */
+    tStart = clock();
 
 	sl = yearRoundClients(sales );
+
+    /* Time End */
+    parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
+
 	list = getStringList(sl);
 	size = getCountStringList(sl);
 
     if( !size )
         printf("No Active Clients Found.");
     else
-        paginateResults( 1, 1, 0, 6, list, "Clients", size );
+        paginateResults( 1, 1, 1, 6, list, "Clients", size, timeS );
 
     freeStringList( sl );
 }
@@ -662,13 +760,23 @@ void generateCSV( Accounting acc )
 	char **month;
 	int cnt, i;
 
+	clock_t tStart;
+	char timeS[20] = "";
 
-    if( !acc ) {
+
+    if( !getAccountingCount( acc ) ) {
         printf("\nAccounting Structure Not Initialized.");
         return;
     }
 
+    /* Time Start */
+    tStart = clock();
+
     stats = getMonthsStats( acc );
+
+    /* Time End */
+    parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
+
     cnt = getCntCsvStats( stats );
 
     if( !cnt ) {
@@ -691,15 +799,18 @@ void generateCSV( Accounting acc )
 	listsToCSV("YearlyStats", 3, cnt,month, "Month", l1, "Clients", l2, "Records");
 	freeCsvStats( stats );
 
-	printf("\nFile writen to YearlyStats.csv\n");
+	printf("\nFile writen to YearlyStats.csv in %s\n", timeS );
 }
 
 /* Query 12 */
-void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
+void getMostWantedProducts( Sales sales )
 {
 	Query12 q;
 	char **list, **list2, **list3;
-	int *iList, *iList2, size, cnt, ret, i;
+	int *iList, *iList2, size, cnt, i;
+
+	clock_t tStart;
+	char timeS[20] = "";
 
 
     if( !getSalesCount( sales ) ) {
@@ -707,24 +818,23 @@ void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
         return;
 	}
 
-	if( !getProductCount( pCat ) ) {
-        printf("\nProducts Catalog Not Initialized.");
+    printf("\n Enter Amount: ");
+    scanf("%d", &cnt);
+
+
+    if( ( cnt <= 0 ) ) {
+        printf("\nAmount must be a Number >0.");
         return;
-	}
-
-    if( !getClientCount( cCat ) ) {
-        printf("\nClients Catalog Not Initialized.");
-        return;
-	}
-
-
-	do
-	{
-		printf("\n Enter Amount: ");
-		ret = scanf("%d", &cnt);
-	} while (ret < 1);
+    }
+    /* Time Start */
+    tStart = clock();
 
 	q = mostSoldProducts(sales, cnt);
+
+    /* Time End */
+    parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
+
+
 	size = getQ12Count(q);
 
 	if( !size ) {
@@ -754,7 +864,7 @@ void getMostWantedProducts(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
     if( !size)
         printf("No Products Found.");
     else
-		paginateResults(3, 1, 0, 8, list, "Products", size, 8, list3, "Count", size, 8, list2, "Uniques", size);
+		paginateResults(3, 1, 1, 8, list, "Products", size, 8, list3, "Count", size, 8, list2, "Uniques", size, timeS );
 
 	freeQ12(q);
 	for (i = 0; i < size; i++)
@@ -779,6 +889,11 @@ void getClientMostWantedProducts( Sales sales , ClientCatalog cCat )
 	int cnt, *res, i;
 	ResultsList rl;
 	Client cli;
+
+	clock_t tStart;
+	char timeS[20] = "";
+
+
 	if (!getSalesCount(sales)) {
 		printf("\nSales Structure Not Initialized.");
 		return;
@@ -801,7 +916,15 @@ void getClientMostWantedProducts( Sales sales , ClientCatalog cCat )
 		return;
 	}
 
+    /* Time Start */
+    tStart = clock();
+
 	rl = Top3ProductsForClient(sales, cli);
+
+    /* Time End */
+    parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
+
+
 	cnt = getCountResultsList(rl);
 
 	if( !cnt ) {
@@ -818,7 +941,7 @@ void getClientMostWantedProducts( Sales sales , ClientCatalog cCat )
 		cntL[i] = malloc(10);
 		sprintf(cntL[i], "%d", res[i]);
 	}
-	paginateResults(2, 1, 0, 10, list, "Product", cnt, 10, cntL, "Count", cnt);
+	paginateResults(2, 1, 1, 10, list, "Product", cnt, 10, cntL, "Count", cnt, timeS );
 
 	for( i = 0; i < 12; i++ )
         free( cntL[i] );
@@ -834,14 +957,23 @@ void getAllInactive( Sales sales )
 	StringList s1, s2;
 	int sz1, sz2;
 
+	clock_t tStart;
+	char timeS[20] = "";
+
 
     if( !getSalesCount( sales ) ) {
         printf("\nSales Structure Not Initialized.");
         return;
 	}
 
+    /* Time Start */
+    tStart = clock();
+
     s1 = productsWithoutPurchases(sales);
     s2 = clientsWithoutPurchases(sales);
+
+    /* Time End */
+    parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
 
     sz1 = getCountStringList( s1 );
     sz2 = getCountStringList( s2 );
@@ -852,9 +984,10 @@ void getAllInactive( Sales sales )
     }
 
 	paginateResults( 2,
-                 0, 0,
+                 0, 1,
                  8, getStringList( s1 ), "Products", sz1,
-                 6, getStringList( s2 ), "Clients", sz2
+                 6, getStringList( s2 ), "Clients", sz2,
+                 timeS
     );
 }
 
@@ -1047,7 +1180,7 @@ void paginateResults( int nLists, int showIdx, int nPostArgs, ... )
 
 		for( j = 0; j < nPostArgs; j++ ) {
 			strcat( footer, " | " );
-			strcat( footer, postArgs[i] );
+			strcat( footer, postArgs[j] );
 		}
 
 		strcat( footer, "\n(n)ext/(p)revious/(q)uit or page number \n: ");
@@ -1119,7 +1252,7 @@ void parseRunTime( char *buff, float milis )
     if( milis > 1000 )
         sprintf( buff, "(%.2f s)", (float)( (float)milis / (float)1000 ) );
     else
-        sprintf( buff, "(%.2f ms)", milis );
+        sprintf( buff, "(%.f ms)", milis );
 }
 
 void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales )

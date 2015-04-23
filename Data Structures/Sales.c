@@ -579,6 +579,11 @@ Query12 mostSoldProducts(Sales_s acc, int N)
 	ClientCatalog tmp;
 	Sale s;
 	Query12 q = malloc(sizeof(*q));
+
+
+	if( N > acc->cntEP )
+        N = acc->cntEP;
+
 	q->sl = initStringList();
 	q->uniqueCli = malloc(sizeof(int) * N);
 	q->cnt = malloc(sizeof(int) * N);
