@@ -18,8 +18,9 @@ void getAllInactive( Sales sales );
 
 int listsToCSV( char *fileName, int nLists, int listSize, ... );
 
-void paginateResults( int nLists, int showIdx, int postArgs, ... );
+void paginateResults( int nLists, int showIdx, int nPostArgs, ... );
 void genColumn( char *ret, char *s, int max );
+void parseRunTime( char *buff, float milis );
 void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales );
 
 
@@ -166,6 +167,8 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
     double price;
     Sale sale;
 
+    clock_t tStart;
+    char timeS[20] = "";
 
 	printf("\n Optional file paths[Max: %d], enter for default\n", MAX_PATH);
 
@@ -177,6 +180,10 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
 
 	printf("\n Sales File: ");
 	fgets( salesFile, MAX_PATH, stdin);
+
+    /*  Time Start */
+    tStart = clock();
+
 
 	strtok( clients, "\n" );
 	strtok( products, "\n" );
@@ -245,12 +252,16 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
 
     printf("\nOrdering Sales Catalog...");
 	sales = orderSales(sales, prodCat, clientCat);
-    printf("Done \n");
+    printf("Done");
 
     printf("\nOrdering Accounting Catalog...");
     acc = orderAcc( acc, prodCat, clientCat );
     printf("Done \n");
 
+    /* Time End */
+    parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
+
+    printf("\nReading Finished in %s", timeS );
 
     getchar();
 
@@ -261,6 +272,9 @@ void ProductsByPrefix( ProductCatalog prodCat )
 {
 	char c;
 	StringList l;
+	clock_t tStart;
+	char timeS[20] = "asd";
+
 
 	fflush( stdin );
 
@@ -274,10 +288,17 @@ void ProductsByPrefix( ProductCatalog prodCat )
 
 	c = toupper( c );
 
+    /* Time Start */
+    tStart = clock();
+
 	if( c >= 'A' && c <= 'Z' ) {
         l = getProductsByPrefix( prodCat, c );
+
+        /* Time End
+        parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
+*/
         if( getCountStringList( l ) )
-            paginateResults( 1, 1, 0, 8, getStringList( l ), "Produtos", getCountStringList( l ) );
+            paginateResults( 1, 1, 1, 8, getStringList( l ), "Produtos", getCountStringList( l ), timeS );
         else
             printf( "\nNo Products By That Prefix" );
 
@@ -930,13 +951,14 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... )
 
 #define CEILING_POS( X, Y ) (1+((X - 1) / Y) )
 
-void paginateResults( int nLists, int showIdx, int postArgs, ... )
+void paginateResults( int nLists, int showIdx, int nPostArgs, ... )
 {
 	char header[300] = "";
 	char line[300] = "";
 	char body[1024] = "";
 	char footer[300] = "";
 	char ***lists;
+	char **postArgs;
 	int i, j, nPage;
 	va_list args;
 	int curPage = 0;
@@ -951,9 +973,10 @@ void paginateResults( int nLists, int showIdx, int postArgs, ... )
     columnSize = (int*)malloc( sizeof(int) * nLists );
     listSize = (int*)malloc( sizeof(int) * nLists );
 	lists = (char***)malloc( sizeof( char ** ) * nLists );
+	postArgs = (char**)malloc( sizeof(char*) * nPostArgs );
 
     fflush( stdin );
-	va_start( args, postArgs );
+	va_start( args, nPostArgs );
 
     if( showIdx ) {
         genColumn( buf, "Indx", 6 );    /* columnSize for Indx is 6 */
@@ -975,6 +998,9 @@ void paginateResults( int nLists, int showIdx, int postArgs, ... )
 
         sprintf( header, "%s%s", header, buf );
 	}
+
+	for( i = 0; i < nPostArgs; i++ )
+        postArgs[i] = va_arg( args, char* );
 
 	maxPage = CEILING_POS( maxLen, (float)PER_PAGE );
 
@@ -1019,9 +1045,9 @@ void paginateResults( int nLists, int showIdx, int postArgs, ... )
 		}
 
 
-		for( j = 0; j < postArgs; j++ ) {
+		for( j = 0; j < nPostArgs; j++ ) {
 			strcat( footer, " | " );
-			strcat( footer, va_arg( args, char* ) );
+			strcat( footer, postArgs[i] );
 		}
 
 		strcat( footer, "\n(n)ext/(p)revious/(q)uit or page number \n: ");
@@ -1064,6 +1090,7 @@ void paginateResults( int nLists, int showIdx, int postArgs, ... )
 	}
 
 
+    free( postArgs );
 
     free( lists );
 
@@ -1085,6 +1112,14 @@ void genColumn( char *ret, char *s, int max )
 		(int)n - strlen(s) / 2,
     "");
 
+}
+
+void parseRunTime( char *buff, float milis )
+{
+    if( milis > 1000 )
+        sprintf( buff, "(%.2f s)", (float)( (float)milis / (float)1000 ) );
+    else
+        sprintf( buff, "(%.2f ms)", milis );
 }
 
 void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales )

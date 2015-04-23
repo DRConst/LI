@@ -6,6 +6,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "./Data Structures/ProductCatalog.h"
 #include "./Data Structures/ClientCatalog.h"
