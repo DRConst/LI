@@ -428,7 +428,7 @@ StringList productBuyersN(Sales_s acc, ProductCatalog pCat, char *product)
 		{
 			s = acc->sales[p->records[i][j]];
 
-			if ( getSaleType( s ) == 'P')
+			if ( getSaleType( s ) == 'N')
 			{
 				if (!existsClient(tmpP, getSaleClient( s ) ) )
 				{
@@ -454,7 +454,7 @@ StringList productBuyersP(Sales_s acc, ProductCatalog pCat, char *product)
 		for (j = 0; j < p->cnt[i]; j++)
 		{
 			s = acc->sales[p->records[i][j]];
-			if (getSaleType(s) == 'N')
+			if (getSaleType(s) == 'P')
 			{
 				if (!existsClient(tmpN, getSaleClient(s)))
 				{
