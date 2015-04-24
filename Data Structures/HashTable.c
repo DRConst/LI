@@ -132,3 +132,23 @@ int getHashTableSize()
 {
 	return sizeof(struct hashTable);
 }
+
+void freeHashTable(HashTable h)
+{
+	int i;
+	Slot s, tmp;
+	for (i = 0; i < h->size; i++)
+	{
+		s = h->slots[i];
+		while (s)
+		{
+			tmp = s->n;
+			free(s->key);
+			free(s->data);
+			free(s);
+			s = tmp;
+		}
+	}
+	free(h->slots);
+	free(h);
+}

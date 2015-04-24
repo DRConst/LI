@@ -81,7 +81,27 @@ ProductCatalog_s insertProduct(ProductCatalog_s cat, char *product)
 
 ProductCatalog_s freeProductCatalog(ProductCatalog_s cat)
 {
-	int i, j;
+	int i,j, k;
+	int used, *codes;
+	Node n;
+
+	for (i = 0; i < 26; i++)
+	{
+		for (j = 0; j < 26; j++)
+		{
+			if (cat->Cat[i][j])
+			{
+				used = getUsedBST(cat->Cat[i][j]);
+				codes = inOrderBST(cat->Cat[i][j]);
+				for (k = 0; k < used; k++)
+				{
+					n = getNode(cat->Cat[i][j], codes[k]);
+					freeHashTable(getNodeData(n));
+				}
+			}
+		}
+		
+	}
 
 	for (i = 0; i < 26; i++)
 	{
