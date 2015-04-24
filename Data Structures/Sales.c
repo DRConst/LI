@@ -242,6 +242,8 @@ Sales_s addSale(Sales_s acc, ClientCatalog cCat, ProductCatalog pCat, Sale sale)
     acc->cntEC++;
 	}
 
+	freeClient(cl);
+
 	acc->cntS++;
 
 	return acc;
@@ -280,6 +282,7 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 				cliE = acc->entriesCli[metaI];
 			}
 			insertHeap(h1, cliE->units, cliE, sizeof cliE);
+			freeClient(cl);
 			/*free(lists[i]);*/
 		}
 		/*free(lists);*/
@@ -322,6 +325,7 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		cl = getClient(cCat, tCE[i]->name);
 		setClientMetaData(cl,i, "Sales");
 		freeElem(e);
+		freeClient(cl);
 	}
 	acc->entriesCli = tCE;
 
@@ -488,7 +492,7 @@ ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ClientCatalog cCat, c
 	minHeap h;
 	int i, j, letter, lSize, cnt = 0, used, *tmpMP;
 	Elem el;
-	char **lists;
+	char **lists, *tmpStr, *tmpStr2;
 	ResultsList mp = initResultsList();
 	int metaI;
 
@@ -496,6 +500,7 @@ ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ClientCatalog cCat, c
 	if (!cl)
 		return NULL;
 	metaI = getClientMetaData(cl, "Sales");
+	free(cl);
 	e = acc->entriesCli[metaI];
 	if (!e)
 		return NULL;
@@ -536,7 +541,10 @@ ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ClientCatalog cCat, c
 			else
 			{
 				j = getProductMetaData(pr, "Sales");
-				insertHeap(h, j, getProductName(pr), sizeof(char) * 6);
+				tmpStr = getProductName(pr);
+				tmpStr2 = malloc(strlen(tmpStr) + 1);
+				strcpy(tmpStr2, tmpStr);
+				insertHeap(h, j, tmpStr2, sizeof(char) * 6);
 			}
 			freeProduct(pr);
 			/*free(lists[i]);*/
@@ -690,7 +698,7 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 	Sale s;
 	Product pr, pr1, pr2, pr3;
 	Elem *e;
-	char **lists;
+	char **lists, *tmpStr, *tmpStr2;
 	char *name;
 	for (i = 0; i < 12; i++)
 	{
@@ -732,8 +740,10 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 			else
 			{
 				/*ent = sales->entriesPr[getProductMetaData(pr, "Sales")];*/
-
-				insertHeap(h, getProductMetaData(pr, "Sales"), getProductName(pr), sizeof getProductName(pr));
+				tmpStr = getProductName(pr);
+				tmpStr2 = malloc(strlen(tmpStr) + 1);
+				strcpy(tmpStr2, tmpStr);
+				insertHeap(h, getProductMetaData(pr, "Sales"), tmpStr2, sizeof getProductName(pr));
 			}
 
 			freeProduct(pr);

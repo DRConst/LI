@@ -21,6 +21,7 @@ int existsClient(ClientCatalog cat, char *client);
 int getClientCount( ClientCatalog clientCat );
 
 Client getClient(ClientCatalog cat, char *client);
+void freeClient(Client cl);
 
 StringList getClientsByPrefix(ClientCatalog cat, char t );
 

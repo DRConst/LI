@@ -420,7 +420,7 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
 	ResultsList rl;
 	char **lists2;
 	int size, i, *cnt;
-
+	Client cli;
 	clock_t tStart;
 	char timeS[20] = "";
 
@@ -445,8 +445,8 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
 
     /* Time Start */
     tStart = clock();
-
-	rl = ProductsBoughtByClient(sales, getClient(clientCat, client));
+	cli = getClient(clientCat, client);
+	rl = ProductsBoughtByClient(sales, cli);
 
     /* Time End */
     parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
@@ -488,7 +488,7 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
 
         getchar();
 	}
-
+	freeClient(cli);
 	freeResultsList( rl );
 }
 
@@ -1008,7 +1008,6 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... )
 	char *file;
     int i, j;
     FILE *csvFile;
-
     if( !strlen( fileName ) )
         return 0;
 	file = malloc(strlen(fileName) + 5);

@@ -18,6 +18,7 @@ int matchProductPattern( char *p );
 
 int existsProduct( ProductCatalog cat, char *product );
 int getProductCount( ProductCatalog prodCat );
+void freeProduct(Product pr);
 
 Product getProduct(ProductCatalog cat, char* product);
 
@@ -29,4 +30,3 @@ void setProductMetaData(Product pr, int x, char *ID);
 char *getProductName(Product pr);
 int getProductDataSize(Product pr);
 int productHasMetaData(Product pr, char *ID);
-void freeProduct(Product pr);

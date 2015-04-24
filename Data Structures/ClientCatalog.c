@@ -77,8 +77,20 @@ int matchClientPattern( char *c )
 
 int existsClient(ClientCatalog_s cat, char *client)
 {
+	Client cl;
+	if (matchClientPattern(client))
+	{
+		cl = getClient(cat, client);
 
-	return ( matchClientPattern(client) && ( getClient(cat, client) != NULL ) );
+		if (cl != NULL)
+		{
+			free(cl);
+			return 1;
+		}
+	}
+
+	
+	return 0;
 }
 
 Client getClient(ClientCatalog_s cat, char *client)
@@ -206,4 +218,10 @@ int clientHasMetaData(Client cli, char *ID)
 	}
 	else
 		return 1;
+}
+
+void freeClient(Client cl)
+{
+	free(cl->name);
+	free(cl);
 }

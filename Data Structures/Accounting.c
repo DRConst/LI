@@ -189,6 +189,7 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
     tE->profit[ 0 ] += getSalePrice( sale ) * getSaleQtd( sale );
     tE->profit[ monthIdx ] += getSalePrice( sale ) * getSaleQtd( sale );
 
+	freeClient(cl);
 
     return acc;
 }
@@ -225,6 +226,7 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 
 			insertHeap(h1,( cliE->cntSalesN[0] + cliE->cntSalesP[0] ), cliE, sizeof cliE);
 			/*free(lists[i]);*/
+			freeClient(cl);
 		}
 		/*free(lists);*/
 		freeStringList( sl );
@@ -269,6 +271,7 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		cl = getClient(cCat, tCE[i]->name);
 		setClientMetaData(cl, i, "Accounting");
 		freeElem(e);
+		freeClient(cl);
 	}
 	acc->entriesCli = tCE;
 
