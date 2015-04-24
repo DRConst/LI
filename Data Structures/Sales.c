@@ -204,6 +204,8 @@ Sales_s addSale(Sales_s acc, ClientCatalog cCat, ProductCatalog pCat, Sale sale)
         acc->cntEP++;
 	}
 
+	freeProduct(pr);
+	
 
 	/*Now bind the sale to the client*/
 
@@ -302,7 +304,7 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 				metaI = getProductMetaData(pr, "Sales");
 				prE = acc->entriesPr[metaI];
 			}
-
+			freeProduct(pr);
             insertHeap(h2, prE->units, prE, sizeof prE);
 			/*free(lists[i]);*/
 		}
@@ -334,6 +336,7 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		pr = getProduct(pCat, tPE[i]->name);
 		setProductMetaData(pr, i, "Sales");
 		freeElem(e);
+		freeProduct(pr);
 	}
 	acc->entriesPr = tPE;
 	free(h1);
@@ -417,7 +420,7 @@ int getProductSalesPerMonth(Sales_s acc, Product prod, int month, int *nSalesP, 
 }
 
 
-StringList productBuyersN(Sales_s acc, ProductCatalog pCat, char *product)
+StringList productBuyersP(Sales_s acc, ProductCatalog pCat, char *product)
 {
 	StringList toRet = initStringList();
 	ClientCatalog tmpP = initClientCatalog();
@@ -432,7 +435,7 @@ StringList productBuyersN(Sales_s acc, ProductCatalog pCat, char *product)
 		{
 			s = acc->sales[p->records[i][j]];
 
-			if ( getSaleType( s ) == 'N')
+			if ( getSaleType( s ) == 'P')
 			{
 				if (!existsClient(tmpP, getSaleClient( s ) ) )
 				{
@@ -442,9 +445,11 @@ StringList productBuyersN(Sales_s acc, ProductCatalog pCat, char *product)
 			}
 		}
 	}
+	freeClientCatalog(tmpP);
+	freeProduct(pr);
 	return toRet;
 }
-StringList productBuyersP(Sales_s acc, ProductCatalog pCat, char *product)
+StringList productBuyersN(Sales_s acc, ProductCatalog pCat, char *product)
 {
 	StringList toRet = initStringList();
 	ClientCatalog tmpN = initClientCatalog();
@@ -458,7 +463,7 @@ StringList productBuyersP(Sales_s acc, ProductCatalog pCat, char *product)
 		for (j = 0; j < p->cnt[i]; j++)
 		{
 			s = acc->sales[p->records[i][j]];
-			if (getSaleType(s) == 'P')
+			if (getSaleType(s) == 'N')
 			{
 				if (!existsClient(tmpN, getSaleClient(s)))
 				{
@@ -468,6 +473,8 @@ StringList productBuyersP(Sales_s acc, ProductCatalog pCat, char *product)
 			}
 		}
 	}
+	freeProduct(pr);
+	freeClientCatalog(tmpN);
 	return toRet;
 }
 
@@ -501,16 +508,16 @@ ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ClientCatalog cCat, c
 		{
 			pr = getProduct(tmp, getSaleProduct( s ) );
 			/*letter = *(*(int**)pr->data);*/
-			setProductMetaData(pr, getProductMetaData(pr, "Sales") + getSaleQtd(s), "Sales");
+			setProductMetaData(pr, getProductMetaData(pr, "Sales") + getSaleQtd(s), "Sales");			
 		}
 		else
 		{
 			insertProduct(tmp, getSaleProduct( s ) );
 			pr = getProduct(tmp, getSaleProduct( s ) );
 			setProductMetaData(pr, getSaleQtd(s), "Sales");
-			pr = getProduct(tmp, getSaleProduct( s ) );
 			cnt++;
 		}
+		freeProduct(pr);
 	}
 
 
@@ -531,6 +538,7 @@ ResultsList mostBoughtMonthlyProductsByClient(Sales_s acc, ClientCatalog cCat, c
 				j = getProductMetaData(pr, "Sales");
 				insertHeap(h, j, getProductName(pr), sizeof(char) * 6);
 			}
+			freeProduct(pr);
 			/*free(lists[i]);*/
 		}
 		/*free(lists);*/
@@ -680,7 +688,7 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 	int index = getClientMetaData(cli, "Sales"), cnt, i, j, letter, lSize, hUsed;
 	Entry_s ent = sales->entriesCli[index];
 	Sale s;
-	Product pr;
+	Product pr, pr1, pr2, pr3;
 	Elem *e;
 	char **lists;
 	char *name;
@@ -703,6 +711,7 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 				cnt += getSaleQtd(s);
 				setProductMetaData(pr, cnt, "Sales");
 			}
+			freeProduct(pr);
 		}
 	}
 	h = newHeap(getProductCount(tmp));
@@ -727,7 +736,7 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 				insertHeap(h, getProductMetaData(pr, "Sales"), getProductName(pr), sizeof getProductName(pr));
 			}
 
-
+			freeProduct(pr);
 
 			/*free(lists[i]);*/
 		}
@@ -741,13 +750,19 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
         e[i] = extractMin( h );
 
     name = (char*)getElemDataAddr( e [ hUsed - 1] );
-    rl = insertResultsList( rl, name, getProductMetaData( getProduct( tmp, name ), "Sales" ) );
+	pr1 = getProduct(tmp, name);
+    rl = insertResultsList( rl, name, getProductMetaData( pr1 , "Sales" ) );
+	freeProduct(pr1);
 
     name = (char*)getElemDataAddr( e [ hUsed - 2] );
-    rl = insertResultsList( rl, name, getProductMetaData( getProduct( tmp, name ), "Sales" ) );
+	pr2 = getProduct(tmp, name);
+    rl = insertResultsList( rl, name, getProductMetaData( pr2, "Sales" ) );
+	freeProduct(pr2);
 
     name = (char*)getElemDataAddr( e [ hUsed - 3] );
-    rl = insertResultsList( rl, name, getProductMetaData( getProduct( tmp, name ), "Sales" ) );
+	pr3 = getProduct(tmp, name);
+    rl = insertResultsList( rl, name, getProductMetaData( pr3, "Sales" ) );
+	freeProduct(pr3);
     /*
 	for ( j = 0; i = hUsed - 1; i >= 0; i--, j++)
 	{

@@ -379,6 +379,8 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
     printf("Product: %s\n\t Normal: %d\n\t Promo: %d\n\t Total: %d\n\tProfit: %.2f", prod, nSalesN, nSalesP, count, total );
     printf("\nCompleted in %s", timeS );
 
+	freeProduct(pr);
+
     getchar();
 
 }

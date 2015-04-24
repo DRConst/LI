@@ -40,7 +40,18 @@ int matchProductPattern( char *p )
 
 int existsProduct( ProductCatalog_s cat, char *product )
 {
-	return ( matchProductPattern(product) && ( getProduct(cat, product) != NULL ) );
+	Product pr;
+	if (matchProductPattern(product))
+	{
+		pr = getProduct(cat, product);
+		if (pr != NULL)
+		{
+			freeProduct(pr);
+			return 1;
+		}
+			
+	}
+	return 0;
 }
 
 int getProductCount( ProductCatalog_s prodCat )
@@ -205,4 +216,11 @@ int productHasMetaData(Product pr, char *ID)
 	}
 	else
 		return 1;
+}
+void freeProduct(Product pr)
+{
+	if (!pr)
+		return;
+	free(pr->name);
+	free(pr);
 }

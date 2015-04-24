@@ -140,6 +140,8 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 		acc->cntEP++;
 	}
 
+	freeProduct(pr);
+
     if( getSaleType( sale ) == 'P' ) {
         tE->cntSalesP[ monthIdx ]++;
         tE->cntSalesP[ 0 ]++;
@@ -248,6 +250,8 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 				prE = acc->entriesPr[metaI];
 			}
 
+			freeProduct(pr);
+
 			insertHeap(h2, ( prE->cntSalesN[0] + prE->cntSalesP[0] ), prE, sizeof prE);
 			/*free(lists[i]);*/
 		}
@@ -279,6 +283,7 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		pr = getProduct(pCat, tPE[i]->name);
 		setProductMetaData(pr, i, "Accounting");
 		freeElem(e);
+		freeProduct(pr);
 	}
 	acc->entriesPr = tPE;
 	return acc;

@@ -29,3 +29,4 @@ void setProductMetaData(Product pr, int x, char *ID);
 char *getProductName(Product pr);
 int getProductDataSize(Product pr);
 int productHasMetaData(Product pr, char *ID);
+void freeProduct(Product pr);
