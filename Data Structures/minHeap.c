@@ -105,3 +105,9 @@ int getElemKey(Elem e)
 {
 	return e->key;
 }
+
+void freeElem(Elem e)
+{
+	free(e->data);
+	free(e);
+}

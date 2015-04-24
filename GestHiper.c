@@ -21,7 +21,7 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... );
 void paginateResults( int nLists, int showIdx, int nPostArgs, ... );
 void genColumn( char *ret, char *s, int max );
 void parseRunTime( char *buff, float milis );
-void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales );
+void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Accounting acc );
 
 
 int main()
@@ -52,7 +52,7 @@ int main()
         if( ret ) {
             switch( op ) {
                 case 1:
-					freeData(prodCat, clientCat, sales);
+					freeData(prodCat, clientCat, sales, acc);
 
 					prodCat = initProductCatalog();
 
@@ -247,6 +247,7 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
             );
             acc = addAccounting( acc, clientCat, prodCat, sale );
         }
+		freeSale(sale);
     }
     printf("Done \n\t%d read", getSalesCount( sales ) );
 
@@ -1255,7 +1256,7 @@ void parseRunTime( char *buff, float milis )
         sprintf( buff, "(%.f ms)", milis );
 }
 
-void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales )
+void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Accounting acc )
 {
 
     /*
@@ -1264,8 +1265,5 @@ void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales )
         freeProductCatalog( prodCat );
         freeClientCatalog( clientCat );
 		freeSales(sales);
-/*
-        freeAccounting( &sales );
-
-    */
+        freeAccounting(acc);
 }

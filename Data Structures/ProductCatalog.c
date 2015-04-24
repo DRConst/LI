@@ -82,7 +82,7 @@ ProductCatalog_s insertProduct(ProductCatalog_s cat, char *product)
 ProductCatalog_s freeProductCatalog(ProductCatalog_s cat)
 {
 	int i,j, k;
-	int used, *codes;
+	int used, *codes = NULL;
 	Node n;
 
 	for (i = 0; i < 26; i++)
@@ -102,7 +102,7 @@ ProductCatalog_s freeProductCatalog(ProductCatalog_s cat)
 		}
 		
 	}
-
+	free(codes);
 	for (i = 0; i < 26; i++)
 	{
 		for (j = 0; j < 26; j++)
@@ -120,7 +120,7 @@ ProductCatalog_s freeProductCatalog(ProductCatalog_s cat)
 StringList getProductsByPrefix(ProductCatalog_s cat, char t )
 {
     char buff[7];
-	int *codes, i, j, used;
+	int *codes = NULL, i, j, used;
 	StringList l = initStringList();
 
 	for (i = 0; i < 26; i++)
@@ -136,7 +136,7 @@ StringList getProductsByPrefix(ProductCatalog_s cat, char t )
 			}
 		}
 	}
-
+	free(codes);
 	return l;
 }
 

@@ -315,9 +315,11 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 	for (i = 0; i < hUsed; i++)
 	{
 		e = extractMin(h1);
-		tCE[i] = (Entry_s)getElemDataAddr(e);
+		tCE[i] = malloc(sizeof(struct entry));
+		memcpy(tCE[i], getElemDataAddr(e), sizeof(struct entry));
 		cl = getClient(cCat, tCE[i]->name);
 		setClientMetaData(cl,i, "Sales");
+		freeElem(e);
 	}
 	acc->entriesCli = tCE;
 
@@ -327,9 +329,11 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 	for (i = 0; i < hUsed; i++)
 	{
 		e = extractMin(h2);
-		tPE[i] = (Entry_s)getElemDataAddr(e);
+		tPE[i] = malloc(sizeof(struct entry));
+		memcpy(tPE[i], getElemDataAddr(e), sizeof(struct entry));
 		pr = getProduct(pCat, tPE[i]->name);
 		setProductMetaData(pr, i, "Sales");
+		freeElem(e);
 	}
 	acc->entriesPr = tPE;
 	free(h1);
@@ -731,7 +735,7 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 	}
 	freeStringList(sl);
 	hUsed = getUsed(h);
-	e = (Elem*)malloc( sizeof(*e) * hUsed );
+	e = malloc( sizeof(*e) * hUsed );
 
 	for( i = 0; i < hUsed; i++ )
         e[i] = extractMin( h );
@@ -755,7 +759,7 @@ ResultsList Top3ProductsForClient(Sales_s sales, Client cli)
 	*/
 
     for( i = 0; i < hUsed; i++ )
-        free( e[i] );
+        freeElem( e[i] );
 
     free( e );
 

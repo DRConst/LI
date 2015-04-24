@@ -33,7 +33,7 @@ ClientCatalog_s initClientCatalog()
 ClientCatalog_s freeClientCatalog(ClientCatalog_s cat)
 {
 	int i, j, k;
-	int used, *codes;
+	int used, *codes = NULL;
 	Node n;
 	for (i = 0; i < 26; i++)
 	{
@@ -52,6 +52,7 @@ ClientCatalog_s freeClientCatalog(ClientCatalog_s cat)
 		}
 
 	}
+	free(codes);
 	for (i = 0; i < 26; i++)
 	{
 		for (j = 0; j < 26; j++)
@@ -120,7 +121,7 @@ ClientCatalog_s insertClient(ClientCatalog_s cat, char *client)
 StringList getClientsByPrefix(ClientCatalog_s cat, char t )
 {
 	char buff[6];
-	int *codes, i, j, used;
+	int *codes = NULL, i, j, used;
 	StringList l = initStringList();
 	for (i = 0; i < 26; i++)
 	{
@@ -136,7 +137,7 @@ StringList getClientsByPrefix(ClientCatalog_s cat, char t )
 			}
 		}
 	}
-
+	free(codes);
 	return l;
 }
 

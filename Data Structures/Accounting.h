@@ -16,6 +16,7 @@ typedef struct csv_stats *CSV_Stats;
 Accounting initAccounting();
 Accounting addAccounting( Accounting acc, ClientCatalog cCat, ProductCatalog pCat,  Sale sale );
 Accounting orderAcc( Accounting acc, ProductCatalog pCat, ClientCatalog cCat);
+void freeAccounting(Accounting acc);
 
 CSV_Stats getMonthsStats(Accounting acc);
 void freeCsvStats(CSV_Stats c);

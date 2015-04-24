@@ -14,3 +14,4 @@ int getUsed(minHeap h);
 int getSize(minHeap h);
 void* getElemDataAddr(Elem e);
 int getElemKey(Elem e);
+void freeElem(Elem e);

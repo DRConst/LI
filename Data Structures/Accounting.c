@@ -260,9 +260,11 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 	for (i = 0; i < hUsed; i++)
 	{
 		e = extractMin(h1);
-		tCE[i] = (EntryAcc)getElemDataAddr(e);
+		tCE[i] = malloc(sizeof(struct entryAcc));
+		memcpy(tCE[i], getElemDataAddr(e), sizeof(struct entryAcc));
 		cl = getClient(cCat, tCE[i]->name);
 		setClientMetaData(cl, i, "Accounting");
+		freeElem(e);
 	}
 	acc->entriesCli = tCE;
 
@@ -272,9 +274,11 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 	for (i = 0; i < hUsed; i++)
 	{
 		e = extractMin(h2);
-		tPE[i] = (EntryAcc)getElemDataAddr(e);
+		tPE[i] = malloc(sizeof(struct entryAcc));
+		memcpy(tPE[i], getElemDataAddr(e), sizeof(struct entryAcc));
 		pr = getProduct(pCat, tPE[i]->name);
 		setProductMetaData(pr, i, "Accounting");
+		freeElem(e);
 	}
 	acc->entriesPr = tPE;
 	return acc;
@@ -526,4 +530,19 @@ StringList getAccountingUnboughtProducts( Accounting_s acc )
     }
 
     return sl;
+}
+void freeAccounting(Accounting acc)
+{
+	int i;
+
+	for (i = 0; i < acc->cntEC; i++)
+	{
+		free(acc->entriesCli[i]);
+	}
+	free(acc->entriesCli);
+	for (i = 0; i < acc->cntEP; i++)
+	{
+		free(acc->entriesPr[i]);
+	}
+	free(acc->entriesPr);
 }
