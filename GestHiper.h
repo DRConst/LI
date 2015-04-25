@@ -15,7 +15,7 @@
 
 #include "./Data Structures/StringList.h"
 
-#define MAX_PATH 150
+#define MAX_FILE_PATH 150
 
 #define PER_PAGE 15
 

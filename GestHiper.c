@@ -156,9 +156,9 @@ void printMenu()
 /* Query 1 */
 void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Accounting acc )
 {
-	char clients[MAX_PATH] = "";
-	char products[MAX_PATH] = "";
-	char salesFile[MAX_PATH] = "";
+	char clients[MAX_FILE_PATH] = "";
+	char products[MAX_FILE_PATH] = "";
+	char salesFile[MAX_FILE_PATH] = "";
 	FILE *clientsFp, *productsFp, *salesFp;
 
     char type;
@@ -170,16 +170,16 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
     clock_t tStart;
     char timeS[20] = "";
 
-	printf("\n Optional file paths[Max: %d], enter for default\n", MAX_PATH);
+	printf("\n Optional file paths[Max: %d], enter for default\n", MAX_FILE_PATH);
 
 	printf("\n Clients File: ");
-	fgets( clients, MAX_PATH, stdin);
+	fgets( clients, MAX_FILE_PATH, stdin);
 
 	printf("\n Products File: ");
-	fgets( products, MAX_PATH, stdin);
+	fgets( products, MAX_FILE_PATH, stdin);
 
 	printf("\n Sales File: ");
-	fgets( salesFile, MAX_PATH, stdin);
+	fgets( salesFile, MAX_FILE_PATH, stdin);
 
     /*  Time Start */
     tStart = clock();
