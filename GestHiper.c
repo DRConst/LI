@@ -246,6 +246,17 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
                     sale
             );
             acc = addAccounting( acc, clientCat, prodCat, sale );
+			if (!acc || !sales)
+			{
+				#if _WIN32
+					system("cls");
+				#else
+					system("clear");
+				#endif
+
+					printf("An error occured, please check your memory usage");
+					exit(1);
+			}
         }
 		freeSale(sale);
     }
@@ -258,6 +269,19 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
     printf("\nOrdering Accounting Catalog...");
     acc = orderAcc( acc, prodCat, clientCat );
     printf("Done \n");
+
+	if (!acc || !sales)
+	{
+		#if _WIN32
+			system("cls");
+		#else
+			system("clear");
+		#endif
+
+		printf("An error occured, please check your memory usage");
+		exit(1);
+	}
+
 
     /* Time End */
     parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );

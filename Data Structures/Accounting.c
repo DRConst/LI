@@ -80,6 +80,8 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 
         acc->entriesCli = realloc( acc->entriesCli,
                             ( sizeof( struct entryAcc ) * acc->sizeEC ) );
+		if (!acc->entriesCli)
+			return NULL;
 
 		for (i = acc->sizeEC / 2; i < acc->sizeEC; i++)
 			acc->entriesCli[i] = NULL;
@@ -96,6 +98,8 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 
         acc->entriesPr = realloc( acc->entriesPr,
                             ( sizeof( struct entryAcc ) * acc->sizeEP ) );
+		if (!acc->entriesPr)
+			return NULL;
 
 		for (i = acc->sizeEP / 2; i < acc->sizeEP; i++)
 			acc->entriesPr[i] = NULL;
@@ -263,6 +267,8 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 	hUsed = getUsed(h1);
 	acc->cntEC = hUsed;
 	tCE = malloc(sizeof *tCE * acc->cntEC);
+	if (!tCE)
+		return NULL;
 	for (i = 0; i < hUsed; i++)
 	{
 		e = extractMin(h1);
@@ -278,6 +284,8 @@ Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 	hUsed = getUsed(h2);
 	acc->cntEP = hUsed;
 	tPE = malloc(sizeof *tPE * acc->cntEP);
+	if (!tPE)
+		return NULL;
 	for (i = 0; i < hUsed; i++)
 	{
 		e = extractMin(h2);

@@ -112,6 +112,8 @@ Sales_s addSale(Sales_s acc, ClientCatalog cCat, ProductCatalog pCat, Sale sale)
 
         acc->entriesCli = realloc( acc->entriesCli,
                             ( sizeof(*acc->entriesCli) * acc->sizeEC ) );
+		if (!acc->entriesCli)
+			return NULL;
 
 		for (i = acc->sizeEC / 2; i < acc->sizeEC; i++)
 			acc->entriesCli[i] = NULL;
@@ -128,6 +130,8 @@ Sales_s addSale(Sales_s acc, ClientCatalog cCat, ProductCatalog pCat, Sale sale)
 
         acc->entriesPr = realloc( acc->entriesPr,
                             ( sizeof(*acc->entriesPr) * acc->sizeEP ) );
+		if (!acc->entriesPr)
+			return NULL;
 
 		for (i = acc->sizeEP / 2; i < acc->sizeEP; i++)
 			acc->entriesPr[i] = NULL;
@@ -144,6 +148,8 @@ Sales_s addSale(Sales_s acc, ClientCatalog cCat, ProductCatalog pCat, Sale sale)
 
         acc->sales = realloc( acc->sales,
                         (sizeof( *acc->sales ) * acc->sizeS ) );
+		if (!acc->sales)
+			return NULL;
 
 		for (i = acc->sizeS / 2; i < acc->sizeS; i++)
 			acc->sales[i] = NULL;
@@ -317,6 +323,8 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 	hUsed = getUsed(h1);
 	acc->cntEC = hUsed;
 	tCE = malloc(sizeof *tCE * acc->cntEC);
+	if (!tCE)
+		return NULL;
 	for (i = 0; i < hUsed; i++)
 	{
 		e = extractMin(h1);
@@ -332,6 +340,8 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 	hUsed = getUsed(h2);
 	acc->cntEP = hUsed;
 	tPE = malloc(sizeof *tPE * acc->cntEP);
+	if (!tPE)
+		return NULL;
 	for (i = 0; i < hUsed; i++)
 	{
 		e = extractMin(h2);
@@ -342,7 +352,8 @@ Sales_s orderSales(Sales_s acc, ProductCatalog pCat, ClientCatalog cCat)
 		freeElem(e);
 		freeProduct(pr);
 	}
-	acc->entriesPr = tPE;
+	free(acc->entriesPr);
+	acc->entriesPr = tPE;	
 	free(h1);
 	free(h2);
 	return acc;
