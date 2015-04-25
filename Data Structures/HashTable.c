@@ -26,7 +26,7 @@ int hash(char*key)
 	int i, len = (int)strlen(key), h = 0;
 	for (i = 0; i < len; i++)
 	{
-		h += pow(key[i], i);
+		h += key[i] * i;
 	}
 	return h;
 }

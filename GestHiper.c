@@ -22,7 +22,7 @@ void paginateResults( int nLists, int showIdx, int nPostArgs, ... );
 void genColumn( char *ret, char *s, int max );
 void parseRunTime( char *buff, float milis );
 void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Accounting acc );
-
+void fflush2();
 
 int main()
 {
@@ -37,11 +37,10 @@ int main()
 
 
 	do {
-        fflush( stdin );
 		printMenu();
 		ret = scanf("%d", &op );
 
-		fflush(stdin);
+		fflush2();
 
         #if _WIN32
             system("cls");
@@ -128,6 +127,16 @@ int main()
 	return 0;
 }
 
+void fflush2()
+{
+    int c;
+
+    do {
+        c = getchar();
+    }while( ( c!='\n' ) && ( c!= EOF ) );
+
+}
+
 void printMenu()
 {
 
@@ -170,10 +179,11 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
     clock_t tStart;
     char timeS[20] = "";
 
+
 	printf("\n Optional file paths[Max: %d], enter for default\n", MAX_FILE_PATH);
 
 	printf("\n Clients File: ");
-	fgets( clients, MAX_FILE_PATH, stdin);
+    fgets( clients, MAX_FILE_PATH, stdin);
 
 	printf("\n Products File: ");
 	fgets( products, MAX_FILE_PATH, stdin);
@@ -301,15 +311,15 @@ void ProductsByPrefix( ProductCatalog prodCat )
 	char timeS[20] = "";
 
 
-	fflush( stdin );
-
 	if( !getProductCount( prodCat ) ) {
         printf("\nProducts Catalog Not Initialized.");
         return;
 	}
 
 	printf("\n Enter Product Prefix[A-Z]: ");
-	scanf( "%c", &c);
+	scanf( " %c", &c);
+
+    fflush2();
 
 	c = toupper( c );
 
@@ -360,12 +370,10 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
         return;
 	}
 
-	fflush( stdin );
 
     printf("\n Enter Product Code: ");
     fgets( prod, 7, stdin );
 
-    fflush( stdin );
 
     printf("\n Enter Month[1,12]: ");
     ret = scanf("%d", &nMonth );
@@ -462,6 +470,8 @@ void getClientSalesCount( Sales sales, ClientCatalog clientCat )
     printf("\nEnter Client Code: ");
     fgets( client, 6, stdin );
 
+    fflush2();
+
     if( ( strlen( client ) != 5 ) || ( !existsClient( clientCat, client ) ) ) {
         printf("\nInvalid Client Code");
         return;
@@ -530,10 +540,11 @@ void ClientsByPrefix( ClientCatalog clientCat )
         return;
 	}
 
-	fflush( stdin );
 
 	printf("\n Enter Client Prefix[A-Z]: ");
-	scanf( "%c", &c);
+	scanf( " %c", &c);
+
+    fflush2();
 
 	c = toupper( c );
 
@@ -577,6 +588,8 @@ void getSalesInterval( Accounting acc )
 
     printf("\n Enter Starting and Finishing Months[1,12]: ");
     ret = scanf("%d %d", &startingMonth, &endingMonth );
+
+    fflush2();
 
     if( (ret != 2 ) || ( endingMonth < startingMonth ) ||
        ( ( startingMonth < 1 ) || ( endingMonth > 12 ) ) ) {
@@ -636,12 +649,14 @@ void getProductBuyers( Sales sales , ProductCatalog pCat )
 	}
 
 	printf("\n Enter Product: ");
-	scanf("%s", product);
+    fgets( product, 7, stdin );
 
 	if ( !existsProduct( pCat, product ) ) {
         printf("\nNo Product by that Name.");
 		return;
 	}
+
+    fflush2();
 
     /* Time Start */
     tStart = clock();
@@ -672,7 +687,7 @@ void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 {
 	char client[6];
 	int month;
-	int ret, i;
+	int ret = 0, i;
 	char **lists, **lists2; int *cnt, size;
 	ResultsList mp;
 
@@ -696,12 +711,14 @@ void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 	}
 
 
-	do
-	{
-		printf("\n Enter Client: ");
-		ret = scanf("%s", client);
-	} while (ret < 1);
-	ret = 0;
+	printf("\n Enter Client: ");
+    fgets( client, 7, stdin );
+
+    if( !existsClient( cCat, client ) ) {
+        printf("\nNo Client by that Name.");
+        return;
+    }
+
 	do
 	{
 		printf("\n Enter month[1..12]: ");
@@ -713,6 +730,8 @@ void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 		printf("\n Invalid month.");
 		return;
 	}
+
+    fflush2();
 
     /* Time Start */
     tStart = clock();
@@ -853,11 +872,13 @@ void getMostWantedProducts( Sales sales )
     printf("\n Enter Amount: ");
     scanf("%d", &cnt);
 
-
     if( ( cnt <= 0 ) ) {
         printf("\nAmount must be a Number >0.");
         return;
     }
+
+    fflush2();
+
     /* Time Start */
     tStart = clock();
 
@@ -916,7 +937,6 @@ void getMostWantedProducts( Sales sales )
 void getClientMostWantedProducts( Sales sales , ClientCatalog cCat )
 {
 	char client[8];
-	int ret;
 	char **list, **cntL;
 	int cnt, *res, i;
 	ResultsList rl;
@@ -937,16 +957,17 @@ void getClientMostWantedProducts( Sales sales , ClientCatalog cCat )
 	}
 
 	printf("\n Enter Client: ");
-	ret = scanf("%s", client);
+	fgets( client, 7, stdin );
 
-	if (ret == 0)
-		return;
-	cli = getClient(cCat, client);
-
-	if (!cli) {
+	if( !existsClient( cCat, client ) ) {
         printf("\nNo Client by that Name.");
 		return;
-	}
+    }
+
+    fflush2();
+
+	cli = getClient(cCat, client);
+
 
     /* Time Start */
     tStart = clock();
@@ -1139,8 +1160,8 @@ void paginateResults( int nLists, int showIdx, int nPostArgs, ... )
 	lists = (char***)malloc( sizeof( char ** ) * nLists );
 	postArgs = (char**)malloc( sizeof(char*) * nPostArgs );
 
-    fflush( stdin );
 	va_start( args, nPostArgs );
+
 
     if( showIdx ) {
         genColumn( buf, "Indx", 6 );    /* columnSize for Indx is 6 */
@@ -1271,9 +1292,9 @@ void genColumn( char *ret, char *s, int max )
     n = 1 + (max/2);
 
     sprintf( ret, "|%*s%*s",
-		(int)n + strlen(s) / 2,
+		(int)( n + strlen(s) / 2 ),
         s,
-		(int)n - strlen(s) / 2,
+		(int)( n - strlen(s) / 2 ),
     "");
 
 }
