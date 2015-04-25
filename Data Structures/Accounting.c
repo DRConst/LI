@@ -332,8 +332,16 @@ csv_Stats_s getMonthsStats(Accounting_s acc)
 StringList getIntervalStats(Accounting_s acc, int s, int f)
 {
 	StringList sl = initStringList();
-	int  i, j, profit, cnt;
+	int  i, j, totalP = 0, totalC = 0;
 	char buff[64];
+	int *profit = malloc(sizeof(int) * (f - s + 1));
+	int *cnt = malloc(sizeof(int) * (f - s + 1));
+	for (i = s; i <= f; i++)
+	{
+		profit[i - s] = 0;
+		cnt[i - s] = 0;
+	}
+	/*
 	for (i = s; i <= f; i++)
 	{
 		profit = 0;
@@ -347,7 +355,33 @@ StringList getIntervalStats(Accounting_s acc, int s, int f)
 		sl = insertStringList(sl, buff, strlen(buff));
 		sprintf(buff, "%d", cnt);
 		sl = insertStringList(sl, buff, strlen(buff));
+	}*/
+
+
+	for (i = 0; i < acc->cntEC; i++)
+	{
+		for (j = s; j <= f; j++)
+		{
+			profit[j - s] += acc->entriesCli[i]->profit[j];
+			cnt[j - s] += acc->entriesCli[i]->cntSalesN[j] + acc->entriesCli[i]->cntSalesP[j];
+		}
 	}
+	for (j = s; j <= f; j++)
+	{
+		totalP += profit[j - s];
+		sprintf(buff, "%d", profit[j - s]);
+		sl = insertStringList(sl, buff, strlen(buff));
+
+		totalC += cnt[j - s];
+		sprintf(buff, "%d", cnt[j - s]);
+		sl = insertStringList(sl, buff, strlen(buff));
+	}
+
+	sprintf(buff, "%d", totalP);
+	sl = insertStringList(sl, buff, strlen(buff));
+	sprintf(buff, "%d", totalC);
+	sl = insertStringList(sl, buff, strlen(buff));
+
 	return sl;
 }
 

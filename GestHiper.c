@@ -577,7 +577,12 @@ void getSalesInterval( Accounting acc )
 	{
 		l1[i] = l[2 * i];
 		l2[i] = l[2 * i + 1];
-		l3[i] = getMonthFromInt(startingMonth + i);
+		if (i != size - 1)
+			l3[i] = getMonthFromInt(startingMonth + i);
+		else
+		{
+			l3[i] = "Total";
+		}
 	}
 
 
