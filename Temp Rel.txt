@@ -1,0 +1,11 @@
+Contabilidade
+Estrutura de Dados
+A estrutura de dados usada para este modulo e um simples array de registos, que contem a informacao necessaria a resposta efficiente as queries pedidas, contendo informacao sobre o numero de vendas em ambos os modos, unidades vendidas e lucro, separados por mes (estando no indice 0 o sumatorio dos seguintes campos).
+Por forma a manter performace a medida que o numero de registos aumenta, este modulo depende da metadata nos catalogos para garantir accessos directos aos registos, desta forma a medida que o numero de registos aumenta o custo de aceder a um certo registo mantem-se constante.
+Por forma a responder a questoes relativas a ordenacao entre productos (mais comprados, etc.) os elementos do array sao ordenados de forma crescente recorrendo a uma minHeap, permitindo responder a certas queries com custo linear a incorrendo apenas num custo incial um pouco mais elevado.
+
+
+Compras
+Estrutura de Dados
+A esturura de dados usada e muito semelhante a usada no modulo de Contabilidade, diferindo no conteudo de cada entrada, e no separar dos registos de clientes e productos em diferentes arrays, sendo tambem ordenado da mesma forma que os registos na Contabilidade, para responder a queries com as mesmas caracteristicas.
+As entradas neste modulo contem agora 12 arrays de registos, em que cada entrada aponta para uma compra realizada no respectivo mes. Foi feita a decisao de manter intactos os dados pertinentes a cada venda por forma a permitir extensibilidade apesar de um maior uso de memoria, permitindo assim, se necessario, adaptar o modulo a novas necessidades.
