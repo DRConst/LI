@@ -26,138 +26,144 @@ void fflush2();
 
 int main()
 {
-	int op = 1;
+    int op = 1;
     ProductCatalog prodCat = initProductCatalog();
     ClientCatalog clientCat = initClientCatalog();
     Sales sales = initSales();
-	Accounting acc = initAccounting();
+    Accounting acc = initAccounting();
     int ret;
 
 
 
 
-	do {
-		printMenu();
-		ret = scanf("%d", &op );
+    do
+    {
+        printMenu();
+        ret = scanf("%d", &op );
 
-		fflush2();
+        fflush2();
 
-        #if _WIN32
-            system("cls");
-        #else
-            system("clear");
-        #endif
+#if _WIN32
+        system("cls");
+#else
+        system("clear");
+#endif
 
-        if( ret ) {
-            switch( op ) {
-                case 1:
-					freeData(prodCat, clientCat, sales, acc);
+        if( ret )
+        {
+            switch( op )
+            {
+            case 1:
+                freeData(prodCat, clientCat, sales, acc);
 
-					prodCat = initProductCatalog();
+                prodCat = initProductCatalog();
 
-					clientCat = initClientCatalog();
+                clientCat = initClientCatalog();
 
-					sales = initSales();
+                sales = initSales();
 
-					acc = initAccounting();
+                acc = initAccounting();
 
-                    readFiles( prodCat, clientCat, sales, acc );
+                readFiles( prodCat, clientCat, sales, acc );
                 break;
 
-                case 2:
-                    ProductsByPrefix( prodCat );
+            case 2:
+                ProductsByPrefix( prodCat );
                 break;
 
-                case 3:
-                    getProductSalesInfo( prodCat, acc );
+            case 3:
+                getProductSalesInfo( prodCat, acc );
                 break;
 
-                case 4:
-                    getUnboughtProducts( acc );
+            case 4:
+                getUnboughtProducts( acc );
                 break;
 
-                case 5:
-                    getClientSalesCount( sales, clientCat );
+            case 5:
+                getClientSalesCount( sales, clientCat );
                 break;
 
-                case 6:
-                    ClientsByPrefix( clientCat );
+            case 6:
+                ClientsByPrefix( clientCat );
                 break;
 
-                case 7:
-                    getSalesInterval( acc );
+            case 7:
+                getSalesInterval( acc );
                 break;
 
-                case 8:
-					getProductBuyers(sales, prodCat );
+            case 8:
+                getProductBuyers(sales, prodCat );
                 break;
 
-                case 9:
-					getClientSales(sales, prodCat, clientCat);
+            case 9:
+                getClientSales(sales, prodCat, clientCat);
                 break;
 
-                case 10:
-					getActiveClients(sales );
+            case 10:
+                getActiveClients(sales );
                 break;
 
-                case 11:
-                    generateCSV( acc );
+            case 11:
+                generateCSV( acc );
                 break;
 
-                case 12:
-                    getMostWantedProducts( sales );
+            case 12:
+                getMostWantedProducts( sales );
                 break;
 
-                case 13:
-                    getClientMostWantedProducts( sales , clientCat);
+            case 13:
+                getClientMostWantedProducts( sales , clientCat);
                 break;
 
-                case 14:
-                    getAllInactive( sales );
+            case 14:
+                getAllInactive( sales );
                 break;
 
-                case 0:
+            case 0:
                 break;
             }
         }
 
-	}while( op != 0 && op != EOF );
+    }
+    while( op != 0 && op != EOF );
 
 
-	return 0;
+    return 0;
 }
 
 void fflush2()
 {
     int c;
 
-    do {
+    do
+    {
         c = getchar();
-    }while( ( c!='\n' ) && ( c!= EOF ) );
+    }
+    while( ( c!='\n' ) && ( c!= EOF ) );
 
 }
 
 void printMenu()
 {
 
-	printf( HEADER_MENU
-        MENU_OPTION_1
-        MENU_OPTION_2
-        MENU_OPTION_3
-        MENU_OPTION_4
-        MENU_OPTION_5
-        MENU_OPTION_6
-        MENU_OPTION_7
-        MENU_OPTION_8
-        MENU_OPTION_9
-        MENU_OPTION_10
-        MENU_OPTION_11
-        MENU_OPTION_12
-        MENU_OPTION_13
-        MENU_OPTION_14
-        EXIT_OPTION
-        "\n	Option: "
-    );
+    printf( HEADER_MENU
+            MENU_OPTION_1
+            MENU_OPTION_2
+            MENU_OPTION_3
+            MENU_OPTION_4
+            MENU_OPTION_5
+            MENU_OPTION_6
+            MENU_OPTION_7
+            MENU_OPTION_8
+            MENU_OPTION_9
+            MENU_OPTION_10
+            MENU_OPTION_11
+            MENU_OPTION_12
+            MENU_OPTION_13
+            MENU_OPTION_14
+            EXIT_OPTION
+            "\n	Option: "
+          );
 }
 
 
@@ -165,10 +171,10 @@ void printMenu()
 /* Query 1 */
 void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Accounting acc )
 {
-	char clients[MAX_FILE_PATH] = "";
-	char products[MAX_FILE_PATH] = "";
-	char salesFile[MAX_FILE_PATH] = "";
-	FILE *clientsFp, *productsFp, *salesFp;
+    char clients[MAX_FILE_PATH] = "";
+    char products[MAX_FILE_PATH] = "";
+    char salesFile[MAX_FILE_PATH] = "";
+    FILE *clientsFp, *productsFp, *salesFp;
 
     char type;
     int qtd, month, ret;
@@ -180,29 +186,30 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
     char timeS[20] = "";
 
 
-	printf("\n Optional file paths[Max: %d], enter for default\n", MAX_FILE_PATH);
+    printf("\n Optional file paths[Max: %d], enter for default\n", MAX_FILE_PATH);
 
-	printf("\n Clients File: ");
+    printf("\n Clients File: ");
     fgets( clients, MAX_FILE_PATH, stdin);
 
-	printf("\n Products File: ");
-	fgets( products, MAX_FILE_PATH, stdin);
+    printf("\n Products File: ");
+    fgets( products, MAX_FILE_PATH, stdin);
 
-	printf("\n Sales File: ");
-	fgets( salesFile, MAX_FILE_PATH, stdin);
+    printf("\n Sales File: ");
+    fgets( salesFile, MAX_FILE_PATH, stdin);
 
     /*  Time Start */
     tStart = clock();
 
 
-	strtok( clients, "\n" );
-	strtok( products, "\n" );
-	strtok( salesFile, "\n" );
+    strtok( clients, "\n" );
+    strtok( products, "\n" );
+    strtok( salesFile, "\n" );
 
     if( strlen( products ) == 1 )
         strcpy( products, "FichProdutos.txt" );
 
-    if( ( productsFp = fopen( products, "r" ) ) == NULL ) {
+    if( ( productsFp = fopen( products, "r" ) ) == NULL )
+    {
         printf( "\nProducts File Not Found");
         return;
     }
@@ -211,7 +218,8 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
     if( strlen( clients ) == 1 )
         strcpy( clients, "FichClientes.txt" );
 
-    if( ( clientsFp = fopen( clients, "r" ) ) == NULL ) {
+    if( ( clientsFp = fopen( clients, "r" ) ) == NULL )
+    {
         printf( "\nClients File Not Found");
         return;
     }
@@ -220,7 +228,8 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
     if( strlen( salesFile ) == 1 )
         strcpy( salesFile, "Compras.txt" );
 
-    if( ( salesFp = fopen( salesFile, "r" ) ) == NULL ) {
+    if( ( salesFp = fopen( salesFile, "r" ) ) == NULL )
+    {
         printf( "\nSales File Not Found");
         return;
     }
@@ -251,46 +260,47 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
 
         sale = createSale( month, qtd, price, prod, client, type );
 
-        if( ret == 6 ) {
+        if( ret == 6 )
+        {
             sales = addSale( sales, clientCat, prodCat,
-                    sale
-            );
+                             sale
+                           );
             acc = addAccounting( acc, clientCat, prodCat, sale );
-			if (!acc || !sales)
-			{
-				#if _WIN32
-					system("cls");
-				#else
-					system("clear");
-				#endif
+            if (!acc || !sales)
+            {
+#if _WIN32
+                system("cls");
+#else
+                system("clear");
+#endif
 
-					printf("An error occured, please check your memory usage");
-					exit(1);
-			}
+                printf("An error occured, please check your memory usage");
+                exit(1);
+            }
         }
-		freeSale(sale);
+        freeSale(sale);
     }
     printf("Done \n\t%d read", getSalesCount( sales ) );
 
     printf("\nOrdering Sales Catalog...");
-	sales = orderSales(sales, prodCat, clientCat);
+    sales = orderSales(sales, prodCat, clientCat);
     printf("Done");
 
     printf("\nOrdering Accounting Catalog...");
     acc = orderAcc( acc, prodCat, clientCat );
     printf("Done \n");
 
-	if (!acc || !sales)
-	{
-		#if _WIN32
-			system("cls");
-		#else
-			system("clear");
-		#endif
+    if (!acc || !sales)
+    {
+#if _WIN32
+        system("cls");
+#else
+        system("clear");
+#endif
 
-		printf("An error occured, please check your memory usage");
-		exit(1);
-	}
+        printf("An error occured, please check your memory usage");
+        exit(1);
+    }
 
 
     /* Time End */
@@ -305,26 +315,28 @@ void readFiles( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Ac
 /* Query 2 */
 void ProductsByPrefix( ProductCatalog prodCat )
 {
-	char c;
-	StringList l;
-	clock_t tStart;
-	char timeS[20] = "";
+    char c;
+    StringList l;
+    clock_t tStart;
+    char timeS[20] = "";
 
 
-	if( !getProductCount( prodCat ) ) {
+    if( !getProductCount( prodCat ) )
+    {
         printf("\nProducts Catalog Not Initialized.");
         return;
-	}
+    }
 
-	printf("\n Enter Product Prefix[A-Z]: ");
-	scanf( " %c", &c);
+    printf("\n Enter Product Prefix[A-Z]: ");
+    scanf( " %c", &c);
 
     fflush2();
 
-	c = toupper( c );
+    c = toupper( c );
 
 
-	if( c >= 'A' && c <= 'Z' ) {
+    if( c >= 'A' && c <= 'Z' )
+    {
 
         /* Time Start */
         tStart = clock();
@@ -341,8 +353,9 @@ void ProductsByPrefix( ProductCatalog prodCat )
 
         freeStringList( l );
 
-	}else
-		printf("\nInvalid Input");
+    }
+    else
+        printf("\nInvalid Input");
 
 }
 
@@ -360,15 +373,17 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
     char timeS[20] = "";
 
 
-	if( !getProductCount( prodCat ) ) {
+    if( !getProductCount( prodCat ) )
+    {
         printf("\nProducts Catalog Not Initialized.");
         return;
-	}
+    }
 
-    if( !getAccountingCount( acc ) ) {
+    if( !getAccountingCount( acc ) )
+    {
         printf("\nAccounting Structure Not Initialized.");
         return;
-	}
+    }
 
 
     printf("\n Enter Product Code: ");
@@ -379,12 +394,14 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
     ret = scanf("%d", &nMonth );
 
 
-    if( !ret || ( ( nMonth < 1 ) || ( nMonth > 12 ) ) ) {
+    if( !ret || ( ( nMonth < 1 ) || ( nMonth > 12 ) ) )
+    {
         printf("\nInvalid Month");
         return;
     }
 
-    if( ( strlen( prod ) != 6 ) || ( !existsProduct( prodCat, prod ) ) ) {
+    if( ( strlen( prod ) != 6 ) || ( !existsProduct( prodCat, prod ) ) )
+    {
         printf("\nInvalid Product Code");
         return;
     }
@@ -403,7 +420,8 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
     /* Time End */
     parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) );
 
-    if( !count ) {
+    if( !count )
+    {
         printf("\n No Sales found for given Product/Month");
         return;
     }
@@ -411,7 +429,7 @@ void getProductSalesInfo( ProductCatalog prodCat, Accounting acc )
     printf("Product: %s\n\t Normal: %d\n\t Promo: %d\n\t Total: %d\n\tProfit: %.2f", prod, nSalesN, nSalesP, count, total );
     printf("\nCompleted in %s", timeS );
 
-	freeProduct(pr);
+    freeProduct(pr);
 
     getchar();
 
@@ -424,13 +442,14 @@ void getUnboughtProducts( Accounting acc )
     clock_t tStart;
     char timeS[20] = "";
 
-    if( !getAccountingCount( acc ) ) {
+    if( !getAccountingCount( acc ) )
+    {
         printf("\nAccounting Structure Not Initialized.");
         return;
-	}
+    }
 
-	/* Time Start */
-	tStart = clock();
+    /* Time Start */
+    tStart = clock();
 
     sl = getAccountingUnboughtProducts( acc );
 
@@ -449,107 +468,116 @@ void getUnboughtProducts( Accounting acc )
 void getClientSalesCount( Sales sales, ClientCatalog clientCat )
 {
     char client[6] = "";
-	ResultsList rl;
-	char **lists2;
-	int size, i, *cnt;
-	Client cli;
-	clock_t tStart;
-	char timeS[20] = "";
+    ResultsList rl;
+    char **lists2;
+    int size, i, *cnt;
+    Client cli;
+    clock_t tStart;
+    char timeS[20] = "";
 
 
-	if( !getClientCount( clientCat ) ) {
+    if( !getClientCount( clientCat ) )
+    {
         printf("\nClients Catalog Not Initialized.");
         return;
-	}
+    }
 
-    if( !getSalesCount( sales ) ) {
+    if( !getSalesCount( sales ) )
+    {
         printf("\nSales Structure Not Initialized.");
         return;
-	}
+    }
 
     printf("\nEnter Client Code: ");
     fgets( client, 6, stdin );
 
     fflush2();
 
-    if( ( strlen( client ) != 5 ) || ( !existsClient( clientCat, client ) ) ) {
+    if( ( strlen( client ) != 5 ) || ( !existsClient( clientCat, client ) ) )
+    {
         printf("\nInvalid Client Code");
         return;
     }
 
     /* Time Start */
     tStart = clock();
-	cli = getClient(clientCat, client);
-	rl = ProductsBoughtByClient(sales, cli);
+    cli = getClient(clientCat, client);
+    rl = ProductsBoughtByClient(sales, cli);
 
     /* Time End */
     parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
 
-	size = getCountResultsList(rl);
+    size = getCountResultsList(rl);
 
-    if( !size ) {
+    if( !size )
+    {
         printf("\nNo Products Found for that Client.");
         freeResultsList( rl );
         return;
     }
 
-	lists2 = malloc(sizeof(char*) * size);
-	cnt = getValuesResultsList(rl);
-	for (i = 0; i < size; i++)
-	{
-		lists2[i] = malloc(10);
+    lists2 = malloc(sizeof(char*) * size);
+    cnt = getValuesResultsList(rl);
+    for (i = 0; i < size; i++)
+    {
+        lists2[i] = malloc(10);
 
-		sprintf(lists2[i], "%d", cnt[i]);
-	}
+        sprintf(lists2[i], "%d", cnt[i]);
+    }
 
-	paginateResults(2, 0, 1, 10, getDescsResultsList(rl), "Month", size, 10, lists2, "Count", size, timeS );
+    paginateResults(2, 0, 1, 10, getDescsResultsList(rl), "Month", size, 10, lists2, "Count", size, timeS );
 
-	printf("Save to File?(Y/N): ");
+    printf("Save to File?(Y/N): ");
 
 
-	if( getchar() == 'Y' ) {
+    if( getchar() == 'Y' )
+    {
 
         /* Time Start */
         tStart = clock();
 
-        if( listsToCSV( client, 2, size, getDescsResultsList(rl), "Month", lists2, "Count" ) ) {
+        if( listsToCSV( client, 2, size, getDescsResultsList(rl), "Month", lists2, "Count" ) )
+        {
             /* Time End */
             parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
 
             printf("\n\tFile Successfully created, %s", timeS );
-        }else
+        }
+        else
             printf("\n\tError Creating File.");
 
         getchar();
-	}
-	freeClient(cli);
-	freeResultsList( rl );
+    }
+    freeClient(cli);
+    freeResultsList( rl );
 }
 
 /* Query 6 */
 void ClientsByPrefix( ClientCatalog clientCat )
 {
-	char c;
-	StringList l;
+    char c;
+    StringList l;
 
     clock_t tStart;
     char timeS[20] = "";
 
-	if( !getClientCount( clientCat ) ) {
+    if( !getClientCount( clientCat ) )
+    {
         printf("\nClients Catalog Not Initialized.");
         return;
-	}
+    }
 
 
-	printf("\n Enter Client Prefix[A-Z]: ");
-	scanf( " %c", &c);
+    printf("\n Enter Client Prefix[A-Z]: ");
+    scanf( " %c", &c);
 
     fflush2();
 
-	c = toupper( c );
+    c = toupper( c );
 
 
-	if( c >= 'A' && c <= 'Z' ) {
+    if( c >= 'A' && c <= 'Z' )
+    {
         /* Time Start */
         tStart = clock();
         l = getClientsByPrefix( clientCat, c );
@@ -557,14 +585,15 @@ void ClientsByPrefix( ClientCatalog clientCat )
         /* Time End */
         parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
 
-		if( getCountStringList( l ) )
+        if( getCountStringList( l ) )
             paginateResults( 1, 1, 1, 8, getStringList( l ), "Clientes", getCountStringList( l ), timeS );
         else
             printf("\nNo Clients By That Prefix");
 
         freeStringList( l );
-	}else
-		printf("\nInvalid Input");
+    }
+    else
+        printf("\nInvalid Input");
 
 }
 
@@ -573,18 +602,19 @@ void getSalesInterval( Accounting acc )
 {
     int ret;
     int startingMonth, endingMonth;
-	StringList sl;
-	int i, size;
-	char **l, **l1, **l2, **l3;
+    StringList sl;
+    int i, size;
+    char **l, **l1, **l2, **l3;
 
-	clock_t tStart;
-	char timeS[20] = "";
+    clock_t tStart;
+    char timeS[20] = "";
 
 
-    if( !getAccountingCount( acc ) ) {
+    if( !getAccountingCount( acc ) )
+    {
         printf("\nAccounting Structure Not Initialized.");
         return;
-	}
+    }
 
     printf("\n Enter Starting and Finishing Months[1,12]: ");
     ret = scanf("%d %d", &startingMonth, &endingMonth );
@@ -592,7 +622,8 @@ void getSalesInterval( Accounting acc )
     fflush2();
 
     if( (ret != 2 ) || ( endingMonth < startingMonth ) ||
-       ( ( startingMonth < 1 ) || ( endingMonth > 12 ) ) ) {
+            ( ( startingMonth < 1 ) || ( endingMonth > 12 ) ) )
+    {
         printf("\nInvalid Month");
         return;
     }
@@ -600,77 +631,80 @@ void getSalesInterval( Accounting acc )
     /* Time Start */
     tStart = clock();
 
-	sl = getIntervalStats(acc, startingMonth, endingMonth);
+    sl = getIntervalStats(acc, startingMonth, endingMonth);
 
     /* Time End */
     parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
 
-	size = getCountStringList(sl) / 2;
-	l = getStringList(sl);
-	l1 = malloc(sizeof(char*) * size);
-	l2 = malloc(sizeof(char*) * size);
-	l3 = malloc(sizeof(char*) * size);
-	for (i = 0; i < size; i++)
-	{
-		l1[i] = l[2 * i];
-		l2[i] = l[2 * i + 1];
-		if (i != size - 1)
-			l3[i] = getMonthFromInt(startingMonth + i);
-		else
-		{
-			l3[i] = "Total";
-		}
-	}
+    size = getCountStringList(sl) / 2;
+    l = getStringList(sl);
+    l1 = malloc(sizeof(char*) * size);
+    l2 = malloc(sizeof(char*) * size);
+    l3 = malloc(sizeof(char*) * size);
+    for (i = 0; i < size; i++)
+    {
+        l1[i] = l[2 * i];
+        l2[i] = l[2 * i + 1];
+        if (i != size - 1)
+            l3[i] = getMonthFromInt(startingMonth + i);
+        else
+        {
+            l3[i] = "Total";
+        }
+    }
 
 
-	paginateResults(3, 0, 1, 10, l3, "Month", size, 10, l1, "Profit", size, 10, l2, "Count", size, timeS );
+    paginateResults(3, 0, 1, 10, l3, "Month", size, 10, l1, "Profit", size, 10, l2, "Count", size, timeS );
 }
 
 /* Query 8 */
 void getProductBuyers( Sales sales , ProductCatalog pCat )
 {
-	char product[7];
-	char **listN, **listP;
-	int cntN, cntP;
-	StringList sl1,sl2;
+    char product[7];
+    char **listN, **listP;
+    int cntN, cntP;
+    StringList sl1,sl2;
 
-	clock_t tStart;
-	char timeS[20] = "";
+    clock_t tStart;
+    char timeS[20] = "";
 
 
-    if( !getSalesCount( sales ) ) {
+    if( !getSalesCount( sales ) )
+    {
         printf("\nSales Structure Not Initialized.");
         return;
-	}
+    }
 
-	if( !getProductCount( pCat ) ) {
+    if( !getProductCount( pCat ) )
+    {
         printf("\nProducts Catalog Not Initialized.");
         return;
-	}
+    }
 
-	printf("\n Enter Product: ");
+    printf("\n Enter Product: ");
     fgets( product, 7, stdin );
 
-	if ( !existsProduct( pCat, product ) ) {
+    if ( !existsProduct( pCat, product ) )
+    {
         printf("\nNo Product by that Name.");
-		return;
-	}
+        return;
+    }
 
     fflush2();
 
     /* Time Start */
     tStart = clock();
 
-	sl1 = productBuyersN(sales, pCat, product);
-	sl2 = productBuyersP(sales, pCat, product);
+    sl1 = productBuyersN(sales, pCat, product);
+    sl2 = productBuyersP(sales, pCat, product);
 
     /* Time End */
     parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
 
-	listN = getStringList(sl1);
-	listP = getStringList(sl2);
-	cntN = getCountStringList(sl1);
-	cntP = getCountStringList(sl2);
+    listN = getStringList(sl1);
+    listP = getStringList(sl2);
+    cntN = getCountStringList(sl1);
+    cntP = getCountStringList(sl2);
 
 
     if( !cntN && !cntP )
@@ -685,114 +719,122 @@ void getProductBuyers( Sales sales , ProductCatalog pCat )
 /* Query 9 */
 void getClientSales(Sales sales, ProductCatalog pCat, ClientCatalog cCat)
 {
-	char client[6];
-	int month;
-	int ret = 0, i;
-	char **lists, **lists2; int *cnt, size;
-	ResultsList mp;
+    char client[6];
+    int month;
+    int ret = 0, i;
+    char **lists, **lists2;
+    int *cnt, size;
+    ResultsList mp;
 
     clock_t tStart;
     char timeS[20] = "";
 
 
-    if( !getSalesCount( sales ) ) {
+    if( !getSalesCount( sales ) )
+    {
         printf("\nSales Structure Not Initialized.");
         return;
-	}
+    }
 
-	if( !getProductCount( pCat ) ) {
+    if( !getProductCount( pCat ) )
+    {
         printf("\nProducts Catalog Not Initialized.");
         return;
-	}
+    }
 
-    if( !getClientCount( cCat ) ) {
+    if( !getClientCount( cCat ) )
+    {
         printf("\nClients Catalog Not Initialized.");
         return;
-	}
+    }
 
 
-	printf("\n Enter Client: ");
+    printf("\n Enter Client: ");
     fgets( client, 7, stdin );
 
-    if( !existsClient( cCat, client ) ) {
+    if( !existsClient( cCat, client ) )
+    {
         printf("\nNo Client by that Name.");
         return;
     }
 
-	do
-	{
-		printf("\n Enter month[1..12]: ");
-		ret = scanf("%d", &month);
-	} while (ret < 1);
+    do
+    {
+        printf("\n Enter month[1..12]: ");
+        ret = scanf("%d", &month);
+    }
+    while (ret < 1);
 
-	if (month > 12 || month < 1)
-	{
-		printf("\n Invalid month.");
-		return;
-	}
+    if (month > 12 || month < 1)
+    {
+        printf("\n Invalid month.");
+        return;
+    }
 
     fflush2();
 
     /* Time Start */
     tStart = clock();
 
-	mp = mostBoughtMonthlyProductsByClient(sales, cCat, client, month - 1);
+    mp = mostBoughtMonthlyProductsByClient(sales, cCat, client, month - 1);
 
     /* Time End */
     parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
 
-	lists = getDescsResultsList(mp);
-	cnt = getValuesResultsList(mp);
-	size = getCountResultsList(mp);
+    lists = getDescsResultsList(mp);
+    cnt = getValuesResultsList(mp);
+    size = getCountResultsList(mp);
 
-	if( !cnt ) {
+    if( !cnt )
+    {
         printf("\nNo Products Found by that Client.");
         freeResultsList( mp );
         return;
-	}
+    }
 
-	lists2 = malloc(sizeof(char*) * size);
-	for (i = 0; i < size; i++)
-	{
-		lists2[i] = malloc(10);
+    lists2 = malloc(sizeof(char*) * size);
+    for (i = 0; i < size; i++)
+    {
+        lists2[i] = malloc(10);
 
-		sprintf(lists2[i], "%d", cnt[i]);
-	}
+        sprintf(lists2[i], "%d", cnt[i]);
+    }
 
-	paginateResults(2, 1, 1, 10, lists, "Products", size, 10 , lists2, "Amount", size, timeS );
+    paginateResults(2, 1, 1, 10, lists, "Products", size, 10 , lists2, "Amount", size, timeS );
 
-	freeResultsList(mp);
+    freeResultsList(mp);
 
-	for (i = 0; i < size; i++)
-		free(lists2[i]);
-	free(lists2);
+    for (i = 0; i < size; i++)
+        free(lists2[i]);
+    free(lists2);
 }
 
 /* Query 10 */
 void getActiveClients(Sales sales)
 {
-	StringList sl;
-	char **list;
-	int size;
+    StringList sl;
+    char **list;
+    int size;
 
-	clock_t tStart;
-	char timeS[20] = "";
+    clock_t tStart;
+    char timeS[20] = "";
 
-    if( !getSalesCount( sales ) ) {
+    if( !getSalesCount( sales ) )
+    {
         printf("\nSales Structure Not Initialized.");
         return;
-	}
+    }
 
     /* Time Start */
     tStart = clock();
 
-	sl = yearRoundClients(sales );
+    sl = yearRoundClients(sales );
 
     /* Time End */
     parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
 
-	list = getStringList(sl);
-	size = getCountStringList(sl);
+    list = getStringList(sl);
+    size = getCountStringList(sl);
 
     if( !size )
         printf("No Active Clients Found.");
@@ -805,17 +847,18 @@ void getActiveClients(Sales sales)
 /* Query 11 */
 void generateCSV( Accounting acc )
 {
-	CSV_Stats stats;
-	char **l1;
-	char **l2;
-	char **month;
-	int cnt, i;
+    CSV_Stats stats;
+    char **l1;
+    char **l2;
+    char **month;
+    int cnt, i;
 
-	clock_t tStart;
-	char timeS[20] = "";
+    clock_t tStart;
+    char timeS[20] = "";
 
 
-    if( !getAccountingCount( acc ) ) {
+    if( !getAccountingCount( acc ) )
+    {
         printf("\nAccounting Structure Not Initialized.");
         return;
     }
@@ -830,7 +873,8 @@ void generateCSV( Accounting acc )
 
     cnt = getCntCsvStats( stats );
 
-    if( !cnt ) {
+    if( !cnt )
+    {
         printf("\nAccounting Structure is Empty.");
         freeCsvStats( stats );
         return;
@@ -841,38 +885,40 @@ void generateCSV( Accounting acc )
 
     month = malloc( sizeof(char*) * 12 );
 
-	for (i = 0; i < 12; i++)
-	{
-		month[i] = malloc(2);
-		sprintf(month[i], "%d", i + 1);
-	}
+    for (i = 0; i < 12; i++)
+    {
+        month[i] = malloc(2);
+        sprintf(month[i], "%d", i + 1);
+    }
 
-	listsToCSV("YearlyStats", 3, cnt,month, "Month", l1, "Clients", l2, "Records");
-	freeCsvStats( stats );
+    listsToCSV("YearlyStats", 3, cnt,month, "Month", l1, "Clients", l2, "Records");
+    freeCsvStats( stats );
 
-	printf("\nFile writen to YearlyStats.csv in %s\n", timeS );
+    printf("\nFile writen to YearlyStats.csv in %s\n", timeS );
 }
 
 /* Query 12 */
 void getMostWantedProducts( Sales sales )
 {
-	Query12 q;
-	char **list, **list2, **list3;
-	int *iList, *iList2, size, cnt, i;
+    Query12 q;
+    char **list, **list2, **list3;
+    int *iList, *iList2, size, cnt, i;
 
-	clock_t tStart;
-	char timeS[20] = "";
+    clock_t tStart;
+    char timeS[20] = "";
 
 
-    if( !getSalesCount( sales ) ) {
+    if( !getSalesCount( sales ) )
+    {
         printf("\nSales Structure Not Initialized.");
         return;
-	}
+    }
 
     printf("\n Enter Amount: ");
     scanf("%d", &cnt);
 
-    if( ( cnt <= 0 ) ) {
+    if( ( cnt <= 0 ) )
+    {
         printf("\nAmount must be a Number >0.");
         return;
     }
@@ -882,142 +928,148 @@ void getMostWantedProducts( Sales sales )
     /* Time Start */
     tStart = clock();
 
-	q = mostSoldProducts(sales, cnt);
+    q = mostSoldProducts(sales, cnt);
 
     /* Time End */
     parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
 
 
-	size = getQ12Count(q);
+    size = getQ12Count(q);
 
-	if( !size ) {
+    if( !size )
+    {
         printf("\nNo Sold Products Registered on Accounting.");
         freeQ12( q );
         return;
-	}
+    }
 
-	list = getQ12StringList(q);
-	iList = getQ12UniqueCli(q);
-	iList2 = getQ12Units(q);
+    list = getQ12StringList(q);
+    iList = getQ12UniqueCli(q);
+    iList2 = getQ12Units(q);
 
-	list2 = malloc(sizeof(char*)*size);
-	for (i = 0; i < size; i++)
-	{
-		list2[i] = malloc(8);
+    list2 = malloc(sizeof(char*)*size);
+    for (i = 0; i < size; i++)
+    {
+        list2[i] = malloc(8);
 
-		sprintf(list2[i], "%d", iList[i]);
-	}
-	list3 = malloc(sizeof(char*)*size);
-	for (i = 0; i < size; i++)
-	{
-		list3[i] = malloc(8);
+        sprintf(list2[i], "%d", iList[i]);
+    }
+    list3 = malloc(sizeof(char*)*size);
+    for (i = 0; i < size; i++)
+    {
+        list3[i] = malloc(8);
 
-		sprintf(list3[i], "%d", iList2[i]);
-	}
+        sprintf(list3[i], "%d", iList2[i]);
+    }
     if( !size)
         printf("No Products Found.");
     else
-		paginateResults(3, 1, 1, 8, list, "Products", size, 8, list3, "Count", size, 8, list2, "Uniques", size, timeS );
+        paginateResults(3, 1, 1, 8, list, "Products", size, 8, list3, "Count", size, 8, list2, "Uniques", size, timeS );
 
-	freeQ12(q);
-	for (i = 0; i < size; i++)
-	{
-		free(list2[i]);
-	}
-	free(list2);
-	for (i = 0; i < size; i++)
-	{
-		free(list3[i]);
-	}
-	free(list3);
+    freeQ12(q);
+    for (i = 0; i < size; i++)
+    {
+        free(list2[i]);
+    }
+    free(list2);
+    for (i = 0; i < size; i++)
+    {
+        free(list3[i]);
+    }
+    free(list3);
 
 }
 
 /* Query 13 */
 void getClientMostWantedProducts( Sales sales , ClientCatalog cCat )
 {
-	char client[8];
-	char **list, **cntL;
-	int cnt, *res, i;
-	ResultsList rl;
-	Client cli;
+    char client[8];
+    char **list, **cntL;
+    int cnt, *res, i;
+    ResultsList rl;
+    Client cli;
 
-	clock_t tStart;
-	char timeS[20] = "";
+    clock_t tStart;
+    char timeS[20] = "";
 
 
-	if (!getSalesCount(sales)) {
-		printf("\nSales Structure Not Initialized.");
-		return;
-	}
+    if (!getSalesCount(sales))
+    {
+        printf("\nSales Structure Not Initialized.");
+        return;
+    }
 
-	if (!getClientCount(cCat)) {
-		printf("\nClients Catalog Not Initialized.");
-		return;
-	}
+    if (!getClientCount(cCat))
+    {
+        printf("\nClients Catalog Not Initialized.");
+        return;
+    }
 
-	printf("\n Enter Client: ");
-	fgets( client, 7, stdin );
+    printf("\n Enter Client: ");
+    fgets( client, 7, stdin );
 
-	if( !existsClient( cCat, client ) ) {
+    if( !existsClient( cCat, client ) )
+    {
         printf("\nNo Client by that Name.");
-		return;
+        return;
     }
 
     fflush2();
 
-	cli = getClient(cCat, client);
+    cli = getClient(cCat, client);
 
 
     /* Time Start */
     tStart = clock();
 
-	rl = Top3ProductsForClient(sales, cli);
+    rl = Top3ProductsForClient(sales, cli);
 
     /* Time End */
     parseRunTime( timeS, ( ( (float)clock() - (float)tStart ) / CLOCKS_PER_SEC ) * 1000 );
 
 
-	cnt = getCountResultsList(rl);
+    cnt = getCountResultsList(rl);
 
-	if( !cnt ) {
+    if( !cnt )
+    {
         printf("\nNo Products Found for that Client.");
         freeResultsList( rl );
         return;
-	}
+    }
 
-	list = getDescsResultsList(rl);
-	res = getValuesResultsList(rl);
-	cntL = malloc(sizeof(char*)* cnt);
-	for (i = 0; i < cnt; i++)
-	{
-		cntL[i] = malloc(10);
-		sprintf(cntL[i], "%d", res[i]);
-	}
-	paginateResults(2, 1, 1, 10, list, "Product", cnt, 10, cntL, "Count", cnt, timeS );
+    list = getDescsResultsList(rl);
+    res = getValuesResultsList(rl);
+    cntL = malloc(sizeof(char*)* cnt);
+    for (i = 0; i < cnt; i++)
+    {
+        cntL[i] = malloc(10);
+        sprintf(cntL[i], "%d", res[i]);
+    }
+    paginateResults(2, 1, 1, 10, list, "Product", cnt, 10, cntL, "Count", cnt, timeS );
 
-	for( i = 0; i < cnt; i++ )
+    for( i = 0; i < cnt; i++ )
         free( cntL[i] );
 
     free( cntL );
 
-	freeResultsList( rl );
+    freeResultsList( rl );
 }
 
 /* Query 14 */
 void getAllInactive( Sales sales )
 {
-	StringList s1, s2;
-	int sz1, sz2;
+    StringList s1, s2;
+    int sz1, sz2;
 
-	clock_t tStart;
-	char timeS[20] = "";
+    clock_t tStart;
+    char timeS[20] = "";
 
 
-    if( !getSalesCount( sales ) ) {
+    if( !getSalesCount( sales ) )
+    {
         printf("\nSales Structure Not Initialized.");
         return;
-	}
+    }
 
     /* Time Start */
     tStart = clock();
@@ -1031,17 +1083,18 @@ void getAllInactive( Sales sales )
     sz1 = getCountStringList( s1 );
     sz2 = getCountStringList( s2 );
 
-    if( !sz1 && !sz2 ) {
+    if( !sz1 && !sz2 )
+    {
         printf("No Products or Clients Without Purchases.");
         return;
     }
 
-	paginateResults( 2,
-                 0, 1,
-                 8, getStringList( s1 ), "Products", sz1,
-                 6, getStringList( s2 ), "Clients", sz2,
-                 timeS
-    );
+    paginateResults( 2,
+                     0, 1,
+                     8, getStringList( s1 ), "Products", sz1,
+                     6, getStringList( s2 ), "Clients", sz2,
+                     timeS
+                   );
 }
 
 /*
@@ -1055,31 +1108,33 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... )
     char ***lists;
     char **titles;
     char buff[200];
-	char *file;
+    char *file;
     int i, j;
     FILE *csvFile;
     if( !strlen( fileName ) )
         return 0;
-	file = malloc(strlen(fileName) + 5);
-	sprintf(file, "%s.csv", fileName);
+    file = malloc(strlen(fileName) + 5);
+    sprintf(file, "%s.csv", fileName);
 
-	lists = (char***)malloc( sizeof( char ** ) * nLists );
-	titles = (char**)malloc( sizeof(char*) * nLists );
+    lists = (char***)malloc( sizeof( char ** ) * nLists );
+    titles = (char**)malloc( sizeof(char*) * nLists );
 
-	va_start( args, listSize );
+    va_start( args, listSize );
 
     /* Grabbing Lists and their titles */
-	for( i = 0; i < nLists; i ++) {
+    for( i = 0; i < nLists; i ++)
+    {
         lists[i] = va_arg( args, char** );
         titles[i] = va_arg( args, char* );
-	}
+    }
 
-	if (!(csvFile = fopen(file, "w")))
-       return 0;
-	fputs("sep=,\n", csvFile);
+    if (!(csvFile = fopen(file, "w")))
+        return 0;
+    fputs("sep=,\n", csvFile);
 
     /* Settings Titles */
-    for( j = 0; j < nLists; j++ ) {
+    for( j = 0; j < nLists; j++ )
+    {
         if( !j )
             strcpy( buff, titles[j] );
         else
@@ -1089,8 +1144,10 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... )
     fputs( buff, csvFile );
 
     /* Outputting lines */
-    for( i = 0; i < listSize; i++ ) {
-        for( j = 0; j < nLists; j++ ) {
+    for( i = 0; i < listSize; i++ )
+    {
+        for( j = 0; j < nLists; j++ )
+        {
             if( !j )
                 strcpy( buff, lists[j][i] );
             else
@@ -1103,9 +1160,9 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... )
 
     free( titles );
 
-	free(lists);
+    free(lists);
 
-	free(file);
+    free(file);
 
     fclose( csvFile );
 
@@ -1138,37 +1195,39 @@ int listsToCSV( char *fileName, int nLists, int listSize, ... )
 
 void paginateResults( int nLists, int showIdx, int nPostArgs, ... )
 {
-	char header[300] = "";
-	char line[300] = "";
-	char body[1024] = "";
-	char footer[300] = "";
-	char ***lists;
-	char **postArgs;
-	int i, j, nPage;
-	va_list args;
-	int curPage = 0;
-	int maxPage = 0;
-	int maxLen = 0;
-	char input[10] = "";
-	char buf[500] = "";
-	char idx[6] = "";
-	int *columnSize, *listSize;
+    char header[300] = "";
+    char line[300] = "";
+    char body[1024] = "";
+    char footer[300] = "";
+    char ***lists;
+    char **postArgs;
+    int i, j, nPage;
+    va_list args;
+    int curPage = 0;
+    int maxPage = 0;
+    int maxLen = 0;
+    char input[10] = "";
+    char buf[500] = "";
+    char idx[6] = "";
+    int *columnSize, *listSize;
 
 
     columnSize = (int*)malloc( sizeof(int) * nLists );
     listSize = (int*)malloc( sizeof(int) * nLists );
-	lists = (char***)malloc( sizeof( char ** ) * nLists );
-	postArgs = (char**)malloc( sizeof(char*) * nPostArgs );
+    lists = (char***)malloc( sizeof( char ** ) * nLists );
+    postArgs = (char**)malloc( sizeof(char*) * nPostArgs );
 
-	va_start( args, nPostArgs );
+    va_start( args, nPostArgs );
 
 
-    if( showIdx ) {
+    if( showIdx )
+    {
         genColumn( buf, "Indx", 6 );    /* columnSize for Indx is 6 */
         strcat( header, buf);
     }
 
-	for( i = 0; i < nLists; i++ ) {
+    for( i = 0; i < nLists; i++ )
+    {
 
         columnSize[i] = va_arg( args, int );
 
@@ -1182,37 +1241,39 @@ void paginateResults( int nLists, int showIdx, int nPostArgs, ... )
             maxLen = listSize[i];
 
         sprintf( header, "%s%s", header, buf );
-	}
+    }
 
-	for( i = 0; i < nPostArgs; i++ )
+    for( i = 0; i < nPostArgs; i++ )
         postArgs[i] = va_arg( args, char* );
 
-	maxPage = CEILING_POS( maxLen, (float)PER_PAGE );
+    maxPage = CEILING_POS( maxLen, (float)PER_PAGE );
 
-	strcat( header, "|\n");
+    strcat( header, "|\n");
 
-	while( curPage != -1 )
+    while( curPage != -1 )
     {
 
-        #if _WIN32
-            system("cls");
-        #else
-            system("clear");
-        #endif
+#if _WIN32
+        system("cls");
+#else
+        system("clear");
+#endif
 
-		strcpy( body, "" );
-		strcpy( footer, "" );
-		for( i = curPage * PER_PAGE;
-			i < maxLen && i < ( ( curPage + 1 ) * PER_PAGE ) ; i++ )
-			{
+        strcpy( body, "" );
+        strcpy( footer, "" );
+        for( i = curPage * PER_PAGE;
+                i < maxLen && i < ( ( curPage + 1 ) * PER_PAGE ) ; i++ )
+        {
             strcpy( line, "" );
-			if( showIdx ) {
-				sprintf( idx, "%d", i + 1);
-				genColumn( buf, idx, 6 );   /* columnSize for Indx is 6 */
-				strcat( line, buf );
-			}
+            if( showIdx )
+            {
+                sprintf( idx, "%d", i + 1);
+                genColumn( buf, idx, 6 );   /* columnSize for Indx is 6 */
+                strcat( line, buf );
+            }
 
-			for( j = 0; j < nLists; j++ ) {
+            for( j = 0; j < nLists; j++ )
+            {
                 strcpy( buf, "");
 
                 if( i < listSize[j] )
@@ -1221,67 +1282,69 @@ void paginateResults( int nLists, int showIdx, int nPostArgs, ... )
                     genColumn( buf, "-", columnSize[j] );
 
                 strcat( line, buf );
-			}
-			strcat( line, "|\n" );
-			strcat( body, line );
+            }
+            strcat( line, "|\n" );
+            strcat( body, line );
 
-        sprintf( footer, " page %d/%d | %d/%d shown | %d per page", curPage+1, maxPage, i + 1, maxLen, PER_PAGE );
+            sprintf( footer, " page %d/%d | %d/%d shown | %d per page", curPage+1, maxPage, i + 1, maxLen, PER_PAGE );
 
-		}
+        }
 
 
-		for( j = 0; j < nPostArgs; j++ ) {
-			strcat( footer, " | " );
-			strcat( footer, postArgs[j] );
-		}
+        for( j = 0; j < nPostArgs; j++ )
+        {
+            strcat( footer, " | " );
+            strcat( footer, postArgs[j] );
+        }
 
-		strcat( footer, "\n(n)ext/(p)revious/(q)uit or page number \n: ");
+        strcat( footer, "\n(n)ext/(p)revious/(q)uit or page number \n: ");
 
 
 
         sprintf( buf, "|%.*s|", (int)(strlen( header ) - 3), MAX_SEPARATOR );
-/*
-        strcat( header, buf );
-        strcat( body, buf );
-*/
+        /*
+                strcat( header, buf );
+                strcat( body, buf );
+        */
         /* sprintf(header, "%s\n|%*.s|\n", header, strlen( header ), MAX_SEPARATOR ); */
 
         printf("%s%s\n%s%s\n%s", header, buf, body, buf, footer );
-		fgets( input, 10, stdin );
+        fgets( input, 10, stdin );
 
-		if( ( nPage = atoi( input ) ) == 0 )
-			/* Char */
-			switch( toupper( input[0] ) ) {
+        if( ( nPage = atoi( input ) ) == 0 )
+            /* Char */
+            switch( toupper( input[0] ) )
+            {
 
-				case 'N': /* next page */
-					if( ( curPage + 1 ) < maxPage )
-						curPage++;
-				break;
+            case 'N': /* next page */
+                if( ( curPage + 1 ) < maxPage )
+                    curPage++;
+                break;
 
-				case 'P': /* previous page */
-					if( curPage > 0 )
-						curPage--;
-				break;
+            case 'P': /* previous page */
+                if( curPage > 0 )
+                    curPage--;
+                break;
 
-				case 'Q': /* quit */
-					curPage = -1;
-				break;
-			}
-		else
-			/* pageNumber */
-			if( ( nPage > 0 ) && ( nPage <= maxPage ) )
-				curPage = nPage - 1;
+            case 'Q': /* quit */
+                curPage = -1;
+                break;
+            }
+        else
+            /* pageNumber */
+            if( ( nPage > 0 ) && ( nPage <= maxPage ) )
+                curPage = nPage - 1;
 
-	}
+    }
 
 
     free( postArgs );
 
     free( lists );
 
-	free( columnSize );
+    free( columnSize );
 
-	free( listSize );
+    free( listSize );
 
 }
 
@@ -1292,10 +1355,10 @@ void genColumn( char *ret, char *s, int max )
     n = 1 + (max/2);
 
     sprintf( ret, "|%*s%*s",
-		(int)( n + strlen(s) / 2 ),
-        s,
-		(int)( n - strlen(s) / 2 ),
-    "");
+             (int)( n + strlen(s) / 2 ),
+             s,
+             (int)( n - strlen(s) / 2 ),
+             "");
 
 }
 
@@ -1312,9 +1375,9 @@ void freeData( ProductCatalog prodCat, ClientCatalog clientCat, Sales sales, Acc
 
     /*
         TODO: Call Each Catalog's own free function
-*/
-        freeProductCatalog( prodCat );
-        freeClientCatalog( clientCat );
-		freeSales(sales);
-        freeAccounting(acc);
+    */
+    freeProductCatalog( prodCat );
+    freeClientCatalog( clientCat );
+    freeSales(sales);
+    freeAccounting(acc);
 }

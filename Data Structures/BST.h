@@ -1,6 +1,8 @@
 #pragma once
-/*#include "Stack.h"*/
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include "HashTable.h"
 
 typedef struct intNode_stc *Node;
 

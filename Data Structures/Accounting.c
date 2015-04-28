@@ -6,53 +6,53 @@ typedef struct entryAcc
     int cntSalesN[13];  /* Month Array, idx0 is total */
     double profit[13];  /* Month Array, idx0 is total */
     int units[13];
-	char name[8];/*debug only*/
+    char name[8];/*debug only*/
 }*EntryAcc;
 
 
 typedef struct accounting
 {
-	int cntEC, cntEP, sizeEC, sizeEP;
-	EntryAcc *entriesCli, *entriesPr;
+    int cntEC, cntEP, sizeEC, sizeEP;
+    EntryAcc *entriesCli, *entriesPr;
 }*Accounting_s;
 
 typedef struct csv_stats
 {
-	StringList sl1, sl2;
+    StringList sl1, sl2;
 }*csv_Stats_s;
 
 EntryAcc initEntryAcc()
 {
-	EntryAcc e = malloc(sizeof(*e));
-	int i;
+    EntryAcc e = malloc(sizeof(*e));
+    int i;
 
 
-	for (i = 0; i < 13; i++)
-	{
-	    e->cntSalesN[i] = 0;
-	    e->cntSalesP[i] = 0;
-	    e->profit[i] = (double)0;
-	}
+    for (i = 0; i < 13; i++)
+    {
+        e->cntSalesN[i] = 0;
+        e->cntSalesP[i] = 0;
+        e->profit[i] = (double)0;
+    }
 
-	strcpy( e->name, "" );
+    strcpy( e->name, "" );
 
 
-	return e;
+    return e;
 }
 
 
 Accounting_s initAccounting()
 {
-	Accounting_s acc = malloc(sizeof(*acc));
+    Accounting_s acc = malloc(sizeof(*acc));
 
-	acc->cntEC = 0;
-	acc->cntEP = 0;
-	acc->sizeEC = 0;
-	acc->sizeEP = 0;
-	acc->entriesCli = NULL;
-	acc->entriesPr = NULL;
+    acc->cntEC = 0;
+    acc->cntEP = 0;
+    acc->sizeEC = 0;
+    acc->sizeEP = 0;
+    acc->entriesCli = NULL;
+    acc->entriesPr = NULL;
 
-	return acc;
+    return acc;
 }
 
 Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog pCat,  Sale sale )
@@ -69,87 +69,91 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
 
 
 
-	/*Check if the sizes allow for insertion, if not realloc stuff*/
+    /*Check if the sizes allow for insertion, if not realloc stuff*/
 
-	if (acc->cntEC == acc->sizeEC)/*Client EntryAcc array is full*/
-	{
-		if (!acc->sizeEC)
-			acc->sizeEC = 1;
-		else
-			acc->sizeEC += acc->sizeEC;
+    if (acc->cntEC == acc->sizeEC)/*Client EntryAcc array is full*/
+    {
+        if (!acc->sizeEC)
+            acc->sizeEC = 1;
+        else
+            acc->sizeEC += acc->sizeEC;
 
         acc->entriesCli = realloc( acc->entriesCli,
-                            ( sizeof( struct entryAcc ) * acc->sizeEC ) );
-		if (!acc->entriesCli)
-			return NULL;
+                                   ( sizeof( struct entryAcc ) * acc->sizeEC ) );
+        if (!acc->entriesCli)
+            return NULL;
 
-		for (i = acc->sizeEC / 2; i < acc->sizeEC; i++)
-			acc->entriesCli[i] = NULL;
+        for (i = acc->sizeEC / 2; i < acc->sizeEC; i++)
+            acc->entriesCli[i] = NULL;
 
-	}
+    }
 
-	if (acc->cntEP == acc->sizeEP)/*Product EntryAcc array is full*/
-	{
+    if (acc->cntEP == acc->sizeEP)/*Product EntryAcc array is full*/
+    {
 
-		if (!acc->sizeEP)
-			acc->sizeEP = 1;
-		else
-			acc->sizeEP += acc->sizeEP;
+        if (!acc->sizeEP)
+            acc->sizeEP = 1;
+        else
+            acc->sizeEP += acc->sizeEP;
 
         acc->entriesPr = realloc( acc->entriesPr,
-                            ( sizeof( struct entryAcc ) * acc->sizeEP ) );
-		if (!acc->entriesPr)
-			return NULL;
+                                  ( sizeof( struct entryAcc ) * acc->sizeEP ) );
+        if (!acc->entriesPr)
+            return NULL;
 
-		for (i = acc->sizeEP / 2; i < acc->sizeEP; i++)
-			acc->entriesPr[i] = NULL;
+        for (i = acc->sizeEP / 2; i < acc->sizeEP; i++)
+            acc->entriesPr[i] = NULL;
 
-	}
+    }
 
 
 
-	/* First, get, if valid, Product/Client */
-	if( matchProductPattern( getSaleProduct( sale ) ) )
+    /* First, get, if valid, Product/Client */
+    if( matchProductPattern( getSaleProduct( sale ) ) )
         pr = getProduct(pCat, getSaleProduct( sale ) );
-	if (!pr)
-		return acc;
+    if (!pr)
+        return acc;
 
     if( matchClientPattern( getSaleClient( sale ) ) )
         cl = getClient(cCat, getSaleClient( sale ) );
-	if (!cl)
-		return acc;
+    if (!cl)
+        return acc;
 
-	monthIdx = getSaleMonth( sale );
+    monthIdx = getSaleMonth( sale );
 
 
-	/*Now bind the sale to the product*/
-	/*Check if the product already has an entry bound by checking metadata*/
-	if ((productHasMetaData(pr, "Accounting") != 0) && (acc->entriesPr[(i = getProductMetaData(pr, "Accounting"))] != NULL))
-		tE = acc->entriesPr[i];
+    /*Now bind the sale to the product*/
+    /*Check if the product already has an entry bound by checking metadata*/
+    if ((productHasMetaData(pr, "Accounting") != 0) && (acc->entriesPr[(i = getProductMetaData(pr, "Accounting"))] != NULL))
+        tE = acc->entriesPr[i];
 
-    else { /*Else create new Product Entry_s, update metadata*/
+    else   /*Else create new Product Entry_s, update metadata*/
+    {
 
         setProductMetaData(pr, acc->cntEP, "Accounting");
         setProductDataSize(pr,sizeof(int));
 
         i = acc->cntEP;
 
-	    tE = acc->entriesPr[ i ] = initEntryAcc();
+        tE = acc->entriesPr[ i ] = initEntryAcc();
 
-	    strcpy(tE->name, getProductName(pr));
+        strcpy(tE->name, getProductName(pr));
 
 
 
-		/*copyEntry(&tE, tE);*/
-		acc->cntEP++;
-	}
+        /*copyEntry(&tE, tE);*/
+        acc->cntEP++;
+    }
 
-	freeProduct(pr);
+    freeProduct(pr);
 
-    if( getSaleType( sale ) == 'P' ) {
+    if( getSaleType( sale ) == 'P' )
+    {
         tE->cntSalesP[ monthIdx ]++;
         tE->cntSalesP[ 0 ]++;
-    }else {
+    }
+    else
+    {
         tE->cntSalesN[ 0 ]++;
         tE->cntSalesN[ monthIdx ]++;
     }
@@ -160,29 +164,33 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
     tE->profit[ 0 ] += getSalePrice( sale ) * getSaleQtd( sale );
     tE->profit[ monthIdx ] += getSalePrice( sale ) * getSaleQtd( sale );
 
-	if ((clientHasMetaData(cl, "Accounting") != 0) && acc->entriesCli[(i = getClientMetaData(cl, "Accounting"))] != NULL)
-		tE = acc->entriesCli[i];
+    if ((clientHasMetaData(cl, "Accounting") != 0) && acc->entriesCli[(i = getClientMetaData(cl, "Accounting"))] != NULL)
+        tE = acc->entriesCli[i];
 
-    else { /*Else create new Client EntryAcc, update metadata*/
+    else   /*Else create new Client EntryAcc, update metadata*/
+    {
 
         setClientMetaData(cl,acc->cntEC, "Accounting");
         setClientDataSize(cl,sizeof(int));
 
         i = acc->cntEC;
 
-	    tE = acc->entriesCli[ i ] = initEntryAcc();
+        tE = acc->entriesCli[ i ] = initEntryAcc();
 
-	    strcpy(tE->name, getClientName(cl));
+        strcpy(tE->name, getClientName(cl));
 
 
-		/*copyEntry(&tE, tE);*/
-		acc->cntEC++;
-	}
+        /*copyEntry(&tE, tE);*/
+        acc->cntEC++;
+    }
 
-    if( getSaleType( sale ) == 'P' ) {
+    if( getSaleType( sale ) == 'P' )
+    {
         tE->cntSalesP[ monthIdx ]++;
         tE->cntSalesP[ 0 ]++;
-    }else {
+    }
+    else
+    {
         tE->cntSalesN[ 0 ]++;
         tE->cntSalesN[ monthIdx ]++;
     }
@@ -193,224 +201,225 @@ Accounting_s addAccounting( Accounting_s acc, ClientCatalog cCat, ProductCatalog
     tE->profit[ 0 ] += getSalePrice( sale ) * getSaleQtd( sale );
     tE->profit[ monthIdx ] += getSalePrice( sale ) * getSaleQtd( sale );
 
-	freeClient(cl);
+    freeClient(cl);
 
     return acc;
 }
 
 Accounting_s orderAcc(Accounting_s acc, ProductCatalog pCat, ClientCatalog cCat)
 {
-	minHeap h1 = newHeap( getClientCount(cCat) ), h2 = newHeap( getProductCount( pCat ) );
-	int letter, i, metaI, lSize, hUsed;
-	char **lists;
-	Client cl; Product pr;
-	EntryAcc cliE, prE, *tCE, *tPE;
-	Elem e;
+    minHeap h1 = newHeap( getClientCount(cCat) ), h2 = newHeap( getProductCount( pCat ) );
+    int letter, i, metaI, lSize, hUsed;
+    char **lists;
+    Client cl;
+    Product pr;
+    EntryAcc cliE, prE, *tCE, *tPE;
+    Elem e;
 
-	StringList sl;
-	for (letter = 0; letter < 26; letter++)
-	{
-		sl = getClientsByPrefix(cCat, 'A' + letter);
-		lSize = getCountStringList(sl);
-		lists = getStringList(sl);
-		for (i = 0; i < lSize; i++)
-		{
-			cl = getClient(cCat, lists[i]);
-			if (!clientHasMetaData(cl, "Accounting"))
-			{
-				/*Client has no records*/
-				cliE = initEntryAcc();
-				strcpy( cliE->name, getClientName( cl ) );
-			}
-			else
-			{
-				metaI = getClientMetaData(cl, "Accounting");
-				cliE = acc->entriesCli[metaI];
-			}
+    StringList sl;
+    for (letter = 0; letter < 26; letter++)
+    {
+        sl = getClientsByPrefix(cCat, 'A' + letter);
+        lSize = getCountStringList(sl);
+        lists = getStringList(sl);
+        for (i = 0; i < lSize; i++)
+        {
+            cl = getClient(cCat, lists[i]);
+            if (!clientHasMetaData(cl, "Accounting"))
+            {
+                /*Client has no records*/
+                cliE = initEntryAcc();
+                strcpy( cliE->name, getClientName( cl ) );
+            }
+            else
+            {
+                metaI = getClientMetaData(cl, "Accounting");
+                cliE = acc->entriesCli[metaI];
+            }
 
-			insertHeap(h1,( cliE->cntSalesN[0] + cliE->cntSalesP[0] ), cliE, sizeof cliE);
-			/*free(lists[i]);*/
-			freeClient(cl);
-		}
-		/*free(lists);*/
-		freeStringList( sl );
-	}
+            insertHeap(h1,( cliE->cntSalesN[0] + cliE->cntSalesP[0] ), cliE, sizeof cliE);
+            /*free(lists[i]);*/
+            freeClient(cl);
+        }
+        /*free(lists);*/
+        freeStringList( sl );
+    }
 
-	for (letter = 0; letter < 26; letter++)
-	{
-		sl = getProductsByPrefix(pCat, 'A' + letter);
-		lSize = getCountStringList(sl);
-		lists = getStringList(sl);
-		for (i = 0; i < lSize; i++)
-		{
-			pr = getProduct(pCat, lists[i]);
-			if (!productHasMetaData(pr, "Accounting"))
-			{
-				/*Client has no records*/
-				prE = initEntryAcc();
-				strcpy( prE->name, getProductName( pr ) );
-			}
-			else
-			{
-				metaI = getProductMetaData(pr, "Accounting");
-				prE = acc->entriesPr[metaI];
-			}
+    for (letter = 0; letter < 26; letter++)
+    {
+        sl = getProductsByPrefix(pCat, 'A' + letter);
+        lSize = getCountStringList(sl);
+        lists = getStringList(sl);
+        for (i = 0; i < lSize; i++)
+        {
+            pr = getProduct(pCat, lists[i]);
+            if (!productHasMetaData(pr, "Accounting"))
+            {
+                /*Client has no records*/
+                prE = initEntryAcc();
+                strcpy( prE->name, getProductName( pr ) );
+            }
+            else
+            {
+                metaI = getProductMetaData(pr, "Accounting");
+                prE = acc->entriesPr[metaI];
+            }
 
-			freeProduct(pr);
+            freeProduct(pr);
 
-			insertHeap(h2, ( prE->cntSalesN[0] + prE->cntSalesP[0] ), prE, sizeof prE);
-			/*free(lists[i]);*/
-		}
-		/*free(lists);*/
-		freeStringList( sl );
-	}
-	hUsed = getUsed(h1);
-	acc->cntEC = hUsed;
-	tCE = malloc(sizeof *tCE * acc->cntEC);
-	if (!tCE)
-		return NULL;
-	for (i = 0; i < hUsed; i++)
-	{
-		e = extractMin(h1);
-		tCE[i] = malloc(sizeof(struct entryAcc));
-		memcpy(tCE[i], getElemDataAddr(e), sizeof(struct entryAcc));
-		cl = getClient(cCat, tCE[i]->name);
-		setClientMetaData(cl, i, "Accounting");
-		freeElem(e);
-		freeClient(cl);
-	}
-	acc->entriesCli = tCE;
+            insertHeap(h2, ( prE->cntSalesN[0] + prE->cntSalesP[0] ), prE, sizeof prE);
+            /*free(lists[i]);*/
+        }
+        /*free(lists);*/
+        freeStringList( sl );
+    }
+    hUsed = getUsed(h1);
+    acc->cntEC = hUsed;
+    tCE = malloc(sizeof *tCE * acc->cntEC);
+    if (!tCE)
+        return NULL;
+    for (i = 0; i < hUsed; i++)
+    {
+        e = extractMin(h1);
+        tCE[i] = malloc(sizeof(struct entryAcc));
+        memcpy(tCE[i], getElemDataAddr(e), sizeof(struct entryAcc));
+        cl = getClient(cCat, tCE[i]->name);
+        setClientMetaData(cl, i, "Accounting");
+        freeElem(e);
+        freeClient(cl);
+    }
+    acc->entriesCli = tCE;
 
-	hUsed = getUsed(h2);
-	acc->cntEP = hUsed;
-	tPE = malloc(sizeof *tPE * acc->cntEP);
-	if (!tPE)
-		return NULL;
-	for (i = 0; i < hUsed; i++)
-	{
-		e = extractMin(h2);
-		tPE[i] = malloc(sizeof(struct entryAcc));
-		memcpy(tPE[i], getElemDataAddr(e), sizeof(struct entryAcc));
-		pr = getProduct(pCat, tPE[i]->name);
-		setProductMetaData(pr, i, "Accounting");
-		freeElem(e);
-		freeProduct(pr);
-	}
-	acc->entriesPr = tPE;
-	return acc;
+    hUsed = getUsed(h2);
+    acc->cntEP = hUsed;
+    tPE = malloc(sizeof *tPE * acc->cntEP);
+    if (!tPE)
+        return NULL;
+    for (i = 0; i < hUsed; i++)
+    {
+        e = extractMin(h2);
+        tPE[i] = malloc(sizeof(struct entryAcc));
+        memcpy(tPE[i], getElemDataAddr(e), sizeof(struct entryAcc));
+        pr = getProduct(pCat, tPE[i]->name);
+        setProductMetaData(pr, i, "Accounting");
+        freeElem(e);
+        freeProduct(pr);
+    }
+    acc->entriesPr = tPE;
+    return acc;
 }
 
 csv_Stats_s getMonthsStats(Accounting_s acc)
 {
-	int  i, j;
-	int cntCli[12], cntRecords[12], k;
-	csv_Stats_s toRet = malloc(sizeof(*toRet));
-	StringList sl1 = initStringList(), sl2 = initStringList();
-	char buff[64];
-	for (i = 0; i < 12; i++)
-	{
-		cntCli[i] = 0;
-		cntRecords[i] = 0;
-	}
-	for (i = 0; i < acc->cntEC; i++)
-	{
-		for (j = 0; j < 12; j++)
-		{
-			k = acc->entriesCli[i]->cntSalesN[j+1] + acc->entriesCli[i]->cntSalesP[j+1];
-			if (k)
-			{
-				cntRecords[j] += k;
-				cntCli[j]++;
-			}
-		}
-	}
-	for (i = 0; i < 12; i++)
-	{
-		sprintf(buff, "%d", cntCli[i]);
-		sl1 = insertStringList(sl1, buff, sizeof buff);
-		sprintf(buff, "%d", cntRecords[i]);
-		sl2 = insertStringList(sl2, buff, sizeof buff);		
-	}
-	toRet->sl1 = sl1;
-	toRet->sl2 = sl2;
+    int  i, j;
+    int cntCli[12], cntRecords[12], k;
+    csv_Stats_s toRet = malloc(sizeof(*toRet));
+    StringList sl1 = initStringList(), sl2 = initStringList();
+    char buff[64];
+    for (i = 0; i < 12; i++)
+    {
+        cntCli[i] = 0;
+        cntRecords[i] = 0;
+    }
+    for (i = 0; i < acc->cntEC; i++)
+    {
+        for (j = 0; j < 12; j++)
+        {
+            k = acc->entriesCli[i]->cntSalesN[j+1] + acc->entriesCli[i]->cntSalesP[j+1];
+            if (k)
+            {
+                cntRecords[j] += k;
+                cntCli[j]++;
+            }
+        }
+    }
+    for (i = 0; i < 12; i++)
+    {
+        sprintf(buff, "%d", cntCli[i]);
+        sl1 = insertStringList(sl1, buff, sizeof buff);
+        sprintf(buff, "%d", cntRecords[i]);
+        sl2 = insertStringList(sl2, buff, sizeof buff);
+    }
+    toRet->sl1 = sl1;
+    toRet->sl2 = sl2;
 
-	return toRet;
+    return toRet;
 }
 
 StringList getIntervalStats(Accounting_s acc, int s, int f)
 {
-	StringList sl = initStringList();
-	int  i, j, totalP = 0, totalC = 0;
-	char buff[64];
-	int *profit = malloc(sizeof(int) * (f - s + 1));
-	int *cnt = malloc(sizeof(int) * (f - s + 1));
-	for (i = s; i <= f; i++)
-	{
-		profit[i - s] = 0;
-		cnt[i - s] = 0;
-	}
-	/*
-	for (i = s; i <= f; i++)
-	{
-		profit = 0;
-		cnt = 0;
-		for (j = 0; j < acc->cntEC; j++)
-		{
-			profit += acc->entriesCli[i]->profit[i];
-			cnt += acc->entriesCli[i]->cntSalesN[i] + acc->entriesCli[i]->cntSalesP[i];
-		}
-		sprintf(buff, "%d", profit);
-		sl = insertStringList(sl, buff, strlen(buff));
-		sprintf(buff, "%d", cnt);
-		sl = insertStringList(sl, buff, strlen(buff));
-	}*/
+    StringList sl = initStringList();
+    int  i, j, totalP = 0, totalC = 0;
+    char buff[64];
+    int *profit = malloc(sizeof(int) * (f - s + 1));
+    int *cnt = malloc(sizeof(int) * (f - s + 1));
+    for (i = s; i <= f; i++)
+    {
+        profit[i - s] = 0;
+        cnt[i - s] = 0;
+    }
+    /*
+    for (i = s; i <= f; i++)
+    {
+    	profit = 0;
+    	cnt = 0;
+    	for (j = 0; j < acc->cntEC; j++)
+    	{
+    		profit += acc->entriesCli[i]->profit[i];
+    		cnt += acc->entriesCli[i]->cntSalesN[i] + acc->entriesCli[i]->cntSalesP[i];
+    	}
+    	sprintf(buff, "%d", profit);
+    	sl = insertStringList(sl, buff, strlen(buff));
+    	sprintf(buff, "%d", cnt);
+    	sl = insertStringList(sl, buff, strlen(buff));
+    }*/
 
 
-	for (i = 0; i < acc->cntEC; i++)
-	{
-		for (j = s; j <= f; j++)
-		{
-			profit[j - s] += acc->entriesCli[i]->profit[j];
-			cnt[j - s] += acc->entriesCli[i]->cntSalesN[j] + acc->entriesCli[i]->cntSalesP[j];
-		}
-	}
-	for (j = s; j <= f; j++)
-	{
-		totalP += profit[j - s];
-		sprintf(buff, "%d", profit[j - s]);
-		sl = insertStringList(sl, buff, strlen(buff));
+    for (i = 0; i < acc->cntEC; i++)
+    {
+        for (j = s; j <= f; j++)
+        {
+            profit[j - s] += acc->entriesCli[i]->profit[j];
+            cnt[j - s] += acc->entriesCli[i]->cntSalesN[j] + acc->entriesCli[i]->cntSalesP[j];
+        }
+    }
+    for (j = s; j <= f; j++)
+    {
+        totalP += profit[j - s];
+        sprintf(buff, "%d", profit[j - s]);
+        sl = insertStringList(sl, buff, strlen(buff));
 
-		totalC += cnt[j - s];
-		sprintf(buff, "%d", cnt[j - s]);
-		sl = insertStringList(sl, buff, strlen(buff));
-	}
+        totalC += cnt[j - s];
+        sprintf(buff, "%d", cnt[j - s]);
+        sl = insertStringList(sl, buff, strlen(buff));
+    }
 
-	sprintf(buff, "%d", totalP);
-	sl = insertStringList(sl, buff, strlen(buff));
-	sprintf(buff, "%d", totalC);
-	sl = insertStringList(sl, buff, strlen(buff));
+    sprintf(buff, "%d", totalP);
+    sl = insertStringList(sl, buff, strlen(buff));
+    sprintf(buff, "%d", totalC);
+    sl = insertStringList(sl, buff, strlen(buff));
 
-	return sl;
+    return sl;
 }
 
 char **getList1CsvStats(csv_Stats_s s)
 {
-	return getStringList(s->sl1);
+    return getStringList(s->sl1);
 }
 char **getList2CsvStats(csv_Stats_s s)
 {
-	return getStringList(s->sl2);
+    return getStringList(s->sl2);
 }
 int getCntCsvStats(csv_Stats_s s)
 {
-	return getCountStringList(s->sl1);
+    return getCountStringList(s->sl1);
 }
 
 void freeCsvStats(csv_Stats_s c)
 {
-	freeStringList(c->sl1);
-	freeStringList(c->sl2);
-	free(c);
+    freeStringList(c->sl1);
+    freeStringList(c->sl2);
+    free(c);
 }
 int getMonthSalesPByProduct( Accounting_s acc, Product pr, int month )
 {
@@ -573,7 +582,8 @@ StringList getAccountingUnboughtProducts( Accounting_s acc )
 
     i = acc->cntEP;
 
-    for( i = 0; i < acc->cntEP; i++ ) {
+    for( i = 0; i < acc->cntEP; i++ )
+    {
         tE = acc->entriesPr[i];
         if( !( tE->cntSalesN[0] + tE->cntSalesP[0] ) )
             insertStringList( sl, tE->name, 7 );
@@ -583,16 +593,16 @@ StringList getAccountingUnboughtProducts( Accounting_s acc )
 }
 void freeAccounting(Accounting acc)
 {
-	int i;
+    int i;
 
-	for (i = 0; i < acc->cntEC; i++)
-	{
-		free(acc->entriesCli[i]);
-	}
-	free(acc->entriesCli);
-	for (i = 0; i < acc->cntEP; i++)
-	{
-		free(acc->entriesPr[i]);
-	}
-	free(acc->entriesPr);
+    for (i = 0; i < acc->cntEC; i++)
+    {
+        free(acc->entriesCli[i]);
+    }
+    free(acc->entriesCli);
+    for (i = 0; i < acc->cntEP; i++)
+    {
+        free(acc->entriesPr[i]);
+    }
+    free(acc->entriesPr);
 }

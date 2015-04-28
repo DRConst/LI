@@ -2,6 +2,7 @@
 #include "BST.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <ctype.h>
 #include "StringList.h"
 #include "HashTable.h"

@@ -1,6 +1,7 @@
 #include "StringList.h"
 
-typedef struct stringList {
+typedef struct stringList
+{
     char **data;
     int *size;
     int count;

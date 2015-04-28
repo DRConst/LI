@@ -1,6 +1,7 @@
 #include "ResultsList.h"
 
-typedef struct resultsList {
+typedef struct resultsList
+{
     char **desc;
     int *data;
     int count;

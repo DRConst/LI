@@ -1,8 +1,4 @@
 #include "BST.h"
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "HashTable.h"
 
 #define UP(i) (i-1)/2
 #define LEFT(i) 2*i+1
@@ -10,91 +6,91 @@
 
 struct intNode_stc
 {
-	int key, dataSize;
-	void *data;
-	struct intNode_stc *l, *r, *p;
+    int key, dataSize;
+    void *data;
+    struct intNode_stc *l, *r, *p;
 };
 
 
 struct intBST_stc
 {
-	int used;
-	Node root;
+    int used;
+    Node root;
 };
 
 
 intBST initBST()
 {
-	intBST b = malloc(sizeof *b);
-	b->used = 0;
-	b->root = NULL;
-	return b;
+    intBST b = malloc(sizeof *b);
+    b->used = 0;
+    b->root = NULL;
+    return b;
 }
 
 Node createNode(int elem, void *data, int dataSize, Node p)
 {
-	Node toRet = malloc(sizeof(*toRet));
-	toRet->key = elem;
-	toRet->dataSize = dataSize;
-	if (data)
-	{
-		/*toRet->data = malloc(dataSize);
-		memcpy(toRet->data, data, dataSize);*/
-		/*HashTable t = (HashTable)data;*/
-		toRet->data = data;
-	}
-	else
-		toRet->data = NULL;
-	toRet->r = NULL;
-	toRet->l = NULL;
-	toRet->p = p;
-	return toRet;
+    Node toRet = malloc(sizeof(*toRet));
+    toRet->key = elem;
+    toRet->dataSize = dataSize;
+    if (data)
+    {
+        /*toRet->data = malloc(dataSize);
+        memcpy(toRet->data, data, dataSize);*/
+        /*HashTable t = (HashTable)data;*/
+        toRet->data = data;
+    }
+    else
+        toRet->data = NULL;
+    toRet->r = NULL;
+    toRet->l = NULL;
+    toRet->p = p;
+    return toRet;
 }
 int auxInsert(Node node, int elem, void *data, int dataSize)
 {
-	if (!node)
-	{
-		node = createNode(elem, data, dataSize, NULL);
-		return 1;
-	}
+    if (!node)
+    {
+        node = createNode(elem, data, dataSize, NULL);
+        return 1;
+    }
 
-	/*
-	if (elem == node->key)
+    /*
+    if (elem == node->key)
         return 1;
     */
-	if (elem <= node->key && node->l)
-	{
-		return auxInsert(node->l,elem,data,dataSize);
-	}
-	if (elem <= node->key && !node->l)
-	{
-		node->l = createNode(elem, data, dataSize, node);
-		return 1;
-	}
-	if (elem > node->key && node->r)
-	{
-		return auxInsert(node->r, elem, data, dataSize);
-	}
-	if (elem > node->key && !node->r)
-	{
-		node->r = createNode(elem, data, dataSize, node);
-		return 1;
-	}
+    if (elem <= node->key && node->l)
+    {
+        return auxInsert(node->l,elem,data,dataSize);
+    }
+    if (elem <= node->key && !node->l)
+    {
+        node->l = createNode(elem, data, dataSize, node);
+        return 1;
+    }
+    if (elem > node->key && node->r)
+    {
+        return auxInsert(node->r, elem, data, dataSize);
+    }
+    if (elem > node->key && !node->r)
+    {
+        node->r = createNode(elem, data, dataSize, node);
+        return 1;
+    }
 
 
-	return 1;
+    return 1;
 }
 
 intBST insertBST(intBST b, int elem, void *data, int dataSize)
 {
-	if (!b)
-		b = initBST();
-	if (!b->root)
-		b->root = createNode(elem, data, dataSize, NULL);
-	else
-		auxInsert(b->root, elem, data, dataSize);
-	b->used++;
-	return b;
+    if (!b)
+        b = initBST();
+    if (!b->root)
+        b->root = createNode(elem, data, dataSize, NULL);
+    else
+        auxInsert(b->root, elem, data, dataSize);
+    b->used++;
+    return b;
 }
 
 /*
@@ -141,21 +137,21 @@ intBST insertBST_it(intBST b, int elem, void *data, int dataSize)
 }*/
 int inOrderAux(Node n, int *toRet, int *i)
 {
-	if (!n)
-		return 0;
-	inOrderAux(n->l, toRet, i);
-	toRet[*i] = n->key;
-	*i += 1;
-	inOrderAux(n->r, toRet, i);
-	return 1;
+    if (!n)
+        return 0;
+    inOrderAux(n->l, toRet, i);
+    toRet[*i] = n->key;
+    *i += 1;
+    inOrderAux(n->r, toRet, i);
+    return 1;
 }
 
 int *inOrderBST(intBST b)
 {
-	int i = 0;
-	int *toRet = malloc(sizeof(int) * b->used);
-	inOrderAux(b->root, toRet, &i);
-	return toRet;
+    int i = 0;
+    int *toRet = malloc(sizeof(int) * b->used);
+    inOrderAux(b->root, toRet, &i);
+    return toRet;
 }
 
 /*
@@ -189,31 +185,31 @@ int *inOrderBST_it(intBST b)
 }*/
 Node getNodeAux(Node n,int key)
 {
-	if(!n)
-	{
-		return NULL;
-	}
-	if(n->key == key)
-	{
-		return n;
-	}
-	if(key < n->key)
-	{
-		return getNodeAux(n->l, key);
-	}
-	if(key > n->key)
-	{
-		return getNodeAux(n->r, key);
-	}
+    if(!n)
+    {
+        return NULL;
+    }
+    if(n->key == key)
+    {
+        return n;
+    }
+    if(key < n->key)
+    {
+        return getNodeAux(n->l, key);
+    }
+    if(key > n->key)
+    {
+        return getNodeAux(n->r, key);
+    }
 
-	return NULL;
+    return NULL;
 }
 
 Node getNode(intBST b, int key)
 {
-	if(!b)
-		return NULL;
-	return getNodeAux(b->root,key);
+    if(!b)
+        return NULL;
+    return getNodeAux(b->root,key);
 
 }
 /*
@@ -227,50 +223,50 @@ int getNodeData(Node n,void **data, int *dataSize)
 
 void freeBSTAux(Node n)
 {
-	if (!n)
-		return;
+    if (!n)
+        return;
 
-	freeBSTAux(n->l);
-	freeBSTAux(n->r);
-	free(n->l);
-	free(n->r);
-	return;
+    freeBSTAux(n->l);
+    freeBSTAux(n->r);
+    free(n->l);
+    free(n->r);
+    return;
 }
 
 int freeBST(intBST b)
 {
-	if (!b)
-		return 0;
-	freeBSTAux(b->root);
-	free(b->root);
-	free(b);
-	return 1;
+    if (!b)
+        return 0;
+    freeBSTAux(b->root);
+    free(b->root);
+    free(b);
+    return 1;
 }
 
 int getUsedBST(intBST b)
 {
-	return (!b ? 0 : b->used);
+    return (!b ? 0 : b->used);
 }
 
 void *getNodeDataAddr(Node n)
 {
-	return (!n ? NULL : &n->data);
+    return (!n ? NULL : &n->data);
 }
 
 void *getNodeData(Node n)
 {
-	return (!n ? NULL : n->data);
+    return (!n ? NULL : n->data);
 }
 
 void setNodeData(Node n, void *data, int dataSize)
 {
-	if (n->data)
-		free(n->data);
-	n->data = data;
-	n->dataSize = dataSize;
+    if (n->data)
+        free(n->data);
+    n->data = data;
+    n->dataSize = dataSize;
 }
 
 int getDataSize(Node n)
 {
-	return (!n ? 0 : n->dataSize);
+    return (!n ? 0 : n->dataSize);
 }
