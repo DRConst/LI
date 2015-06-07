@@ -7,8 +7,6 @@ import java.util.Map;
 public class ClientCatalog
 {
 
-
-
     private HashMap<String, Client> clientCatalog;
 
     ClientCatalog()
@@ -35,4 +33,25 @@ public class ClientCatalog
         return clientCatalog.size();
     }
 
+    public boolean existsClient(String code)
+    {
+        return this.clientCatalog.containsKey(code);
+    }
+
+    public Client getClient(String code) throws ClientNotFoundException
+    {
+        Client p = this.clientCatalog.get(code);
+        if(p != null)
+            return p;
+        else
+        {
+            throw new ClientNotFoundException("Client " + p.getCode() + " Not Found.");
+        }
+    }
+
+    public void insertClient(Client p) throws ClientAlreadyExistsException
+    {
+        if(this.clientCatalog.put(p.getCode(), p) == null)
+            throw new ClientAlreadyExistsException("Client " + p.getCode() + " Already In Catalog.");
+    }
 }

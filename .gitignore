@@ -42,3 +42,5 @@ Data Structures/Debug/Data Structures.exe.lastcodeanalysissucceeded
 *.csv
 ~$QueryTimes.xlsx
 Data Structures/IncludeFileDependencies1.dgml
+*.name
+*.iml

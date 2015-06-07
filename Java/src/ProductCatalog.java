@@ -7,32 +7,54 @@ import java.util.Map;
 public class ProductCatalog
 {
 
-
-
-    private HashMap<String, Product> ProductCatalog;
+    private HashMap<String, Product> productCatalog;
 
     ProductCatalog()
     {
-        this.ProductCatalog = new HashMap<>();
+        this.productCatalog = new HashMap<>();
     }
 
     ProductCatalog(ProductCatalog cCat)
     {
-        this.ProductCatalog = new HashMap<>(cCat.getProductCount());
+        this.productCatalog = new HashMap<>(cCat.getProductCount());
 
         for(Product cli : cCat.getProductCatalog().values())
         {
-            this.ProductCatalog.put(cli.getCode(), cli.clone());
+            this.productCatalog.put(cli.getCode(), cli.clone());
         }
     }
 
     public Map<String, Product> getProductCatalog() {
-        return ProductCatalog;
+        return productCatalog;
     }
 
     public int getProductCount()
     {
-        return ProductCatalog.size();
+        return productCatalog.size();
     }
+
+    public boolean existsProduct(String code)
+    {
+        return this.productCatalog.containsKey(code);
+    }
+
+    public Product getProduct(String code) throws ProductNotFoundException
+    {
+        Product p = this.productCatalog.get(code);
+        if(p != null)
+            return p;
+        else
+        {
+            throw new ProductNotFoundException("Product " + p.getCode() + " Not Found.");
+        }
+    }
+
+    public void insertProduct(Product p) throws ProductAlreadyExistsException
+    {
+        if(this.productCatalog.put(p.getCode(), p) == null)
+            throw new ProductAlreadyExistsException("Product " + p.getCode() + " Already In Catalog.");
+    }
+
+
 
 }
