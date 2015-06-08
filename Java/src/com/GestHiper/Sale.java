@@ -1,3 +1,5 @@
+package com.GestHiper;
+
 /**
  * Created by Diogo on 07/06/2015.
  */
@@ -113,7 +115,7 @@ public class Sale {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Sale{");
+        final StringBuilder sb = new StringBuilder("com.GestHiper.Sale{");
         sb.append("month=").append(month);
         sb.append(", amount=").append(amount);
         sb.append(", price=").append(price);

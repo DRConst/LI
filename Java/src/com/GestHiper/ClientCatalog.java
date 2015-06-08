@@ -1,3 +1,5 @@
+package com.GestHiper;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,13 +55,13 @@ public class ClientCatalog
             return p;
         else
         {
-            throw new ClientNotFoundException("Client " + p.getCode() + " Not Found.");
+            throw new ClientNotFoundException("com.GestHiper.Client " + p.getCode() + " Not Found.");
         }
     }
 
     public void insertClient(Client p) throws ClientAlreadyExistsException
     {
         if(this.clientCatalog.put(p.getCode(), p) == null)
-            throw new ClientAlreadyExistsException("Client " + p.getCode() + " Already In Catalog.");
+            throw new ClientAlreadyExistsException("com.GestHiper.Client " + p.getCode() + " Already In Catalog.");
     }
 }

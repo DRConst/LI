@@ -1,3 +1,5 @@
+package com.GestHiper;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,14 +56,14 @@ public class ProductCatalog
             return p;
         else
         {
-            throw new ProductNotFoundException("Product " + p.getCode() + " Not Found.");
+            throw new ProductNotFoundException("com.GestHiper.Product " + p.getCode() + " Not Found.");
         }
     }
 
     public void insertProduct(Product p) throws ProductAlreadyExistsException
     {
         if(this.productCatalog.put(p.getCode(), p) == null)
-            throw new ProductAlreadyExistsException("Product " + p.getCode() + " Already In Catalog.");
+            throw new ProductAlreadyExistsException("com.GestHiper.Product " + p.getCode() + " Already In Catalog.");
     }
 
 

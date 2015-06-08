@@ -1,21 +1,20 @@
+package com.GestHiper;
+
 /**
  * Created by Diogo on 03/06/2015.
  */
-public class Product {
+public class Client {
 
     String code;
 
-    Product()
-    {
+    Client(){ }
 
-    }
-
-    Product(String code)
+    Client(String code)
     {
         this.code = code;
     }
 
-    Product(Product c)
+    Client(Client c)
     {
         this.code = c.getCode();
     }
@@ -24,9 +23,9 @@ public class Product {
         return code;
     }
 
-    public Product clone()
+    public Client clone()
     {
-        return new Product(this);
+        return new Client(this);
     }
 
     @Override
@@ -34,9 +33,9 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Product product = (Product) o;
+        Client client = (Client) o;
 
-        return code.equals(product.code);
+        return code.equals(client.code);
 
     }
 
