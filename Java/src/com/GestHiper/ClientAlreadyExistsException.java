@@ -1,7 +1,9 @@
 package com.GestHiper;
 
 /**
- * Created by Diogo on 07/06/2015.
+ *  Exception for Client - Already Exists
+ *  @author     Diogo
+ *  @since      07/06/2015
  */
 public class ClientAlreadyExistsException extends Exception {
 

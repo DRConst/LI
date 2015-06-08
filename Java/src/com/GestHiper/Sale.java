@@ -1,7 +1,9 @@
 package com.GestHiper;
 
 /**
- * Created by Diogo on 07/06/2015.
+ *  Sale Class
+ *  @author     Diogo
+ *  @since      07/06/2015
  */
 public class Sale {
     private int month, amount;

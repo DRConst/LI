@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Diogo on 03/06/2015.
+ *  Product Catalog Class
+ *  @author     Diogo
+ *  @since      03/06/2015
  */
 public class ProductCatalog
 {
@@ -26,6 +28,11 @@ public class ProductCatalog
         }
     }
 
+
+    /**
+     * Retrieves new Map instance with catalog data
+     * @return ProductCatalog primary structure
+     */
     public Map<String, Product> getProductCatalog(){
 
     HashMap<String, Product> toRet = new HashMap<>();
@@ -39,16 +46,34 @@ public class ProductCatalog
 
     }
 
+
+    /**
+     * Returns nº products in catalog
+     * @return Nº Products
+     */
     public int getProductCount()
     {
         return productCatalog.size();
     }
 
+
+    /**
+     * Checks for existence of provided code in catalog
+     * @param code Product Code
+     * @return True, False - Existence of code
+     */
     public boolean existsProduct(String code)
     {
         return this.productCatalog.containsKey(code);
     }
 
+
+    /**
+     * Gets Product Instance associated with provided code
+     * @param code Product Code
+     * @return New Product instance associated with provided code
+     * @throws ProductNotFoundException On Invalid Code
+     */
     public Product getProduct(String code) throws ProductNotFoundException
     {
         Product p = this.productCatalog.get(code);
@@ -60,6 +85,12 @@ public class ProductCatalog
         }
     }
 
+
+    /**
+     * Inserts new Product into the Catalog
+     * @param p New Product to be inserted
+     * @throws ProductAlreadyExistsException On Attempting to Insert an already existent Product
+     */
     public void insertProduct(Product p) throws ProductAlreadyExistsException
     {
         if(this.productCatalog.put(p.getCode(), p) == null)
@@ -67,5 +98,14 @@ public class ProductCatalog
     }
 
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        for( Product pr : productCatalog.values() )
+            sb.append( pr.toString() + "\n" );
+
+        return sb.toString();
+    }
 
 }

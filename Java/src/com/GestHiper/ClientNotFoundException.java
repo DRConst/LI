@@ -1,7 +1,9 @@
 package com.GestHiper;
 
 /**
- * Created by Diogo on 07/06/2015.
+ *  Exception for Client - Not Found
+ *  @author     Diogo
+ *  @since      07/06/2015
  */
 public class ClientNotFoundException extends Exception {
 

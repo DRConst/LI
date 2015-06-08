@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Diogo on 03/06/2015.
+ *  Client Catalog Class
+ *  @author     Diogo
+ *  @since      03/06/2015
  */
 public class ClientCatalog
 {
@@ -26,6 +28,11 @@ public class ClientCatalog
         }
     }
 
+
+    /**
+     * Retrieves new Map instance with catalog data
+     * @return ClientCatalog primary structure
+     */
     public Map<String, Client> getClientCatalog() {
 
         HashMap<String, Client> toRet = new HashMap<>();
@@ -38,30 +45,66 @@ public class ClientCatalog
         return toRet;
     }
 
+
+    /**
+     * Returns nº clients in catalog
+     * @return Nº Clients
+     */
     public int getClientCount()
     {
         return clientCatalog.size();
     }
 
+
+    /**
+     * Checks for existence of provided code in catalog
+     * @param code Client Code
+     * @return True, False - Existence of code
+     */
     public boolean existsClient(String code)
     {
         return this.clientCatalog.containsKey(code);
     }
 
+
+    /**
+     * Gets ClientInstance associated with provided code
+     * @param code  Client Code
+     * @return  New Client instance associated with provided code
+     * @throws ClientNotFoundException  On Invalid code
+     */
     public Client getClient(String code) throws ClientNotFoundException
     {
         Client p = this.clientCatalog.get(code);
         if(p != null)
-            return p;
+            return p.clone();
         else
         {
             throw new ClientNotFoundException("com.GestHiper.Client " + p.getCode() + " Not Found.");
         }
     }
 
+
+    /**
+     * Inserts new Client into Catalog
+     * @param p New Client to be inserted
+     * @throws ClientAlreadyExistsException On Attempting to insert an already existent Client
+     */
     public void insertClient(Client p) throws ClientAlreadyExistsException
     {
         if(this.clientCatalog.put(p.getCode(), p) == null)
             throw new ClientAlreadyExistsException("com.GestHiper.Client " + p.getCode() + " Already In Catalog.");
     }
+
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        for( Client cli : clientCatalog.values() )
+            sb.append( cli.toString() + "\n" );
+
+        return sb.toString();
+    }
+
 }

@@ -1,16 +1,15 @@
 package com.GestHiper;
 
 /**
- * Created by Diogo on 03/06/2015.
+ *  Product Class
+ *  @author     Diogo
+ *  @since      03/06/2015
  */
 public class Product {
 
     String code;
 
-    Product()
-    {
-
-    }
+    Product() { this.code = ""; }
 
     Product(String code)
     {
@@ -22,10 +21,20 @@ public class Product {
         this.code = c.getCode();
     }
 
+
+    /**
+     * Retrieves Product Code
+     * @return Product Code
+     */
     public String getCode() {
         return code;
     }
 
+
+    /**
+     * Clones current Product instance, making use of Constructor
+     * @return New Product Instance
+     */
     public Product clone()
     {
         return new Product(this);
@@ -46,4 +55,8 @@ public class Product {
     public int hashCode() {
         return code.hashCode();
     }
+
+
+    @Override
+    public String toString() { return code; }
 }
