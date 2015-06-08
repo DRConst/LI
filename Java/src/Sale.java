@@ -2,16 +2,18 @@
  * Created by Diogo on 07/06/2015.
  */
 public class Sale {
-    int month, ammount;
-    double price;
-    String product, client, type;
+    private int month, amount;
+    private double price;
+    private String type;
+	private Product product;
+	private Client client; 
 
-    public Sale(int month, int ammount, double price, String product, String client, String type) {
+    public Sale(int month, int amount, double price, Product product, Client client, String type) {
         this.month = month;
-        this.ammount = ammount;
+        this.amount = amount;
         this.price = price;
-        this.product = product;
-        this.client = client;
+        this.product = product.clone();
+        this.client = client.clone();
         this.type = type;
     }
 
@@ -20,7 +22,7 @@ public class Sale {
 
     public Sale(Sale s) {
         this.month = s.getMonth();
-        this.ammount = s.getAmmount();
+        this.amount = s.getAmount();
         this.price = s.getPrice();
         this.product = s.getProduct();
         this.client = s.getClient();
@@ -36,12 +38,12 @@ public class Sale {
         this.month = month;
     }
 
-    public int getAmmount() {
-        return ammount;
+    public int getAmount() {
+        return amount;
     }
 
-    public void setAmmount(int ammount) {
-        this.ammount = ammount;
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
     public double getPrice() {
@@ -52,20 +54,20 @@ public class Sale {
         this.price = price;
     }
 
-    public String getProduct() {
-        return product;
+    public Product getProduct() {
+        return product.clone();
     }
 
-    public void setProduct(String product) {
-        this.product = product;
+    public void setProduct(Product product) {
+        this.product = product.clone();
     }
 
-    public String getClient() {
-        return client;
+    public Client getClient() {
+        return client.clone();
     }
 
-    public void setClient(String client) {
-        this.client = client;
+    public void setClient(Client client) {
+        this.client = client.clone();
     }
 
     public String getType() {
@@ -85,12 +87,12 @@ public class Sale {
 
         Sale sale = (Sale) o;
 
-        if (month != sale.month) return false;
-        if (ammount != sale.ammount) return false;
-        if (Double.compare(sale.price, price) != 0) return false;
-        if (!product.equals(sale.product)) return false;
-        if (!client.equals(sale.client)) return false;
-        return type.equals(sale.type);
+        if (month != sale.getMonth() ) return false;
+        if (amount != sale.getAmount() ) return false;
+        if (Double.compare(sale.getPrice() , price) != 0) return false;
+        if (!product.equals( sale.getProduct() ) ) return false;
+        if (!client.equals( sale.getClient() ) ) return false;
+        return type.equals( sale.getType() );
 
     }
 
@@ -99,7 +101,7 @@ public class Sale {
         int result;
         long temp;
         result = month;
-        result = 31 * result + ammount;
+        result = 31 * result + amount;
         temp = Double.doubleToLongBits(price);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + product.hashCode();
@@ -113,7 +115,7 @@ public class Sale {
     public String toString() {
         final StringBuilder sb = new StringBuilder("Sale{");
         sb.append("month=").append(month);
-        sb.append(", ammount=").append(ammount);
+        sb.append(", amount=").append(amount);
         sb.append(", price=").append(price);
         sb.append(", product='").append(product).append('\'');
         sb.append(", client='").append(client).append('\'');
