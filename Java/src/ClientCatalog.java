@@ -20,12 +20,20 @@ public class ClientCatalog
 
         for(Client cli : cCat.getClientCatalog().values())
         {
-            this.clientCatalog.put(cli.getCode(), cli.clone());
+            this.clientCatalog.put(cli.getCode(), cli);
         }
     }
 
     public Map<String, Client> getClientCatalog() {
-        return clientCatalog;
+
+        HashMap<String, Client> toRet = new HashMap<>();
+
+        for(Client cli : this.clientCatalog.values())
+        {
+            this.clientCatalog.put(cli.getCode(), cli.clone());
+        }
+
+        return toRet;
     }
 
     public int getClientCount()

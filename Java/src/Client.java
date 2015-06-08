@@ -5,10 +5,7 @@ public class Client {
 
     String code;
 
-    Client()
-    {
-
-    }
+    Client(){ }
 
     Client(String code)
     {
@@ -27,5 +24,21 @@ public class Client {
     public Client clone()
     {
         return new Client(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Client client = (Client) o;
+
+        return code.equals(client.code);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return code.hashCode();
     }
 }

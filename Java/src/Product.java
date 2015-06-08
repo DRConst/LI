@@ -28,4 +28,20 @@ public class Product {
     {
         return new Product(this);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Product product = (Product) o;
+
+        return code.equals(product.code);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return code.hashCode();
+    }
 }

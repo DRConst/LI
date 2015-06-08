@@ -24,8 +24,17 @@ public class ProductCatalog
         }
     }
 
-    public Map<String, Product> getProductCatalog() {
-        return productCatalog;
+    public Map<String, Product> getProductCatalog(){
+
+    HashMap<String, Product> toRet = new HashMap<>();
+
+    for(Product pr : this.productCatalog.values())
+    {
+        this.productCatalog.put(pr.getCode(), pr.clone());
+    }
+
+    return toRet;
+
     }
 
     public int getProductCount()
