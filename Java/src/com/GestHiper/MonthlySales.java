@@ -19,6 +19,25 @@ public class MonthlySales {
 
     private int totalAmount;	// sum of all months's MetaSales's amounts
 
+    public void registerSale(Sale sale)
+    {
+        monthly.get(sale.getMonth() - 1).registerSale(sale);
+
+        if(sale.getType().equals("P"))
+        {
+            this.totalP++;
+            this.total$P += sale.getPrice() * sale.getAmount();
+        }else
+        {
+            this.totalN++;
+            this.total$N += sale.getPrice() * sale.getAmount();
+        }
+
+        this.totalAmount += sale.getAmount();
+    }
+
+
+
     public MonthlySales()
     {
         this.monthly = new ArrayList<  >( 12 );

@@ -2,27 +2,63 @@ package com.GestHiper;
 
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Created by Diogo on 09/06/2015.
  */
 public class Sales {
-    private TreeMap<Product, MonthlySales > salesMeta;		// Ordered desc by nSales( totalP + totalN )
+    private TreeMap<String, MonthlySales > salesMeta;		// Ordered desc by nSales( totalP + totalN )
+    private TreeSet<MonthlySales> orderedSet;
+
+
+    public void registerSale(Sale sale)
+    {
+        String productCode = sale.getProduct().getCode();
+        String clientCode = sale.getClient().getCode();
+        MonthlySales productSales = salesMeta.get(productCode);
+        MonthlySales clientSales = salesMeta.get(clientCode);
+
+        if(productSales == null)
+        {
+            productSales = salesMeta.put(productCode, new MonthlySales());
+        }
+
+        if(clientSales == null)
+        {
+            clientSales = salesMeta.put(clientCode, new MonthlySales());
+        }
+
+        productSales.registerSale(sale);
+        clientSales.registerSale(sale);
+    }
+
+
+    public void orderSales()
+    {
+        orderedSet = new TreeSet<>(/*Comparator*/);
+
+        orderedSet.addAll(salesMeta.values());
+    }
+
+
+
+
 
     public Sales()
     {
         this.salesMeta  = new TreeMap<>();
     }
 
-    public Sales(Map<Product, MonthlySales> map)
+    public Sales(Map<String, MonthlySales> map)
     {
         this.salesMeta = new TreeMap<>(map);
     }
 
-    public TreeMap<Product, MonthlySales> getSalesMeta() {
-        TreeMap<Product, MonthlySales> toRet = new TreeMap<>();
+    public TreeMap<String, MonthlySales> getSalesMeta() {
+        TreeMap<String, MonthlySales> toRet = new TreeMap<>();
 
-        for(Map.Entry<Product, MonthlySales> entry : this.salesMeta.entrySet())
+        for(Map.Entry<String, MonthlySales> entry : this.salesMeta.entrySet())
         {
             toRet.put(entry.getKey(), entry.getValue().clone());
         }
@@ -30,7 +66,7 @@ public class Sales {
         return toRet;
     }
 
-    public void setSalesMeta(TreeMap<Product, MonthlySales> salesMeta) {
+    public void setSalesMeta(TreeMap<String, MonthlySales> salesMeta) {
         this.salesMeta = salesMeta;
     }
 

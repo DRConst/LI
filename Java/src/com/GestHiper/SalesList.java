@@ -11,15 +11,34 @@ import java.util.TreeSet;
  */
 public class SalesList {
 
-    private int totalP;		// sum of all months's MetaSales nTypeP
+    private int totalP;		// sum of this months's MetaSales nTypeP
     private int totalN;		//	...
 
     private double total$P;	//	...
     private double total$N;	//	...
 
-    private int totalAmount;	// sum of all months's MetaSales's amounts
+    private int totalAmount;	// sum of this months's MetaSales's amounts
 
     private TreeSet<Sale> sales; //SortedSet is abstact
+
+
+    public void registerSale(Sale sale)
+    {
+        sales.add(sale);
+
+        if(sale.getType().equals("P"))
+        {
+            this.totalP++;
+            this.total$P += sale.getPrice() * sale.getAmount();
+        }else
+        {
+            this.totalN++;
+            this.total$N += sale.getPrice() * sale.getAmount();
+        }
+
+        this.totalAmount += sale.getAmount();
+    }
+
 
     public SalesList()
     {

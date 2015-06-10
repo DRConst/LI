@@ -13,12 +13,44 @@ public class AccountingStats {
     private double[] profit;
     private String name;
 
+
+
+    public void registerSale(Sale s)
+    {
+        int month = s.getMonth();
+
+        if(s.getType().equals("N"))
+            cntSalesN[month]++;
+        else
+            cntSalesP[month]++;
+
+        units[month] += s.getAmount();
+
+        profit[month] += s.getPrice() * s.getAmount();
+    }
+
+
+
+
+
+
+
+
     public AccountingStats()
     {
         cntSalesP = new int[13];
         cntSalesN = new int[13];
         units = new int[13];
         profit = new double[13];
+    }
+
+    public AccountingStats(String code)
+    {
+        cntSalesP = new int[13];
+        cntSalesN = new int[13];
+        units = new int[13];
+        profit = new double[13];
+        this.name = code;
     }
 
     public int[] getCntSalesP() {

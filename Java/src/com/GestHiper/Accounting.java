@@ -10,6 +10,33 @@ public class Accounting {
 
     private HashMap<String, AccountingStats> stats;
 
+
+    public void registerSale(Sale sale){
+        String clientCode = sale.getClient().getCode();
+        String productCode = sale.getProduct().getCode();
+        AccountingStats clientStats = stats.get(clientCode);
+        AccountingStats productStats = stats.get(productCode);
+
+        if(clientStats == null)
+        {
+            clientStats = this.stats.put(clientCode, new AccountingStats(clientCode));
+        }
+
+        if(productStats == null)
+        {
+            productStats = this.stats.put(productCode, new AccountingStats(productCode));
+        }
+
+        clientStats.registerSale(sale);
+
+        productStats.registerSale(sale);
+    }
+
+
+
+
+
+
     public Accounting()
     {
         this.stats = new HashMap<>();
