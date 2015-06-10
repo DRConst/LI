@@ -128,5 +128,10 @@ public class Sale {
         return sb.toString();
     }
 
+    public Sale clone()
+    {
+        return new Sale(this);
+    }
+
 
 }

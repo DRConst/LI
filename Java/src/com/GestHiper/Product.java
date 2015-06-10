@@ -47,7 +47,7 @@ public class Product {
 
         Product product = (Product) o;
 
-        return code.equals(product.code);
+        return code.equals(product.getCode());
 
     }
 

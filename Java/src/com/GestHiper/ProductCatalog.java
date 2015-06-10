@@ -108,4 +108,19 @@ public class ProductCatalog
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProductCatalog that = (ProductCatalog) o;
+
+        return getProductCatalog().equals(that.getProductCatalog());
+
+    }
+
+    @Override
+    public int hashCode() {
+        return getProductCatalog().hashCode();
+    }
 }

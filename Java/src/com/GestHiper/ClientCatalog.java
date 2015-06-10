@@ -107,4 +107,19 @@ public class ClientCatalog
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ClientCatalog that = (ClientCatalog) o;
+
+        return getClientCatalog().equals(that.getClientCatalog());
+
+    }
+
+    @Override
+    public int hashCode() {
+        return getClientCatalog().hashCode();
+    }
 }

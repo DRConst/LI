@@ -48,7 +48,7 @@ public class Client {
 
         Client client = (Client) o;
 
-        return code.equals(client.code);
+        return code.equals(client.getCode());
 
     }
 
