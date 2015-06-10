@@ -1,5 +1,6 @@
 package com.GestHiper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +10,7 @@ import java.util.Map;
 public class Accounting {
 
     private HashMap<String, AccountingStats> stats;
-
+    private AccountingStats global;
 
     public void registerSale(Sale sale){
         String clientCode = sale.getClient().getCode();
@@ -30,11 +31,48 @@ public class Accounting {
         clientStats.registerSale(sale);
 
         productStats.registerSale(sale);
+
+        global.registerSale(sale);
     }
 
 
 
+    public ArrayList<Integer> getMonthlySales()
+    {
+        int[] cntSalesN = global.getCntSalesN();
+        int[] cntSalesP = global.getCntSalesP();
 
+        ArrayList<Integer> toRet = new ArrayList<>(12);
+
+        for(int i = 0; i < 12; i++)
+        {
+            toRet.add(cntSalesN[i] + cntSalesP[i]);
+        }
+
+        return toRet;
+    }
+
+    public double getTotalProfit()
+    {
+        double toRet = 0;
+        double[] profits = global.getProfit();
+
+        for(double d : profits)
+            toRet += d;
+
+        return toRet;
+    }
+
+    public int getTotalUnits()
+    {
+        int toRet = 0;
+        int[] profits = global.getUnits();
+
+        for(int i : profits)
+            toRet += i;
+
+        return toRet;
+    }
 
 
     public Accounting()

@@ -32,10 +32,6 @@ public class AccountingStats {
 
 
 
-
-
-
-
     public AccountingStats()
     {
         cntSalesP = new int[13];
