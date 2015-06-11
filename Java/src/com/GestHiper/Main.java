@@ -52,18 +52,48 @@ public class Main {
             switch( userOpt ) {
 
                 case 1:
-                    testSales.registerSale( s1 );
-                    testSales.registerSale( s2 );
-                    testSales.registerSale( s3 );
-                    testSales.registerSale( s4 );
-                    testSales.registerSale( s5 );
-                    testSales.registerSale( s6 );
-                    testSales.registerSale( s7 );
-                    testSales.registerSale( s8 );
+                    try {
+                        testSales.registerProd( prod1 );
+                        testSales.registerProd( prod2 );
+                //      testSales.registerProd( prod3 );
+                        testSales.registerProd( prod4 );
+                        testSales.registerProd( prod5 );
+                        testSales.registerProd( prod6 );
+
+                    } catch (ProductAlreadyExistsException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        testSales.registerCli( cl1 );
+                        testSales.registerCli( cl2 );
+                        testSales.registerCli( cl3 );
+                        testSales.registerCli( cl4 );
+                        testSales.registerCli( cl5 );
+                        testSales.registerCli( cl6 );
+                    } catch (ClientAlreadyExistsException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    try {
+                        testSales.registerSale( s1 );
+                        testSales.registerSale( s2 );
+                        testSales.registerSale( s3 );
+                        testSales.registerSale( s4 );
+                        testSales.registerSale( s5 );
+                        testSales.registerSale( s6 );
+                        testSales.registerSale( s7 );
+                        testSales.registerSale( s8 );
+                    } catch (ProductNotFoundException | ClientNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     break;
 
                 case 2:
-                    TreeMap<Product, MonthlySales> tree = testSales.getSortedSalesProd();
+                    TreeMap<Product, MonthlySales> treeProd = testSales.getSortedSalesProd();
+                    TreeMap<Client, MonthlySales> treeCli = testSales.getSortedSalesCli();
+
                     MonthlySales monthly = testSales.getMonthlyProd( prod5 );
                     break;
 
@@ -128,12 +158,12 @@ public class Main {
         System.out.println("--------------------------------------\n"
                 + "\t1\t- Products Never Bought;\n"
                 + "\t2\t- Clients Without Purchases;\n"
-                + "\t3\t- Nº Sales/Clients, given month;\n"
-                + "\t4\t- Nº Sales/Products/$ for each month, given client;\n"
-                + "\t5\t- Nº Sales/Clients/$ for each month, given product;\n"
-                + "\t6\t- Nº N/P Sales and $ for each month, given product;\n"
+                + "\t3\t- Nï¿½ Sales/Clients, given month;\n"
+                + "\t4\t- Nï¿½ Sales/Products/$ for each month, given client;\n"
+                + "\t5\t- Nï¿½ Sales/Clients/$ for each month, given product;\n"
+                + "\t6\t- Nï¿½ N/P Sales and $ for each month, given product;\n"
                 + "\t7\t- List Most Bought Products, desc:qtd,alph, given client;\n"
-                + "\t8\t- List N Most Bought Products & their Nº Unique Clients;\n"
+                + "\t8\t- List N Most Bought Products & their Nï¿½ Unique Clients;\n"
                 + "\t9\t- List N Clients with Most Unique Purchases;\n"
                 + "\t10\t- List N Clients Most Bought a Given product;\n"
                 + "\t11\t- Display File Statistics;\n"

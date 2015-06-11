@@ -43,6 +43,25 @@ public class Hipermercado implements Serializable {
 
         productCat.insertProduct( prod );
 
+        sales.registerProd( prod );
+    }
+
+    public void registerClient( String code ) throws ClientAlreadyExistsException
+    {
+        Client cli = new Client( code );
+
+        clientCatalog.insertClient(cli);
+
+        sales.registerCli(cli);
+    }
+
+    public void registerSale( Sale s ) throws ProductNotFoundException,ClientNotFoundException
+    {
+        /*
+            do Acc insertion here
+         */
+
+        sales.registerSale( s );
     }
 
     public ProductCatalog getProductCat() {

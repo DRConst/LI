@@ -48,7 +48,29 @@ public class Sales implements Serializable {
         return salesMetaProd.get( prod );
     }
 
-    public void registerSale(Sale sale)
+    public void registerProd( Product prod ) throws ProductAlreadyExistsException
+    {
+        MonthlySales productSales = salesMetaProd.get( prod );
+
+        if( productSales != null )
+            throw new ProductAlreadyExistsException("com.Hipermercado.Sales " + prod.getCode() + " Already Registered in Sales.");
+
+        productSales = new MonthlySales( prod.getCode() );
+        salesMetaProd.put( prod, productSales );
+    }
+
+    public void registerCli( Client cli) throws ClientAlreadyExistsException
+    {
+        MonthlySales clientSales = salesMetaCli.get( cli );
+
+        if( clientSales != null )
+            throw new ClientAlreadyExistsException("com.Hipermercado.Sales " + cli.getCode() + " Already Registered in Sales.");
+
+        clientSales = new MonthlySales( cli.getCode() );
+        salesMetaCli.put( cli, clientSales );
+    }
+
+    public void registerSale(Sale sale) throws ProductNotFoundException,ClientNotFoundException
     {
         Product prod = sale.getProduct();
         Client client = sale.getClient();
@@ -56,16 +78,10 @@ public class Sales implements Serializable {
         MonthlySales clientSales = salesMetaCli.get(client);
 
         if( productSales == null )
-        {
-            productSales = new MonthlySales( prod.getCode() );
-            salesMetaProd.put( prod, productSales );
-        }
+            throw new ProductNotFoundException("com.Hipermercado.Sales " + prod.getCode() + " Not Found in Sales.");
 
         if(clientSales == null)
-        {
-            clientSales = new MonthlySales( client.getCode() );
-            salesMetaCli.put( client, clientSales );
-        }
+            throw new ClientNotFoundException("com.Hipermercado.Sales " + client.getCode() + " Not Found in Sales.");
 
         productSales.registerSale(sale, client.getCode() );
         clientSales.registerSale(sale, prod.getCode() );
