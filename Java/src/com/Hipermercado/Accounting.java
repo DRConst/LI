@@ -1,4 +1,4 @@
-package com.GestHiper;
+package com.Hipermercado;
 
 import java.util.ArrayList;
 import java.util.HashMap;
