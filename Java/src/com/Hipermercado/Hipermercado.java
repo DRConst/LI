@@ -57,9 +57,7 @@ public class Hipermercado implements Serializable {
 
     public void registerSale( Sale s ) throws ProductNotFoundException,ClientNotFoundException
     {
-        /*
-            do Acc insertion here
-         */
+        acc.registerSale(s);
 
         sales.registerSale( s );
     }
