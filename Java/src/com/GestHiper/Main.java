@@ -1,5 +1,7 @@
-package com.Hipermercado;
+package com.GestHiper;
 
+
+import com.Hipermercado.*;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -149,7 +151,11 @@ public class Main {
                     break;
 
                 default:
-                    // doSaveToFile
+                    try {
+                        Serializer.writeObject(hiper);
+                    } catch (IOException e) {
+                        System.out.println("Error Saving Status.");
+                    }
                     break;
             }
 

@@ -1,4 +1,4 @@
-package com.Hipermercado;
+package com.GestHiper;
 
 /**
  * Crono = mede um tempo entre start() e stop()
