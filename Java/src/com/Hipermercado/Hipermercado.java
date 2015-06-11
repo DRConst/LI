@@ -29,7 +29,7 @@ public class Hipermercado implements Serializable {
 
     public Hipermercado( Hipermercado h )
     {
-        productCat = new ProductCatalog( h.getProductCat() );
+        productCat = new ProductCatalog( h.getProductCatalog() );
         clientCatalog = new ClientCatalog( h.getClientCatalog() );
         /*
             missing Accounting init
@@ -64,7 +64,7 @@ public class Hipermercado implements Serializable {
         sales.registerSale( s );
     }
 
-    public ProductCatalog getProductCat() {
+    public ProductCatalog getProductCatalog() {
         return productCat;
     }
 

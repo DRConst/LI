@@ -1,10 +1,11 @@
-package com.GestHiper;
+package com.Hipermercado;
 
 
-import com.Hipermercado.*;
-
-import java.util.Scanner;
-import java.util.TreeMap;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Main, Class interacting with user and holding primary instances
@@ -14,6 +15,10 @@ public class Main {
 
     public static void main(String[] args) {
 	    int userOpt;
+
+        Hipermercado hiper = new Hipermercado();
+
+        /*
         Sales testSales = new Sales();
         Sale s1,s2,s3,s4,s5,s6,s7,s8;
         Product prod1,prod2,prod3,prod4,prod5,prod6;
@@ -44,7 +49,7 @@ public class Main {
         s6 = new Sale( 7, 1, 1.96, prod6, cl2, "P");
         s7 = new Sale( 5, 6, 6.16, prod1, cl4, "N");
         s8 = new Sale( 9, 2, 2.88, prod3, cl1, "P");
-
+        */
 
         do {
             userOpt = menu();
@@ -52,6 +57,7 @@ public class Main {
             switch( userOpt ) {
 
                 case 1:
+                    /*
                     try {
                         testSales.registerProd( prod1 );
                         testSales.registerProd( prod2 );
@@ -87,14 +93,21 @@ public class Main {
                         testSales.registerSale( s8 );
                     } catch (ProductNotFoundException | ClientNotFoundException e) {
                         e.printStackTrace();
-                    }
+                    }*/
+
+                    parseClientCatalog(hiper);
+                    parseProductCatalog(hiper);
+
                     break;
 
+
                 case 2:
+                    /*
                     TreeMap<Product, MonthlySales> treeProd = testSales.getSortedSalesProd();
                     TreeMap<Client, MonthlySales> treeCli = testSales.getSortedSalesCli();
 
                     MonthlySales monthly = testSales.getMonthlyProd( prod5 );
+                    */
                     break;
 
                 case 3:
@@ -225,5 +238,166 @@ public class Main {
 
 
     }
+
+    private static void parseSales(Hipermercado hipermercado, String filename)
+    {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(filename));
+            String line;
+            String product, client, type;
+            double price;
+            int ammount, month;
+            StringTokenizer tok;
+            Sale s;
+            while((line = br.readLine()) != null)
+            {
+                tok = new StringTokenizer(line, " ", false);
+                product = tok.nextToken();
+                price = new Double(tok.nextToken());
+                ammount = new Integer(tok.nextToken());
+                type = tok.nextToken();
+                client = tok.nextToken();
+                month = new Integer(tok.nextToken());
+                s = new Sale(month, ammount, price,hipermercado.getProductCatalog().getProduct(product), hipermercado.getClientCatalog().getClient(client), type);
+                hipermercado.registerSale(s);
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClientNotFoundException e) {
+            e.printStackTrace();
+        } catch (ProductNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void parseClientCatalog(Hipermercado hipermercado)
+    {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("CatalogoClientes.txt"));
+            String line;
+            Crono.start();
+            while((line = br.readLine()) != null)
+            {
+                hipermercado.registerClient(line);
+            }
+            System.out.println(Crono.stop());
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClientAlreadyExistsException e)
+        {
+
+        }
+    }
+
+    private static void parseProductCatalog(Hipermercado hipermercado)
+    {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("CatalogoProdutos.txt"));
+            String line;
+            Crono.start();
+            while((line = br.readLine()) != null)
+            {
+                hipermercado.registerProduct(line);
+            }
+            System.out.println(Crono.stop());
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ProductAlreadyExistsException e)
+        {
+
+        }
+    }
+
+    private static void scannerNoParse()
+    {
+        try {
+            Scanner sc = new Scanner(new FileInputStream("Compras1.txt"));
+            String line;
+            Crono.start();
+            while(sc.hasNextLine())
+                line = sc.nextLine();
+            System.out.println(Crono.stop());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static  void brNoParse()
+    {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("Compras1.txt"));
+            String line;
+            Crono.start();
+            while((line = br.readLine()) != null)
+                ;
+            System.out.println(Crono.stop());
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void scannerParse()
+    {
+        try {
+            Scanner sc = new Scanner(new FileInputStream("Compras1.txt")).useLocale(Locale.US);
+            String product, client, type;
+            double price;
+            int ammount, month;
+
+
+            Crono.start();
+            while(sc.hasNextLine())
+            {
+                product = sc.next();
+                price = sc.nextDouble();
+                ammount = sc.nextInt();
+                type = sc.next();
+                client = sc.next();
+                month = sc.nextInt();
+            }
+            System.out.println(Crono.stop());
+            sc.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }   catch (NoSuchElementException e)
+        {
+            System.out.println(Crono.stop());
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static  void brParse()
+    {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("Compras1.txt"));
+            String line;
+            String product, client, type;
+            double price;
+            int ammount, month;
+            StringTokenizer tok;
+            Sale s;
+            Crono.start();
+            while((line = br.readLine()) != null)
+            {
+                tok = new StringTokenizer(line, " ", false);
+                product = tok.nextToken();
+                price = new Double(tok.nextToken());
+                ammount = new Integer(tok.nextToken());
+                type = tok.nextToken();
+                client = tok.nextToken();
+                month = new Integer(tok.nextToken());
+
+            }
+            System.out.println(Crono.stop());
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
