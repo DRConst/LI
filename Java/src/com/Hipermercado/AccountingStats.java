@@ -1,5 +1,6 @@
 package com.Hipermercado;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -10,7 +11,8 @@ public class AccountingStats {
     private int[] cntSalesP; /* Month Array, idx0 is total */
     private int[] cntSalesN;
     private int[] units;
-    private double[] profit;
+    private double[] profitP;
+    private double[] profitN;
     private String name;
 
 
@@ -20,16 +22,31 @@ public class AccountingStats {
         int month = s.getMonth();
 
         if(s.getType().equals("N"))
+        {
             cntSalesN[month]++;
+            profitN[month] += s.getPrice() * s.getAmount();
+        }
         else
+        {
             cntSalesP[month]++;
+            profitP[month] += s.getPrice() * s.getAmount();
+        }
 
         units[month] += s.getAmount();
 
-        profit[month] += s.getPrice() * s.getAmount();
+
     }
 
 
+    public ArrayList<Query6Return> getCountsProfitByType()
+    {
+        ArrayList<Query6Return> toRet = new ArrayList<>(12);
+
+        for(int i = 1; i < 13; i++)
+            toRet.add(new Query6Return(cntSalesP[i], cntSalesN[i], profitP[i], profitN[i]));
+
+        return toRet;
+    }
 
 
     public AccountingStats()
@@ -37,7 +54,7 @@ public class AccountingStats {
         cntSalesP = new int[13];
         cntSalesN = new int[13];
         units = new int[13];
-        profit = new double[13];
+        profitP = new double[13];
     }
 
     public AccountingStats(String code)
@@ -45,10 +62,18 @@ public class AccountingStats {
         cntSalesP = new int[13];
         cntSalesN = new int[13];
         units = new int[13];
-        profit = new double[13];
+        profitP = new double[13];
         this.name = code;
     }
 
+
+    public double[] getProfitN() {
+        return profitN;
+    }
+
+    public void setProfitN(double[] profitN) {
+        this.profitN = profitN;
+    }
     public int[] getCntSalesP() {
         return cntSalesP;
     }
@@ -73,12 +98,12 @@ public class AccountingStats {
         this.units = units;
     }
 
-    public double[] getProfit() {
-        return profit;
+    public double[] getProfitP() {
+        return profitP;
     }
 
-    public void setProfit(double[] profit) {
-        this.profit = profit;
+    public void setProfitP(double[] profitP) {
+        this.profitP = profitP;
     }
 
     public String getName() {
@@ -99,7 +124,7 @@ public class AccountingStats {
         if (!Arrays.equals(getCntSalesP(), stats.getCntSalesP())) return false;
         if (!Arrays.equals(getCntSalesN(), stats.getCntSalesN())) return false;
         if (!Arrays.equals(getUnits(), stats.getUnits())) return false;
-        if (!Arrays.equals(getProfit(), stats.getProfit())) return false;
+        if (!Arrays.equals(getProfitP(), stats.getProfitP())) return false;
         return getName().equals(stats.getName());
 
     }
@@ -109,7 +134,7 @@ public class AccountingStats {
         int result = Arrays.hashCode(getCntSalesP());
         result = 31 * result + Arrays.hashCode(getCntSalesN());
         result = 31 * result + Arrays.hashCode(getUnits());
-        result = 31 * result + Arrays.hashCode(getProfit());
+        result = 31 * result + Arrays.hashCode(getProfitP());
         result = 31 * result + getName().hashCode();
         return result;
     }
@@ -120,7 +145,7 @@ public class AccountingStats {
         sb.append("cntSalesP=").append(Arrays.toString(cntSalesP));
         sb.append(", cntSalesN=").append(Arrays.toString(cntSalesN));
         sb.append(", units=").append(Arrays.toString(units));
-        sb.append(", profit=").append(Arrays.toString(profit));
+        sb.append(", profitP=").append(Arrays.toString(profitP));
         sb.append(", name='").append(name).append('\'');
         sb.append('}');
         return sb.toString();

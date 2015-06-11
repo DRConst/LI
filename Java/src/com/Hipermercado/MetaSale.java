@@ -86,10 +86,10 @@ public class MetaSale implements Comparable<MetaSale>,Serializable {
         this.amount += s.getAmount();
 
         if (s.getType().equals("N")) {
-            this.total$N += s.getPrice();
+            this.total$N += s.getPrice() * s.getAmount();
             this.totalN++;
         }else {
-            this.total$P += s.getPrice();
+            this.total$P += s.getPrice() * s.getAmount();
             this.totalP++;
         }
 

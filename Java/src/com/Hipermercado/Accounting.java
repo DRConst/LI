@@ -1,36 +1,41 @@
 package com.Hipermercado;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by Diogo on 09/06/2015.
  */
 public class Accounting {
 
-    private HashMap<String, AccountingStats> stats;
+    private TreeMap<Client, AccountingStats> clientStats = null;
+    private TreeMap<Product, AccountingStats> productStats;
     private AccountingStats global;
 
     public void registerSale(Sale sale){
         String clientCode = sale.getClient().getCode();
         String productCode = sale.getProduct().getCode();
-        AccountingStats clientStats = stats.get(clientCode);
-        AccountingStats productStats = stats.get(productCode);
+        AccountingStats clientStat = this.clientStats.get(sale.getClient());
+        AccountingStats productStat = this.productStats.get(sale.getProduct());
 
         if(clientStats == null)
         {
-            clientStats = this.stats.put(clientCode, new AccountingStats(clientCode));
+            this.clientStats.put(sale.getClient(), new AccountingStats(clientCode));
+            clientStat = this.clientStats.get(sale.getClient());
         }
 
         if(productStats == null)
         {
-            productStats = this.stats.put(productCode, new AccountingStats(productCode));
+            this.productStats.put(sale.getProduct(), new AccountingStats(productCode));
+            productStat = this.productStats.get(sale.getProduct());
         }
 
-        clientStats.registerSale(sale);
+        clientStat.registerSale(sale);
 
-        productStats.registerSale(sale);
+        productStat.registerSale(sale);
 
         global.registerSale(sale);
     }
@@ -55,7 +60,7 @@ public class Accounting {
     public double getTotalProfit()
     {
         double toRet = 0;
-        double[] profits = global.getProfit();
+        double[] profits = global.getProfitP();
 
         for(double d : profits)
             toRet += d;
@@ -77,27 +82,14 @@ public class Accounting {
 
     public Accounting()
     {
-        this.stats = new HashMap<>();
+        this.clientStats = new TreeMap<>();
+        this.productStats = new TreeMap<>();
     }
 
-    public Accounting(Map<String, AccountingStats> map)
+    public Accounting(Map<Client, AccountingStats> clientMap, Map<Product, AccountingStats> productMap)
     {
-        this.stats = new HashMap<>(map);
-    }
-
-    public HashMap<String, AccountingStats> getStats() {
-        HashMap<String, AccountingStats> toRet = new HashMap<>();
-
-        for(AccountingStats stats : this.stats.values())
-        {
-            toRet.put(stats.getName(), stats);
-        }
-
-        return toRet;
-    }
-
-    public void setStats(HashMap<String, AccountingStats> stats) {
-        this.stats = stats;
+        this.clientStats = new TreeMap<>(clientMap);
+        this.productStats = new TreeMap<>(productMap);
     }
 
     @Override
@@ -107,20 +99,17 @@ public class Accounting {
 
         Accounting that = (Accounting) o;
 
-        return getStats().equals(that.getStats());
+        if (!clientStats.equals(that.clientStats)) return false;
+        if (!productStats.equals(that.productStats)) return false;
+        return global.equals(that.global);
 
     }
 
     @Override
     public int hashCode() {
-        return getStats().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Accounting{");
-        sb.append("stats=").append(stats);
-        sb.append('}');
-        return sb.toString();
+        int result = clientStats.hashCode();
+        result = 31 * result + productStats.hashCode();
+        result = 31 * result + global.hashCode();
+        return result;
     }
 }
