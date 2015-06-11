@@ -1,4 +1,4 @@
-package com.GestHiper;
+package com.Hipermercado;
 
 /**
  *  Exception for Client - Not Found

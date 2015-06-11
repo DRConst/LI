@@ -1,15 +1,14 @@
-package com.GestHiper;
+package com.Hipermercado;
 
-import sun.reflect.generics.tree.Tree;
-
-import java.util.ArrayList;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.io.Serializable;
+import java.util.*;
 
 /**
- * Created by Diogo on 10/06/2015.
+ *  SalesList Class, Used By MonthlySales
+ *  @author     Diogo
+ *  @since      10/06/2015
  */
-public class SalesList {
+public class SalesList implements Serializable {
 
     private int totalP;		// sum of this months's MetaSales nTypeP
     private int totalN;		//	...
@@ -19,12 +18,20 @@ public class SalesList {
 
     private int totalAmount;	// sum of this months's MetaSales's amounts
 
-    private TreeSet<Sale> sales; //SortedSet is abstact
+    private HashMap<String, MetaSale> sales; //SortedSet is abstract
 
 
-    public void registerSale(Sale sale)
+    public void registerSale(Sale sale, String child)
     {
-        sales.add(sale);
+        MetaSale temp = sales.get( child );
+
+        if( temp == null ) {
+            temp = new MetaSale(child);
+            sales.put( child, temp );
+        }
+
+        temp.registerMetaSale( sale );
+
 
         if(sale.getType().equals("P"))
         {
@@ -39,13 +46,27 @@ public class SalesList {
         this.totalAmount += sale.getAmount();
     }
 
+    public TreeMap<String, MetaSale> getSortedSalesList()
+    {
+        TreeMap<String, MetaSale> result = new TreeMap<>( new ValueComparator(sales) );
+
+        result.putAll( sales );
+
+        return result;
+    }
+
 
     public SalesList()
     {
-        this.sales = new TreeSet<>();
+        this.sales = new HashMap<>();
+        this.totalP = 0;
+        this.totalN = 0;
+        this.total$P = 0.0;
+        this.total$N = 0.0;
+        this.totalAmount = 0;
     }
 
-    public SalesList(int totalP, int totalN, double total$P, double total$N, int totalAmount, TreeSet<Sale> sales) {
+    public SalesList(int totalP, int totalN, double total$P, double total$N, int totalAmount, HashMap<String, MetaSale> sales) {
         this.totalP = totalP;
         this.totalN = totalN;
         this.total$P = total$P;
@@ -104,18 +125,14 @@ public class SalesList {
         this.totalAmount = totalAmount;
     }
 
-    public TreeSet<Sale> getSales() {
-        TreeSet<Sale> toRet = new TreeSet<>();
+    public HashMap<String,MetaSale> getSales() {
+        HashMap<String, MetaSale> result = new HashMap<>(sales);
 
-        for(Sale s : this.sales)
-        {
-            toRet.add(s.clone());
-        }
-
-        return toRet;
+        return result;
     }
 
-    public void setSales(TreeSet<Sale> sales) {
+
+    public void setSales(HashMap<String, MetaSale> sales) {
         this.sales = sales;
     }
 
@@ -153,5 +170,23 @@ public class SalesList {
     public SalesList clone()
     {
         return new SalesList(this);
+    }
+
+    private class ValueComparator implements Comparator {
+
+        Map map;
+
+        public ValueComparator(Map map){
+            this.map = map;
+        }
+        public int compare(Object keyA, Object keyB){
+
+            Comparable valueA = (Comparable) map.get(keyA);
+            Comparable valueB = (Comparable) map.get(keyB);
+
+
+            return valueA.compareTo(valueB);
+
+        }
     }
 }

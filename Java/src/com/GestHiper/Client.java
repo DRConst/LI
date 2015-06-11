@@ -1,17 +1,19 @@
-package com.GestHiper;
+package com.Hipermercado;
+
+import java.io.Serializable;
 
 /**
  *  Client Class
  *  @author     Diogo
  *  @since      03/06/2015
  */
-public class Client {
+public class Client implements Serializable {
 
     String code;
 
     Client(){ this.code = ""; }
 
-    Client(String code)
+    public Client(String code)
     {
         this.code = code;
     }

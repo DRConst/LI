@@ -1,17 +1,19 @@
-package com.GestHiper;
+package com.Hipermercado;
+
+import java.io.Serializable;
 
 /**
  *  Product Class
  *  @author     Diogo
  *  @since      03/06/2015
  */
-public class Product {
+public class Product implements Serializable {
 
     String code;
 
     Product() { this.code = ""; }
 
-    Product(String code)
+    public Product(String code)
     {
         this.code = code;
     }

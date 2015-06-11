@@ -1,5 +1,6 @@
-package com.GestHiper;
+package com.Hipermercado;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +9,7 @@ import java.util.Map;
  *  @author     Diogo
  *  @since      03/06/2015
  */
-public class ProductCatalog
+public class ProductCatalog implements Serializable
 {
 
     private HashMap<String, Product> productCatalog;
@@ -81,7 +82,7 @@ public class ProductCatalog
             return p;
         else
         {
-            throw new ProductNotFoundException("com.GestHiper.Product " + p.getCode() + " Not Found.");
+            throw new ProductNotFoundException("com.Hipermercado.Product " + p.getCode() + " Not Found.");
         }
     }
 
@@ -94,7 +95,7 @@ public class ProductCatalog
     public void insertProduct(Product p) throws ProductAlreadyExistsException
     {
         if(this.productCatalog.put(p.getCode(), p) == null)
-            throw new ProductAlreadyExistsException("com.GestHiper.Product " + p.getCode() + " Already In Catalog.");
+            throw new ProductAlreadyExistsException("com.Hipermercado.Product " + p.getCode() + " Already In Catalog.");
     }
 
 

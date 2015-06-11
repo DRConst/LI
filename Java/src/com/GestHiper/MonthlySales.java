@@ -1,15 +1,17 @@
-package com.GestHiper;
+package com.Hipermercado;
 
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.SortedSet;
 
 /**
- * Created by Diogo on 09/06/2015.
+ *  MonthlySales Class, used by Sales Class
+ *  @author     Diogo
+ *  @since      09/06/2015
  */
-public class MonthlySales {
+public class MonthlySales implements Comparable<MonthlySales> {
 
     private ArrayList<SalesList > monthly;
+
+    private String key;     // Parent key, used for alpha order
 
     private int totalP;		// sum of all months's MetaSales nTypeP
     private int totalN;		//	...
@@ -19,9 +21,55 @@ public class MonthlySales {
 
     private int totalAmount;	// sum of all months's MetaSales's amounts
 
-    public void registerSale(Sale sale)
+
+    public MonthlySales()
     {
-        monthly.get(sale.getMonth() - 1).registerSale(sale);
+        this.monthly = new ArrayList<>( 12 );
+        this.key = "";
+        this.totalP = 0;
+        this.totalN = 0;
+        this.totalAmount = 0;
+        this.total$P = 0.0;
+        this.total$N = 0.0;
+    }
+
+    public MonthlySales( String key ) {
+        this.monthly = new ArrayList<>( 12 );
+        for( int i = 0; i < 12; i++ )
+            monthly.add( new SalesList() );
+        this.key = key;
+        this.totalP = 0;
+        this.totalN = 0;
+        this.totalAmount = 0;
+        this.total$P = 0.0;
+        this.total$N = 0.0;
+    }
+
+    public MonthlySales(MonthlySales sales)
+    {
+        this.monthly = sales.getMonthly();
+        this.totalP = sales.getTotalP();
+        this.totalN = sales.getTotalN();
+        this.total$P = sales.getTotal$P();
+        this.total$N = sales.getTotal$N();
+        this.totalAmount = sales.getTotalAmount();
+        this.key = sales.getKey();
+    }
+
+    public void registerSale(Sale sale, String child)
+    {
+        SalesList temp;
+
+        temp = monthly.get( sale.getMonth() - 1 );
+
+        if( temp == null) {
+            temp = new SalesList();
+            monthly.set( ( sale.getMonth() - 1), temp );
+        }
+
+        temp.registerSale( sale, child );
+
+
 
         if(sale.getType().equals("P"))
         {
@@ -36,32 +84,6 @@ public class MonthlySales {
         this.totalAmount += sale.getAmount();
     }
 
-
-
-    public MonthlySales()
-    {
-        this.monthly = new ArrayList<  >( 12 );
-    }
-
-    public MonthlySales(ArrayList<SalesList> monthly, int totalP, int totalN, double total$P, double total$N, int totalAmount) {
-        this.monthly = monthly;
-        this.totalP = totalP;
-        this.totalN = totalN;
-        this.total$P = total$P;
-        this.total$N = total$N;
-        this.totalAmount = totalAmount;
-    }
-
-    public MonthlySales(MonthlySales sales)
-    {
-        this.monthly = sales.getMonthly();
-        this.totalP = sales.getTotalP();
-        this.totalN = sales.getTotalN();
-        this.total$P = sales.getTotal$P();
-        this.total$N = sales.getTotal$N();
-        this.totalAmount = sales.getTotalAmount();
-    }
-
     public ArrayList<SalesList> getMonthly() {
         ArrayList<SalesList> toRet = new ArrayList<>();
 
@@ -72,6 +94,10 @@ public class MonthlySales {
 
         return toRet;
     }
+
+    public void setKey( String key ) { this.key = key; }
+
+    public String getKey() { return key; }
 
     public void setMonthly(ArrayList<SalesList> monthly) {
         this.monthly = monthly;
@@ -129,6 +155,7 @@ public class MonthlySales {
 
         MonthlySales that = (MonthlySales) o;
 
+        if( !getKey().equals( that.getKey() ) ) return false;
         if (getTotalP() != that.getTotalP()) return false;
         if (getTotalN() != that.getTotalN()) return false;
         if (Double.compare(that.getTotal$P(), getTotal$P()) != 0) return false;
@@ -145,6 +172,7 @@ public class MonthlySales {
         result = getMonthly().hashCode();
         result = 31 * result + getTotalP();
         result = 31 * result + getTotalN();
+        result = 31 * result + getKey().length();
         temp = Double.doubleToLongBits(getTotal$P());
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(getTotal$N());
@@ -156,7 +184,8 @@ public class MonthlySales {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("MonthlySales{");
-        sb.append("monthly=").append(monthly);
+        sb.append("key=").append(key);
+        sb.append(", monthly=").append(monthly);
         sb.append(", totalP=").append(totalP);
         sb.append(", totalN=").append(totalN);
         sb.append(", total$P=").append(total$P);
@@ -164,5 +193,15 @@ public class MonthlySales {
         sb.append(", totalAmount=").append(totalAmount);
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public int compareTo(MonthlySales o) {
+        int res =  ( o.getTotalN() + o.getTotalP() ) - ( this.totalN + this.totalP );
+
+        if( res == 0 )
+            res = key.compareTo( o.getKey() );
+
+        return res;
     }
 }

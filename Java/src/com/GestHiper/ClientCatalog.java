@@ -1,5 +1,6 @@
-package com.GestHiper;
+package com.Hipermercado;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +9,7 @@ import java.util.Map;
  *  @author     Diogo
  *  @since      03/06/2015
  */
-public class ClientCatalog
+public class ClientCatalog implements Serializable
 {
 
     private HashMap<String, Client> clientCatalog;
@@ -80,7 +81,7 @@ public class ClientCatalog
             return p.clone();
         else
         {
-            throw new ClientNotFoundException("com.GestHiper.Client " + p.getCode() + " Not Found.");
+            throw new ClientNotFoundException("com.Hipermercado.Client " + p.getCode() + " Not Found.");
         }
     }
 
@@ -93,7 +94,7 @@ public class ClientCatalog
     public void insertClient(Client p) throws ClientAlreadyExistsException
     {
         if(this.clientCatalog.put(p.getCode(), p) == null)
-            throw new ClientAlreadyExistsException("com.GestHiper.Client " + p.getCode() + " Already In Catalog.");
+            throw new ClientAlreadyExistsException("com.Hipermercado.Client " + p.getCode() + " Already In Catalog.");
     }
 
 
