@@ -6,7 +6,7 @@ import java.util.Arrays;
 /**
  * Created by Diogo on 09/06/2015.
  */
-public class AccountingStats {
+public class AccountingStats implements Comparable<AccountingStats> {
 
     private int[] cntSalesP; /* Month Array, idx0 is total */
     private int[] cntSalesN;
@@ -149,5 +149,10 @@ public class AccountingStats {
         sb.append(", name='").append(name).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public int compareTo(AccountingStats o) {
+        int res = o.get
     }
 }

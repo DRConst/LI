@@ -3,10 +3,7 @@ package com.GestHiper;
 
 import com.Hipermercado.*;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -97,8 +94,7 @@ public class Main {
                         e.printStackTrace();
                     }*/
 
-                    parseClientCatalog(hiper);
-                    parseProductCatalog(hiper);
+                    Query1( hiper );
 
                     break;
 
@@ -245,8 +241,51 @@ public class Main {
 
     }
 
-    private static void parseSales(Hipermercado hipermercado, String filename)
+
+    public static void Query1( Hipermercado hiper)
     {
+        Scanner scanner = new Scanner(System.in);
+        String salesFile;
+        int nInvalid, nInvalidClient, nInvalidProduct;
+
+        System.out.println("Input Sales File: ");
+        salesFile = scanner.nextLine();
+
+        if( salesFile.length() == 0 )
+            salesFile = "Compras.txt";
+
+        System.out.print("Reading ClientCatalog...");
+        nInvalidClient = parseClientCatalog(hiper);
+        if( nInvalidClient == -1 )
+            return;
+
+        System.out.println( hiper.getClientCatalog().getClientCount() +" Read, "+ nInvalidClient + " Invalid.");
+
+
+
+        System.out.print("Reading ProductCatalog...");
+        nInvalidProduct = parseProductCatalog(hiper);
+        if( nInvalidProduct == -1 )
+            return;
+        System.out.println( hiper.getProductCatalog().getProductCount() +" Read, "+ nInvalidProduct + " Invalid.");
+
+        System.out.print("Reading "+ salesFile +"...");
+        nInvalid = parseSales( hiper, salesFile );
+        if( nInvalid == -1 )
+            return;
+        System.out.println( hiper.getAcc().getTotalNSales()+ " Read, "+ nInvalid +" Invalid.");
+    }
+    /**
+     * Parses Sales File and Registers each Sale into HiperMercado
+     *  also counts invalid Sales.
+     * @param hipermercado
+     * @param filename
+     */
+    private static int parseSales(Hipermercado hipermercado, String filename)
+    {
+        int nInvalid = 0;
+
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
             String line;
@@ -255,8 +294,9 @@ public class Main {
             int ammount, month;
             StringTokenizer tok;
             Sale s;
-            while((line = br.readLine()) != null)
-            {
+
+
+            while ((line = br.readLine()) != null) {
                 tok = new StringTokenizer(line, " ", false);
                 product = tok.nextToken();
                 price = new Double(tok.nextToken());
@@ -264,57 +304,91 @@ public class Main {
                 type = tok.nextToken();
                 client = tok.nextToken();
                 month = new Integer(tok.nextToken());
-                s = new Sale(month, ammount, price,hipermercado.getProductCatalog().getProduct(product), hipermercado.getClientCatalog().getClient(client), type);
-                hipermercado.registerSale(s);
+
+                try {
+
+                    s = new Sale(month, ammount, price, hipermercado.getProductCatalog().getProduct(product), hipermercado.getClientCatalog().getClient(client), type);
+                    hipermercado.registerSale(s);
+
+                } catch (ClientNotFoundException | ProductNotFoundException p) {
+                    nInvalid++;
+                }
             }
             br.close();
+        } catch( FileNotFoundException e ) {
+            System.out.println( "File "+ filename + " Not Found");
+            nInvalid = -1;
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (ClientNotFoundException e) {
-            e.printStackTrace();
-        } catch (ProductNotFoundException e) {
-            e.printStackTrace();
         }
+
+        return nInvalid;
     }
 
-    private static void parseClientCatalog(Hipermercado hipermercado)
+    /**
+     * Parses default ClientCatalog's File
+     *  also outputs executionTime in seconds
+     * @param hipermercado
+     * @return Nº Invalid Clients
+     */
+    private static int parseClientCatalog(Hipermercado hipermercado)
     {
+        int nInvalid = 0;
         try {
             BufferedReader br = new BufferedReader(new FileReader("CatalogoClientes.txt"));
             String line;
             Crono.start();
-            while((line = br.readLine()) != null)
-            {
-                hipermercado.registerClient(line);
+            while ((line = br.readLine()) != null) {
+
+                try {
+                    hipermercado.registerClient(line);
+                } catch (ClientAlreadyExistsException e) { nInvalid++; }
+
             }
             System.out.println(Crono.stop());
             br.close();
+        }catch( FileNotFoundException e) {
+            System.out.println("File CatalogoClientes.txt Not Found");
+            nInvalid = -1;
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (ClientAlreadyExistsException e)
-        {
-
         }
+
+        return nInvalid;
     }
 
-    private static void parseProductCatalog(Hipermercado hipermercado)
+    /**
+     * Parses Default ProductCatalog's File
+     *  outputs executionTime in seconds
+     * @param hipermercado
+     * @return Nº Invalid Products
+     */
+    private static int parseProductCatalog(Hipermercado hipermercado)
     {
+        int nInvalid = 0;
         try {
             BufferedReader br = new BufferedReader(new FileReader("CatalogoProdutos.txt"));
             String line;
             Crono.start();
             while((line = br.readLine()) != null)
             {
-                hipermercado.registerProduct(line);
+                try {
+
+                    hipermercado.registerProduct(line);
+
+                }catch (ProductAlreadyExistsException e){ nInvalid++; }
+
             }
             System.out.println(Crono.stop());
             br.close();
+        }catch( FileNotFoundException e) {
+            System.out.println("File CatalogoProdutos.txt Not Found");
+            nInvalid = -1;
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (ProductAlreadyExistsException e)
-        {
-
         }
+
+        return nInvalid;
     }
 
     private static void scannerNoParse()

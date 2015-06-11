@@ -93,7 +93,7 @@ public class ClientCatalog implements Serializable
      */
     public void insertClient(Client p) throws ClientAlreadyExistsException
     {
-        if(this.clientCatalog.put(p.getCode(), p) == null)
+        if(this.clientCatalog.put(p.getCode(), p) != null)
             throw new ClientAlreadyExistsException("com.Hipermercado.Client " + p.getCode() + " Already In Catalog.");
     }
 

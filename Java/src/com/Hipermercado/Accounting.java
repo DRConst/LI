@@ -79,6 +79,17 @@ public class Accounting {
         return toRet;
     }
 
+    public int getTotalNSales()
+    {
+        ArrayList<Integer> monthly = getMonthlySales();
+        int total = 0;
+
+        for( Integer m : monthly )
+            total += m;
+
+        return total;
+    }
+
 
     public Accounting()
     {

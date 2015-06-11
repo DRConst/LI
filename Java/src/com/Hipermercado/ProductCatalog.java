@@ -94,7 +94,7 @@ public class ProductCatalog implements Serializable
      */
     public void insertProduct(Product p) throws ProductAlreadyExistsException
     {
-        if(this.productCatalog.put(p.getCode(), p) == null)
+        if(this.productCatalog.put(p.getCode(), p) != null)
             throw new ProductAlreadyExistsException("com.Hipermercado.Product " + p.getCode() + " Already In Catalog.");
     }
 
