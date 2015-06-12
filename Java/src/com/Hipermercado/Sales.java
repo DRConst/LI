@@ -9,8 +9,8 @@ import java.util.*;
  *  @since      09/06/2015
  */
 public class Sales implements Serializable {
-    private HashMap<Product, MonthlySales >salesMetaProd;   // Ordered desc by nSales( totalP + totalN )
-    private HashMap<Client, MonthlySales > salesMetaCli;   // Ordered desc by nSales( totalP + totalN )
+    private Map<Product, MonthlySales >salesMetaProd;   // Ordered desc by nSales( totalP + totalN )
+    private Map<Client, MonthlySales > salesMetaCli;   // Ordered desc by nSales( totalP + totalN )
 
 
     public Sales()
@@ -25,6 +25,11 @@ public class Sales implements Serializable {
         this.salesMetaCli  = new HashMap<>(cliMap);
     }
 
+    public void sortSales()
+    {
+        salesMetaProd = getSortedSalesProd();
+        salesMetaCli = getSortedSalesCli();
+    }
     public TreeMap<Product, MonthlySales> getSortedSalesProd()
     {
         TreeMap<Product, MonthlySales> result = new TreeMap<>( new ValueComparator(salesMetaProd));

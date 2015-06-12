@@ -18,7 +18,7 @@ public class SalesList implements Serializable {
 
     private int totalAmount;	// sum of this months's MetaSales's amounts
 
-    private HashMap<String, MetaSale> sales; //SortedSet is abstract
+    private Map<String, MetaSale> sales; //SortedSet is abstract
 
 
     public void registerSale(Sale sale, String child)
@@ -46,6 +46,11 @@ public class SalesList implements Serializable {
         this.totalAmount += sale.getAmount();
     }
 
+    public void sortSales()
+    {
+        sales = getSortedSalesList();
+    }
+
     public TreeMap<String, MetaSale> getSortedSalesList()
     {
         TreeMap<String, MetaSale> result = new TreeMap<>( new ValueComparator(sales) );
@@ -55,6 +60,14 @@ public class SalesList implements Serializable {
         return result;
     }
 
+    /**
+     * Returns Nº Different Products/Clients Associated with Current Entry.
+     * @return  N Diff Elements
+     */
+    public int getNDiff()
+    {
+        return this.sales.keySet().size();
+    }
 
     public SalesList()
     {

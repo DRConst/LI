@@ -117,7 +117,7 @@ public class MetaSale implements Comparable<MetaSale>,Serializable {
         int res = o.getAmount() - this.amount;
 
         if( res == 0 )
-            res = o.getKey().compareTo( this.key );
+            res = key.compareTo( o.getKey() );
 
         return res;
     }

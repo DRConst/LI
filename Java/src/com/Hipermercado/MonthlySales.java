@@ -200,7 +200,7 @@ public class MonthlySales implements Comparable<MonthlySales> {
         int res =  ( o.getTotalN() + o.getTotalP() ) - ( this.totalN + this.totalP );
 
         if( res == 0 )
-            res = key.compareTo( o.getKey() );
+            res = key.compareTo(o.getKey());
 
         return res;
     }
