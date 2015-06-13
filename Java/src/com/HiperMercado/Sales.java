@@ -34,6 +34,7 @@ public class Sales implements Serializable {
     public void sortSales() {
         salesMetaProd = getSortedSalesProd();
         salesMetaCli = getSortedSalesCli();
+        isSorted = true;
     }
 
     public TreeMap<Product, MonthlySales> getSortedSalesProd() {
@@ -177,20 +178,27 @@ public class Sales implements Serializable {
      * Query1
      * @return Unbought Products ordered alphabeticaly
      */
-    public TreeSet<String> getUnboughtProducts()
+    public LinkedList<String> getUnboughtProducts()
     {
-        TreeSet<String> toRet = new TreeSet<>();
+        LinkedList<String> toRet = new LinkedList<>();
 
         if(!isSorted)
             this.sortSales();
 
-        for(MonthlySales p : salesMetaProd.values())
+        TreeMap<Product, MonthlySales> temp = (TreeMap)salesMetaProd;
+        NavigableSet<Product> test = temp.descendingKeySet();
+
+        for( Product key : test )
         {
+            MonthlySales p = salesMetaProd.get( key );
             if(p.getTotalAmount() != 0)
                 break;
 
-            toRet.add(p.getKey());
+            toRet.add( key.getCode() );
         }
+
+
+        Collections.sort( toRet, Collections.reverseOrder() );
 
         return toRet;
     }

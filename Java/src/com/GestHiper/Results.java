@@ -27,6 +27,11 @@ public class Results {
         this.res = r.getResults();
     }
 
+
+    public void add( String key, Object o )
+    {
+        res.put( key, o );
+    }
     public void inc(String key) {
         Integer val = (Integer)res.get(key);
 

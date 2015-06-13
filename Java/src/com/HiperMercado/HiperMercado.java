@@ -2,6 +2,8 @@ package com.Hipermercado;
 
 
 import java.io.Serializable;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.TreeSet;
 
 /**
@@ -111,7 +113,7 @@ public class HiperMercado implements Serializable {
      * Query1
      * @return Unbought Products ordered alphabeticaly
      */
-    public TreeSet<String> getUnboughtProducts()
+    public LinkedList<String> getUnboughtProducts()
     {
         return sales.getUnboughtProducts();
     }

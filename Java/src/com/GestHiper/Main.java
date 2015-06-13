@@ -4,10 +4,7 @@ package com.GestHiper;
 import com.Hipermercado.*;
 
 import java.io.*;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Main, Class interacting with user and holding primary instances
@@ -60,44 +57,8 @@ public class Main {
             switch (userOpt) {
 
                 case 1:
-                    hiper.getUnboughtProducts();
-                    /*
-                    try {
-                        testSales.registerProd( prod1 );
-                        testSales.registerProd( prod2 );
-                //      testSales.registerProd( prod3 );
-                        testSales.registerProd( prod4 );
-                        testSales.registerProd( prod5 );
-                        testSales.registerProd( prod6 );
 
-                    } catch (ProductAlreadyExistsException e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        testSales.registerCli( cl1 );
-                        testSales.registerCli( cl2 );
-                        testSales.registerCli( cl3 );
-                        testSales.registerCli( cl4 );
-                        testSales.registerCli( cl5 );
-                        testSales.registerCli( cl6 );
-                    } catch (ClientAlreadyExistsException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    try {
-                        testSales.registerSale( s1 );
-                        testSales.registerSale( s2 );
-                        testSales.registerSale( s3 );
-                        testSales.registerSale( s4 );
-                        testSales.registerSale( s5 );
-                        testSales.registerSale( s6 );
-                        testSales.registerSale( s7 );
-                        testSales.registerSale( s8 );
-                    } catch (ProductNotFoundException | ClientNotFoundException e) {
-                        e.printStackTrace();
-                    }*/
+                    Query1( hiper );
 
                     break;
 
@@ -239,6 +200,21 @@ public class Main {
         return input;
     }
 
+    /**
+     * Checks if given String is an Integer
+     * @param s
+     * @return Boolean
+     */
+    public static boolean isNumeric(String s )
+    {
+
+        try {
+            Integer.parseInt(s);
+        }
+        catch(NumberFormatException e) { return false; }
+
+        return true;
+    }
 
     /**
      * 'Cleaning' terminal
@@ -254,6 +230,14 @@ public class Main {
 
     }
 
+    public static void Query1( HiperMercado hiper )
+    {
+        Results res = new Results();
+
+        res.add( "Products", hiper.getUnboughtProducts() );
+
+        paginate( res );
+    }
 
     public static HiperMercado Query12() throws FileNotFoundException {
         Scanner scanner = new Scanner(System.in);
@@ -290,6 +274,59 @@ public class Main {
 
 
         return hiper;
+    }
+
+
+    /**
+     * Paginates Results
+     * @param res
+     */
+    public static void paginate(Results res)
+    {
+        int nLists, maxEntries;
+        TreeSet<String> columnNames = new TreeSet<>( res.getKeys() );
+        String op;
+        Scanner scanner = new Scanner( System.in );
+        int nPage, maxPage;
+        StringBuilder header = new StringBuilder();
+
+
+        nLists = res.size();
+
+        maxEntries = 0;
+        nPage = 0;
+        for( String key : columnNames ) {
+            LinkedHashSet<String> temp = (LinkedHashSet)res.get( key );
+
+            if( temp.size() > maxEntries )
+                maxEntries = temp.size();
+
+            header.append( key );
+            for( int i = 0; i < (8 - key.length() ); i++ )
+                header.append(" ");
+        }
+
+        maxPage = (int)Math.ceil( maxEntries / 10 );
+        op = scanner.nextLine();
+
+        if( isNumeric( op ) ) {
+            nPage = Integer.parseInt( op );
+
+            if( nPage > maxPage )
+                nPage = maxPage;
+
+            if( nPage < 0 )
+                nPage = 0;
+
+        }else {
+
+            if( op.equals("n") )
+                nPage++;
+            else
+                nPage--;
+        }
+
+
     }
 
 
