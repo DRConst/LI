@@ -24,6 +24,7 @@ public class MonthlySales implements Comparable<MonthlySales> {
      */
     public MonthlySales() {
 
+		monthly = new ArrayList<>( 12 );
         for (int i = 0; i < 12; i++)
             monthly.add(new SalesList());
 
@@ -42,6 +43,7 @@ public class MonthlySales implements Comparable<MonthlySales> {
      */
     public MonthlySales(String key) {
 
+		monthly = new ArrayList<>( 12 );
         for (int i = 0; i < 12; i++)
             monthly.add(new SalesList());
 
