@@ -2,9 +2,7 @@ package com.Hipermercado;
 
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Hipermercado Class
@@ -122,7 +120,7 @@ public class HiperMercado implements Serializable {
      * Query2
      * @return Clients without purchases ordered alphabeticaly
      */
-    public TreeSet<String> getClientsWithoutPurchases()
+    public LinkedList<String> getClientsWithoutPurchases()
     {
         return sales.getClientsWithoutPurchases();
     }
@@ -136,8 +134,8 @@ public class HiperMercado implements Serializable {
      */
     public ClientStats getMonthlyClientStats(String code, int month) throws ClientNotFoundException, SalesNotFoundException {
         ClientStats clientStats = new ClientStats();
-
-        if(!clientCatalog.existsClient(code))
+        Client cli = clientCatalog.getClient(code);
+        if(cli == null)
             throw new ClientNotFoundException(code + " not found");
 
         clientStats.setYearlyBill(acc.getClientsYearlyBill(code));
@@ -147,7 +145,7 @@ public class HiperMercado implements Serializable {
         clientStats.setBill(acc.getClientMonthlyBill(code));
 
         try {
-            clientStats.setUniqueCount(sales.getUniquePurchases(code));
+            clientStats.setUniqueCount(sales.getUniqueClientPurchases(cli));
         } catch (SalesNotFoundException e) {
             throw e;
         }
@@ -165,8 +163,8 @@ public class HiperMercado implements Serializable {
      */
     public ClientStats getMonthlyProductStats(String code, int month) throws ProductNotFoundException, SalesNotFoundException {
         ClientStats clientStats = new ClientStats();
-
-        if(!productCatalog.existsProduct(code))
+        Product pr = productCatalog.getProduct(code);
+        if(pr == null)
             throw new ProductNotFoundException(code + " not found");
 
         clientStats.setYearlyBill(acc.getProductsYearlyBill(code));
@@ -176,7 +174,7 @@ public class HiperMercado implements Serializable {
         clientStats.setBill(acc.getProductMonthlyBill(code));
 
         try {
-            clientStats.setUniqueCount(sales.getUniquePurchases(code));
+            clientStats.setUniqueCount(sales.getUniqueProductPurchases(pr));
         } catch (SalesNotFoundException e) {
             throw e;
         }
@@ -185,12 +183,27 @@ public class HiperMercado implements Serializable {
         return clientStats;
     }
 
+    public TreeSet<String> getMostBoughtProductsForClient(String code) throws ClientNotFoundException {
+        try {
+            Client cli = clientCatalog.getClient(code);
+            return sales.getMostBoughtProductsForClient(cli);
+        } catch (ClientNotFoundException e) {
+            throw e;
+        }
+    }
+
     public YearlySaleStats getYearlyProductStats(String code) throws ProductNotFoundException{
         if(!productCatalog.existsProduct(code))
             throw new ProductNotFoundException(code + "isn't registered");
 
         return acc.getYearlyProductStats(code);
     }
+
+    public Set<Client> getClientsWithMostPurchases()
+    {
+        return sales.getSortedSalesCli().keySet();
+    }
+
     /**
      * Registers Given Sale into Sales and Accounting
      *

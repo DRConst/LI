@@ -122,11 +122,11 @@ public class Sales implements Serializable {
         this.salesMetaCli = salesMetaCli;
     }
 
-    public TreeSet<String> getMostBoughtProductsForClient(String code)
+    public TreeSet<String> getMostBoughtProductsForClient(Client cli)
     {
         HashMap<String, MetaSale> temp = new HashMap<>();
 
-        for(SalesList salesList : salesMetaCli.get(code).getMonthly())
+        for(SalesList salesList : salesMetaCli.get(cli).getMonthly())
         {
             for(MetaSale metaSale : salesList.getSales().values())
             {
@@ -142,24 +142,13 @@ public class Sales implements Serializable {
                 }
             }
         }
-        return new TreeSet<>(new ValueComparator(temp));
+        TreeSet<String> toRet =  new TreeSet<>(new ValueComparator(temp));
+        toRet.addAll(temp.keySet());
+        return toRet;
     }
 
-    public TreeSet<String> getClientsWithMostPurchases()
-    {
-        HashMap<String, Integer> temp = new HashMap<>();
 
-        for(MonthlySales monthlySales : salesMetaCli.values())
-        {
-            Integer sum = 0;
-            for(Integer i : monthlySales.getUniquePurchases())
-                sum += i;
-            temp.put(monthlySales.getKey(), sum);
-        }
-        return new TreeSet<>(new ValueComparator(temp));
-    }
 
-    
 
     @Override
     public boolean equals(Object o) {
@@ -198,7 +187,7 @@ public class Sales implements Serializable {
         }
 
 
-        Collections.reverse( toRet );
+        //Collections.sort( toRet, Collections.reverseOrder() );
 
         return toRet;
     }
@@ -207,30 +196,49 @@ public class Sales implements Serializable {
      * Query2
      * @return Clients without purchases ordered alphabeticaly
      */
-    public TreeSet<String> getClientsWithoutPurchases()
+    public LinkedList<String> getClientsWithoutPurchases()
     {
-        TreeSet<String> toRet = new TreeSet<>();
+
+        LinkedList<String> toRet = new LinkedList<>();
 
         if(!isSorted)
             this.sortSales();
 
-        for(MonthlySales p : salesMetaCli.values())
+        TreeMap<Client, MonthlySales> temp = (TreeMap)salesMetaCli;
+        NavigableSet<Client> test = temp.descendingKeySet();
+
+        for( Client key : test )
         {
+            MonthlySales p = salesMetaCli.get( key );
             if(p.getTotalAmount() != 0)
                 break;
 
-            toRet.add(p.getKey());
+            toRet.add( key.getCode() );
         }
+
+
+        //Collections.sort( toRet, Collections.reverseOrder() );
 
         return toRet;
     }
 
-    public ArrayList<Integer> getUniquePurchases(String code) throws SalesNotFoundException
+    public ArrayList<Integer> getUniqueClientPurchases(Client cli) throws SalesNotFoundException
     {
-        MonthlySales monthlySales = salesMetaCli.get(code);
+        MonthlySales monthlySales = salesMetaCli.get(cli);
 
         if(monthlySales == null)
-            throw new SalesNotFoundException("No sales for " + code);
+            throw new SalesNotFoundException("No sales for " + cli.getCode());
+
+        return  monthlySales.getUniquePurchases();
+
+    }
+
+    public ArrayList<Integer> getUniqueProductPurchases(Product pr) throws SalesNotFoundException
+    {
+        MonthlySales monthlySales = salesMetaProd.get(pr);
+
+        if(monthlySales == null)
+            throw new SalesNotFoundException("No sales for " + pr.getCode());
 
         return  monthlySales.getUniquePurchases();
 
@@ -282,4 +290,3 @@ public class Sales implements Serializable {
 
 
 }
-

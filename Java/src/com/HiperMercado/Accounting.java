@@ -70,30 +70,30 @@ public class Accounting implements Serializable {
     }
 
     /**
-     * Returns Nº Unique Clients in the Specified Month
+     * Returns N? Unique Clients in the Specified Month
      *
      * @param month
-     * @return Nº Unique Clients
+     * @return N? Unique Clients
      */
     public int getNDiffClientsByMonth(int month) {
         return this.clients.get(month - 1).getNDiff();
     }
 
     /**
-     * Returns Nº Unique Products in the Specified Month
+     * Returns N? Unique Products in the Specified Month
      *
      * @param month
-     * @return Nº Unique Products
+     * @return N? Unique Products
      */
     public int getNDiffProductsByMonth(int month) {
         return this.products.get(month - 1).getNDiff();
     }
 
     /**
-     * Returns Nº Sales in the Specified Month
+     * Returns N? Sales in the Specified Month
      *
      * @param month
-     * @return Nº Sales
+     * @return N? Sales
      */
     public int getNSalesByMonth(int month) {
         int res = this.products.get(month - 1).getTotalN();
@@ -228,7 +228,7 @@ public class Accounting implements Serializable {
         for( int i = 0; i < 12; i++)
         {
             try {
-                SalesList salesList = clients.get(i);
+                SalesList salesList = products.get(i);
                 MetaSale s = salesList.getMetaSale(code);
                 toRet.add(i, s.getTotal$N() + s.getTotal$P());
             } catch (SalesNotFoundException e) {

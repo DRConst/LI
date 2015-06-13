@@ -13,10 +13,11 @@ import java.util.*;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ProductNotFoundException, ClientNotFoundException {
         int userOpt;
 
         HiperMercado hiper = new HiperMercado();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         /*
         Sales testSales = new Sales();
@@ -50,7 +51,9 @@ public class Main {
         s7 = new Sale( 5, 6, 6.16, prod1, cl4, "N");
         s8 = new Sale( 9, 2, 2.88, prod3, cl1, "P");
         */
-
+        parseClientCatalog(hiper);
+        parseProductCatalog(hiper);
+        parseSales(hiper, "Compras.txt");
         do {
             userOpt = menu();
 
@@ -64,21 +67,19 @@ public class Main {
 
 
                 case 2:
-                    hiper.getClientsWithoutPurchases();
-                    /*
-                    TreeMap<Product, MonthlySales> treeProd = testSales.getSortedSalesProd();
-                    TreeMap<Client, MonthlySales> treeCli = testSales.getSortedSalesCli();
-
-                    MonthlySales monthly = testSales.getMonthlyProd( prod5 );
-                    */
+                    System.out.println(hiper.getClientsWithoutPurchases());
                     break;
 
                 case 3:
                     break;
 
                 case 4:
+                    System.out.println("Insert the client code: ");
+                    String clientCode = br.readLine();
+                    ArrayList<ClientStats> stats = new ArrayList<>();
                     try {
-                        hiper.getMonthlyClientStats("asd", 0);
+                        for( int i = 0; i < 12; i++)
+                            stats.add(i, hiper.getMonthlyClientStats(clientCode, i + 1));
                     } catch (ClientNotFoundException e) {
                         e.printStackTrace();
                     } catch (SalesNotFoundException e) {
@@ -88,18 +89,30 @@ public class Main {
                     break;
 
                 case 5:
+                    try {
+                        System.out.println(hiper.getMonthlyProductStats("XA1482", 1).getBill());
+                    } catch (ProductNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (SalesNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("hai");
                     break;
 
                 case 6:
+                    System.out.println(hiper.getYearlyProductStats("XA1482"));
                     break;
 
                 case 7:
+                    System.out.println(hiper.getMostBoughtProductsForClient("FO767"));
                     break;
 
                 case 8:
+
                     break;
 
                 case 9:
+                    System.out.println(hiper.getClientsWithMostPurchases());
                     break;
 
                 case 10:
@@ -234,9 +247,9 @@ public class Main {
     {
         Results res = new Results();
 
-        res.add( "Products", hiper.getUnboughtProducts() );
-
-        paginate( res );
+        //res.add( "Products", hiper.getUnboughtProducts() );
+        System.out.println(hiper.getUnboughtProducts());
+        //paginate( res );
     }
 
     public static HiperMercado Query12() throws FileNotFoundException {
@@ -285,47 +298,120 @@ public class Main {
     {
         int nLists, maxEntries;
         TreeSet<String> columnNames = new TreeSet<>( res.getKeys() );
-        String op;
+        String op = "";
         Scanner scanner = new Scanner( System.in );
         int nPage, maxPage;
         StringBuilder header = new StringBuilder();
+        StringBuilder footer = new StringBuilder();
+        StringBuilder footerBase = new StringBuilder();
+        StringBuilder line = new StringBuilder();
+        StringBuilder block = new StringBuilder();
+        Boolean isEmpty = false;
 
 
         nLists = res.size();
 
         maxEntries = 0;
         nPage = 0;
+
+        header.append( "| Idx" );
+        for (int i = 0; i < 7; i++)
+            header.append(" ");
+        header.append("|");
+
+
+
         for( String key : columnNames ) {
-            LinkedHashSet<String> temp = (LinkedHashSet)res.get( key );
 
-            if( temp.size() > maxEntries )
-                maxEntries = temp.size();
+            if( key.startsWith("*") )
+                footerBase.append( key.substring(1) + res.get(key) + " | " );
 
-            header.append( key );
-            for( int i = 0; i < (8 - key.length() ); i++ )
-                header.append(" ");
+            else {
+                LinkedList<String> temp = (LinkedList) res.get(key);
+
+                isEmpty = isEmpty | (temp.size() == 0);
+                if (temp.size() > maxEntries)
+                    maxEntries = temp.size();
+
+                header.append(key);
+                for (int i = 0; i < (10 - key.length()); i++)
+                    header.append(" ");
+                header.append("|");
+            }
+        }
+
+        if( isEmpty ) {
+            System.out.println("No Results");
+            return;
         }
 
         maxPage = (int)Math.ceil( maxEntries / 10 );
-        op = scanner.nextLine();
 
-        if( isNumeric( op ) ) {
-            nPage = Integer.parseInt( op );
+        while( nPage != -1 ) {
+
+            for(int i = 0; i < 20; i++)
+                System.out.println("");
+
+            System.out.println( header.toString() );
+
+            block = new StringBuilder();
+            for( int i = nPage * 10;
+                 ( ( i < maxEntries ) &&  i < ( (nPage+1) * 10 ) );
+                 i++){
+                line = new StringBuilder();
+
+                line. append( "| "+ (i+1) );
+                for (int j = 0; j < (10 - ((i+1)+"").length()); j++)
+                    line.append(" ");
+                line.append("|");
+
+                for( String key : columnNames ) {
+                    if (key.startsWith("*"))
+                        continue;
+                    LinkedList<String> vals = (LinkedList)res.get( key );
+                    String val = vals.get( i );
+
+                    line.append("| "+ val );
+                    for (int j = 0; j < (10 - val.length()); j++)
+                        line.append(" ");
+                    line.append("|");
+
+                }
+
+                block.append( line+ "\n");
+
+            }
+            System.out.println( block.toString() );
+            footer = new StringBuilder ( footerBase.toString() + "Page: "+ (nPage+1)+ " / "+ (maxPage+1) );
+            System.out.println( footer.toString() );
+
+
+            if( scanner.hasNextLine() )
+                op = scanner.nextLine();
+
+            if( isNumeric( op ) )
+                nPage = Integer.parseInt( op ) - 1;
+            else {
+
+                if( op.equals("n") )
+                    nPage++;
+                else {
+                    if (op.equals("p"))
+                        nPage--;
+                    else {
+                        if (op.equals("q"))
+                            nPage = -1;
+                    }
+                }
+            }
+
 
             if( nPage > maxPage )
                 nPage = maxPage;
 
-            if( nPage < 0 )
+            if( ( nPage < 0 ) && (nPage != -1) )
                 nPage = 0;
-
-        }else {
-
-            if( op.equals("n") )
-                nPage++;
-            else
-                nPage--;
         }
-
 
     }
 
