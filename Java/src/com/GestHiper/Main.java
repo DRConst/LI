@@ -13,10 +13,11 @@ import java.util.*;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ProductNotFoundException, ClientNotFoundException {
         int userOpt;
 
         HiperMercado hiper = new HiperMercado();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         /*
         Sales testSales = new Sales();
@@ -50,7 +51,9 @@ public class Main {
         s7 = new Sale( 5, 6, 6.16, prod1, cl4, "N");
         s8 = new Sale( 9, 2, 2.88, prod3, cl1, "P");
         */
-
+        parseClientCatalog(hiper);
+        parseProductCatalog(hiper);
+        parseSales(hiper, "Compras.txt");
         do {
             userOpt = menu();
 
@@ -64,21 +67,19 @@ public class Main {
 
 
                 case 2:
-                    hiper.getClientsWithoutPurchases();
-                    /*
-                    TreeMap<Product, MonthlySales> treeProd = testSales.getSortedSalesProd();
-                    TreeMap<Client, MonthlySales> treeCli = testSales.getSortedSalesCli();
-
-                    MonthlySales monthly = testSales.getMonthlyProd( prod5 );
-                    */
+                    System.out.println(hiper.getClientsWithoutPurchases());
                     break;
 
                 case 3:
                     break;
 
                 case 4:
+                    System.out.println("Insert the client code: ");
+                    String clientCode = br.readLine();
+                    ArrayList<ClientStats> stats = new ArrayList<>();
                     try {
-                        hiper.getMonthlyClientStats("asd", 0);
+                        for( int i = 0; i < 12; i++)
+                            stats.add(i, hiper.getMonthlyClientStats(clientCode, i + 1));
                     } catch (ClientNotFoundException e) {
                         e.printStackTrace();
                     } catch (SalesNotFoundException e) {
@@ -88,18 +89,30 @@ public class Main {
                     break;
 
                 case 5:
+                    try {
+                        System.out.println(hiper.getMonthlyProductStats("XA1482", 1).getBill());
+                    } catch (ProductNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (SalesNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("hai");
                     break;
 
                 case 6:
+                    System.out.println(hiper.getYearlyProductStats("XA1482"));
                     break;
 
                 case 7:
+                    System.out.println(hiper.getMostBoughtProductsForClient("FO767"));
                     break;
 
                 case 8:
+
                     break;
 
                 case 9:
+                    System.out.println(hiper.getClientsWithMostPurchases());
                     break;
 
                 case 10:
@@ -234,9 +247,9 @@ public class Main {
     {
         Results res = new Results();
 
-        res.add( "Products", hiper.getUnboughtProducts() );
-
-        paginate( res );
+        //res.add( "Products", hiper.getUnboughtProducts() );
+        System.out.println(hiper.getUnboughtProducts());
+        //paginate( res );
     }
 
     public static HiperMercado Query12() throws FileNotFoundException {

@@ -228,7 +228,7 @@ public class Accounting implements Serializable {
         for( int i = 0; i < 12; i++)
         {
             try {
-                SalesList salesList = clients.get(i);
+                SalesList salesList = products.get(i);
                 MetaSale s = salesList.getMetaSale(code);
                 toRet.add(i, s.getTotal$N() + s.getTotal$P());
             } catch (SalesNotFoundException e) {
