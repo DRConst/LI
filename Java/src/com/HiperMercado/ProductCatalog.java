@@ -86,7 +86,7 @@ public class ProductCatalog implements Serializable {
         if (p != null)
             return p;
         else {
-            throw new ProductNotFoundException("com.HiperMercado.Product " + p.getCode() + " Not Found.");
+            throw new ProductNotFoundException("com.Hipermercado.Product " + p.getCode() + " Not Found.");
         }
     }
 
@@ -99,7 +99,7 @@ public class ProductCatalog implements Serializable {
      */
     public void insertProduct(Product p) throws ProductAlreadyExistsException {
         if (this.productCatalog.put(p.getCode(), p) != null)
-            throw new ProductAlreadyExistsException("com.HiperMercado.Product " + p.getCode() + " Already In Catalog.");
+            throw new ProductAlreadyExistsException("com.Hipermercado.Product " + p.getCode() + " Already In Catalog.");
     }
 
 

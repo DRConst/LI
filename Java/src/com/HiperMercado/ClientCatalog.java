@@ -85,7 +85,7 @@ public class ClientCatalog implements Serializable {
         if (p != null)
             return p.clone();
         else {
-            throw new ClientNotFoundException("com.HiperMercado.Client " + p.getCode() + " Not Found.");
+            throw new ClientNotFoundException("com.Hipermercado.Client " + p.getCode() + " Not Found.");
         }
     }
 
@@ -98,7 +98,7 @@ public class ClientCatalog implements Serializable {
      */
     public void insertClient(Client p) throws ClientAlreadyExistsException {
         if (this.clientCatalog.put(p.getCode(), p) != null)
-            throw new ClientAlreadyExistsException("com.HiperMercado.Client " + p.getCode() + " Already In Catalog.");
+            throw new ClientAlreadyExistsException("com.Hipermercado.Client " + p.getCode() + " Already In Catalog.");
     }
 
 

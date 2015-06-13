@@ -143,7 +143,7 @@ public class Sale {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("com.HiperMercado.Sale{");
+        final StringBuilder sb = new StringBuilder("com.Hipermercado.Sale{");
         sb.append("month=").append(month);
         sb.append(", amount=").append(amount);
         sb.append(", price=").append(price);

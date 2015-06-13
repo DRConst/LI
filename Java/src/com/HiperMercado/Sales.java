@@ -1,10 +1,7 @@
 package com.Hipermercado;
 
 import java.io.Serializable;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Sales Class
@@ -15,7 +12,7 @@ import java.util.TreeMap;
 public class Sales implements Serializable {
     private Map<Product, MonthlySales> salesMetaProd;   // Ordered desc by nSales( totalP + totalN )
     private Map<Client, MonthlySales> salesMetaCli;   // Ordered desc by nSales( totalP + totalN )
-
+    private boolean isSorted = false;
 
     public Sales() {
         this.salesMetaProd = new HashMap<>();
@@ -28,6 +25,7 @@ public class Sales implements Serializable {
     }
 
     public Sales(Sales s) {
+        isSorted = true;
         salesMetaProd = new HashMap<>(s.getSalesMetaProd());
         salesMetaCli = new HashMap<>(s.getSalesMetaCli());
     }
@@ -61,7 +59,7 @@ public class Sales implements Serializable {
         MonthlySales productSales = salesMetaProd.get(prod);
 
         if (productSales != null)
-            throw new ProductAlreadyExistsException("com.HiperMercado.Sales " + prod.getCode() + " Already Registered in Sales.");
+            throw new ProductAlreadyExistsException("com.Hipermercado.Sales " + prod.getCode() + " Already Registered in Sales.");
 
         productSales = new MonthlySales(prod.getCode());
         salesMetaProd.put(prod, productSales);
@@ -71,7 +69,7 @@ public class Sales implements Serializable {
         MonthlySales clientSales = salesMetaCli.get(cli);
 
         if (clientSales != null)
-            throw new ClientAlreadyExistsException("com.HiperMercado.Sales " + cli.getCode() + " Already Registered in Sales.");
+            throw new ClientAlreadyExistsException("com.Hipermercado.Sales " + cli.getCode() + " Already Registered in Sales.");
 
         clientSales = new MonthlySales(cli.getCode());
         salesMetaCli.put(cli, clientSales);
@@ -84,10 +82,10 @@ public class Sales implements Serializable {
         MonthlySales clientSales = salesMetaCli.get(client);
 
         if (productSales == null)
-            throw new ProductNotFoundException("com.HiperMercado.Sales " + prod.getCode() + " Not Found in Sales.");
+            throw new ProductNotFoundException("com.Hipermercado.Sales " + prod.getCode() + " Not Found in Sales.");
 
         if (clientSales == null)
-            throw new ClientNotFoundException("com.HiperMercado.Sales " + client.getCode() + " Not Found in Sales.");
+            throw new ClientNotFoundException("com.Hipermercado.Sales " + client.getCode() + " Not Found in Sales.");
 
         productSales.registerSale(sale, client.getCode());
         clientSales.registerSale(sale, prod.getCode());
@@ -133,6 +131,28 @@ public class Sales implements Serializable {
 
         return salesMetaCli.equals(sales.getSalesMetaCli());
 
+    }
+
+    /**
+     * Query1
+     * @return Unbought Products ordered Alphabeticaly
+     */
+    public TreeSet<String> getUnboughtProducts()
+    {
+        TreeSet<String> toRet = new TreeSet<>();
+
+        if(!isSorted)
+            this.sortSales();
+
+        for(MonthlySales p : salesMetaProd.values())
+        {
+            if(p.getTotalAmount() != 0)
+                break;
+
+            toRet.add(p.getKey());
+        }
+
+        return toRet;
     }
 
     @Override

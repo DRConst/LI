@@ -285,7 +285,7 @@ public class Main {
 
 
     /**
-     * Parses Sales File and Registers each Sale into HiperMercado
+     * Parses Sales File and Registers each Sale into Hipermercado
      * also counts invalid Sales.
      *
      * @param hiperMercado

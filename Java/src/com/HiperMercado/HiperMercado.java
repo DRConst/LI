@@ -4,7 +4,7 @@ package com.Hipermercado;
 import java.io.Serializable;
 
 /**
- * HiperMercado Class
+ * Hipermercado Class
  * Holds all relevant classes such as
  * ProductCatalog, ClientCatalog
  * Accounting, Sales
@@ -21,7 +21,7 @@ public class HiperMercado implements Serializable {
 
 
     /**
-     * HiperMercado Constructor, inits empty HiperMercado
+     * Hipermercado Constructor, inits empty Hipermercado
      */
     public HiperMercado() {
         productCatalog = new ProductCatalog();
@@ -31,7 +31,7 @@ public class HiperMercado implements Serializable {
     }
 
     /**
-     * HiperMercado Constructor, clones given HiperMercado
+     * Hipermercado Constructor, clones given Hipermercado
      *
      * @param h
      */
