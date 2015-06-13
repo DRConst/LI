@@ -198,7 +198,7 @@ public class Sales implements Serializable {
         }
 
 
-        Collections.sort( toRet, Collections.reverseOrder() );
+        Collections.reverse( toRet );
 
         return toRet;
     }
