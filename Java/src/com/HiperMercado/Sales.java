@@ -198,7 +198,7 @@ public class Sales implements Serializable {
         }
 
 
-        Collections.sort( toRet, Collections.reverseOrder() );
+        //Collections.sort( toRet, Collections.reverseOrder() );
 
         return toRet;
     }
@@ -225,12 +225,23 @@ public class Sales implements Serializable {
         return toRet;
     }
 
-    public ArrayList<Integer> getUniquePurchases(String code) throws SalesNotFoundException
+    public ArrayList<Integer> getUniqueClientPurchases(Client cli) throws SalesNotFoundException
     {
-        MonthlySales monthlySales = salesMetaCli.get(code);
+        MonthlySales monthlySales = salesMetaCli.get(cli);
 
         if(monthlySales == null)
-            throw new SalesNotFoundException("No sales for " + code);
+            throw new SalesNotFoundException("No sales for " + cli.getCode());
+
+        return  monthlySales.getUniquePurchases();
+
+    }
+
+    public ArrayList<Integer> getUniqueProductPurchases(Product pr) throws SalesNotFoundException
+    {
+        MonthlySales monthlySales = salesMetaProd.get(pr);
+
+        if(monthlySales == null)
+            throw new SalesNotFoundException("No sales for " + pr.getCode());
 
         return  monthlySales.getUniquePurchases();
 
