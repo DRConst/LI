@@ -1,17 +1,41 @@
 package com.Hipermercado;
 
 /**
- *  Sale Class
- *  @author     Diogo
- *  @since      07/06/2015
+ * Sale Class
+ *
+ * @author Diogo
+ * @since 07/06/2015
  */
 public class Sale {
     private int month, amount;
     private double price;
     private String type;
-	private Product product;
-	private Client client; 
+    private Product product;
+    private Client client;
 
+
+    /**
+     * Sale Constructor, inits empty Sale
+     */
+    public Sale() {
+        this.month = 0;
+        this.amount = 0;
+        this.price = 0.0;
+        this.type = "";
+        this.product = new Product();
+        this.client = new Client();
+    }
+
+    /**
+     * Sale Constructor, inits Sale with given values
+     *
+     * @param month
+     * @param amount
+     * @param price
+     * @param product
+     * @param client
+     * @param type
+     */
     public Sale(int month, int amount, double price, Product product, Client client, String type) {
         this.month = month;
         this.amount = amount;
@@ -21,9 +45,11 @@ public class Sale {
         this.type = type;
     }
 
-    public Sale() {
-    }
-
+    /**
+     * Sale Constructor, clones given Sale
+     *
+     * @param s
+     */
     public Sale(Sale s) {
         this.month = s.getMonth();
         this.amount = s.getAmount();
@@ -91,12 +117,12 @@ public class Sale {
 
         Sale sale = (Sale) o;
 
-        if (month != sale.getMonth() ) return false;
-        if (amount != sale.getAmount() ) return false;
-        if (Double.compare(sale.getPrice() , price) != 0) return false;
-        if (!product.equals( sale.getProduct() ) ) return false;
-        if (!client.equals( sale.getClient() ) ) return false;
-        return type.equals( sale.getType() );
+        if (month != sale.getMonth()) return false;
+        if (amount != sale.getAmount()) return false;
+        if (Double.compare(sale.getPrice(), price) != 0) return false;
+        if (!product.equals(sale.getProduct())) return false;
+        if (!client.equals(sale.getClient())) return false;
+        return type.equals(sale.getType());
 
     }
 
@@ -117,7 +143,7 @@ public class Sale {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("com.Hipermercado.Sale{");
+        final StringBuilder sb = new StringBuilder("com.HiperMercado.Sale{");
         sb.append("month=").append(month);
         sb.append(", amount=").append(amount);
         sb.append(", price=").append(price);
@@ -128,10 +154,9 @@ public class Sale {
         return sb.toString();
     }
 
-    public Sale clone()
-    {
+    @Override
+    public Sale clone() {
         return new Sale(this);
     }
-
 
 }

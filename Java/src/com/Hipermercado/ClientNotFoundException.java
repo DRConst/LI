@@ -1,16 +1,19 @@
 package com.Hipermercado;
 
 /**
- *  Exception for Client - Not Found
- *  @author     Diogo
- *  @since      07/06/2015
+ * Exception for Client - Not Found
+ *
+ * @author Diogo
+ * @since 07/06/2015
  */
 public class ClientNotFoundException extends Exception {
 
-    public ClientNotFoundException()
-    {
+
+    public ClientNotFoundException() {
         super();
     }
 
-    public ClientNotFoundException(String s){ super(s); }
+    public ClientNotFoundException(String s) {
+        super(s);
+    }
 }

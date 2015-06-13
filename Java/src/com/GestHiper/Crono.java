@@ -3,7 +3,7 @@ package com.GestHiper;
 /**
  * Crono = mede um tempo entre start() e stop()
  * O tempo ? medido em nanosegundos e convertido para
- *  um double que representa os segs na sua parte inteira.
+ * um double que representa os segs na sua parte inteira.
  *
  * @author FMM
  * @version 1.0 / 2006
@@ -13,12 +13,17 @@ public class Crono {
     private static long inicio = 0L;
     private static long fim = 0L;
 
-    /** inicia a contagem de tempo */
+    /**
+     * inicia a contagem de tempo
+     */
     public static void start() {
-        fim = 0L; inicio = System.nanoTime();
+        fim = 0L;
+        inicio = System.nanoTime();
     }
 
-    /** termina a contagem de tempo  e devolve diferen?a em segs */
+    /**
+     * termina a contagem de tempo  e devolve diferen?a em segs
+     */
     public static double stop() {
         fim = System.nanoTime();
         long elapsedTime = fim - inicio;
@@ -26,7 +31,9 @@ public class Crono {
         return segs;
     }
 
-    /** converte a diferen?a numa string */
+    /**
+     * converte a diferen?a numa string
+     */
     public static String print() {
         return "" + stop();
     }

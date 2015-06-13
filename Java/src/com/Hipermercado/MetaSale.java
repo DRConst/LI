@@ -4,10 +4,11 @@ import java.io.Serializable;
 
 /**
  * MetaSale Class, used by SalesList
+ *
  * @author Pedro
  * @since 10/06/2015
  */
-public class MetaSale implements Comparable<MetaSale>,Serializable {
+public class MetaSale implements Comparable<MetaSale>, Serializable {
     private String key;
     private int amount;
     private int totalN;
@@ -15,6 +16,12 @@ public class MetaSale implements Comparable<MetaSale>,Serializable {
     private double total$P;
     private double total$N;
 
+
+    /**
+     * MetaSale Constructor, inits with given key, used normally
+     *
+     * @param key
+     */
     public MetaSale(String key) {
         this.key = key;
         this.amount = 0;
@@ -24,7 +31,12 @@ public class MetaSale implements Comparable<MetaSale>,Serializable {
         this.total$N = 0.0;
     }
 
-    private MetaSale( MetaSale m ) {
+    /**
+     * MetaSale Constructor, clones given MetaSale
+     *
+     * @param m
+     */
+    private MetaSale(MetaSale m) {
         this.key = m.getKey();
         this.amount = m.getAmount();
         this.totalN = m.getTotalN();
@@ -32,6 +44,7 @@ public class MetaSale implements Comparable<MetaSale>,Serializable {
         this.total$N = m.getTotal$N();
         this.total$P = m.getTotal$P();
     }
+
 
     public String getKey() {
         return key;
@@ -81,14 +94,20 @@ public class MetaSale implements Comparable<MetaSale>,Serializable {
         this.total$N = total$N;
     }
 
-    public void registerMetaSale( Sale s ) {
+
+    /**
+     * Registers Given Sale on this MetaSale, adds it to totals
+     *
+     * @param s Given Sale
+     */
+    public void registerMetaSale(Sale s) {
 
         this.amount += s.getAmount();
 
         if (s.getType().equals("N")) {
             this.total$N += s.getPrice() * s.getAmount();
             this.totalN++;
-        }else {
+        } else {
             this.total$P += s.getPrice() * s.getAmount();
             this.totalP++;
         }
@@ -116,9 +135,14 @@ public class MetaSale implements Comparable<MetaSale>,Serializable {
     public int compareTo(MetaSale o) {
         int res = o.getAmount() - this.amount;
 
-        if( res == 0 )
-            res = key.compareTo( o.getKey() );
+        if (res == 0)
+            res = key.compareTo(o.getKey());
 
         return res;
+    }
+
+    @Override
+    public MetaSale clone() {
+        return new MetaSale(this);
     }
 }

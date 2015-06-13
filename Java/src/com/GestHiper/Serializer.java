@@ -1,4 +1,5 @@
 package com.GestHiper;
+
 import java.io.*;
 
 /**
@@ -6,18 +7,18 @@ import java.io.*;
  */
 public class Serializer {
 
-	public static void writeObject(Object o) throws IOException {
+    public static void writeObject(Object o) throws IOException {
 
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(o.getClass().getName() + ".saved"))) {
-                oos.writeObject(o);
-            }
-	}
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(o.getClass().getName() + ".saved"))) {
+            oos.writeObject(o);
+        }
+    }
 
-	public static Object readObject(String name) throws IOException, ClassNotFoundException {
-		Object toRet;
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(name + ".saved"))) {
-                toRet = ois.readObject();
-            }
-		return toRet;
-	}
+    public static Object readObject(String name) throws IOException, ClassNotFoundException {
+        Object toRet;
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(name + ".saved"))) {
+            toRet = ois.readObject();
+        }
+        return toRet;
+    }
 }

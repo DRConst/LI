@@ -4,18 +4,22 @@ package com.GestHiper;
 import com.Hipermercado.*;
 
 import java.io.*;
-import java.util.*;
+import java.util.Locale;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.StringTokenizer;
 
 /**
  * Main, Class interacting with user and holding primary instances
+ *
  * @author LI_Grupo 6
  */
 public class Main {
 
     public static void main(String[] args) {
-	    int userOpt;
+        int userOpt;
 
-        Hipermercado hiper = new Hipermercado();
+        HiperMercado hiper = new HiperMercado();
 
         /*
         Sales testSales = new Sales();
@@ -53,7 +57,7 @@ public class Main {
         do {
             userOpt = menu();
 
-            switch( userOpt ) {
+            switch (userOpt) {
 
                 case 1:
                     /*
@@ -139,8 +143,8 @@ public class Main {
 
                     try {
                         hiper = Query12();
-                    }catch( FileNotFoundException e ) {
-                        System.out.println("Erro "+ e.getMessage() );
+                    } catch (FileNotFoundException e) {
+                        System.out.println("Erro " + e.getMessage());
                     }
 
                     break;
@@ -162,18 +166,18 @@ public class Main {
 
             pageClear();
 
-        }while( userOpt != 0 );
+        } while (userOpt != 0);
 
     }
 
 
     /**
      * Main Menu listing user options
-     *  also gets user selection and validates it
-     * @return  user option
+     * also gets user selection and validates it
+     *
+     * @return user option
      */
-    public static int menu()
-    {
+    public static int menu() {
         System.out.println("GestHiper");
         System.out.println("--------------------------------------\n"
                 + "\t1\t- Products Never Bought;\n"
@@ -192,40 +196,36 @@ public class Main {
                 + "\t14\t- Save to File;\n"
                 + "\t0\t- Exit;\n");
 
-        return getIntOpt(0,14);
+        return getIntOpt(0, 14);
     }
 
 
     /**
      * Asks for number in interval [min, max]
+     *
      * @param min inferior limit
      * @param max superior limit
      * @return valid user number
      */
-    public static int getIntOpt(int min, int max)
-    {
+    public static int getIntOpt(int min, int max) {
         Scanner scanner = new Scanner(System.in);
         boolean done = false;
         int input = max;
 
         System.out.println("Insert a number between " + min + " and " + max + ".\n");
 
-        do
-        {
-            if (!scanner.hasNextInt())
-            {
+        do {
+            if (!scanner.hasNextInt()) {
                 System.out.println("Please insert an integer value.");
                 scanner.nextLine();
-            }
-            else
-            {
+            } else {
                 input = scanner.nextInt();
                 if (input < min || input > max)
                     System.out.println("The value must be between " + min + " and " + max + ".");
                 else
                     done = true;
             }
-        }while(!done);
+        } while (!done);
         scanner.nextLine();
         return input;
     }
@@ -234,46 +234,44 @@ public class Main {
     /**
      * 'Cleaning' terminal
      */
-    public static void pageClear()
-    {
-        Scanner scanner = new Scanner( System.in );
+    public static void pageClear() {
+        Scanner scanner = new Scanner(System.in);
 
 
         scanner.nextLine();
-        for (int i=0;i<50;i++)
-            System.out.println ("\n");
+        for (int i = 0; i < 50; i++)
+            System.out.println("\n");
 
 
     }
 
 
-    public static Hipermercado Query12() throws FileNotFoundException
-    {
+    public static HiperMercado Query12() throws FileNotFoundException {
         Scanner scanner = new Scanner(System.in);
-        Hipermercado hiper = new Hipermercado();
+        HiperMercado hiper = new HiperMercado();
         String salesFile;
         Results res;
 
         System.out.println("Input Sales File: ");
         salesFile = scanner.nextLine();
 
-        if( salesFile.length() == 0 )
+        if (salesFile.length() == 0)
             salesFile = "Compras.txt";
 
         System.out.print("Reading ClientCatalog...");
         res = parseClientCatalog(hiper);
 
-        System.out.println( res.get("nValid") + " Read, " + res.get("nInvalid") + " Invalid.");
+        System.out.println(res.get("nValid") + " Read, " + res.get("nInvalid") + " Invalid.");
 
 
         System.out.print("Reading ProductCatalog...");
         res = parseProductCatalog(hiper);
-        System.out.println( res.get("nValid") + " Read, " + res.get("nInvalid") + " Invalid.");
+        System.out.println(res.get("nValid") + " Read, " + res.get("nInvalid") + " Invalid.");
 
 
         System.out.print("Reading " + salesFile + "...");
         res = parseSales(hiper, salesFile);
-        System.out.println( res.get("nValid") + " Read, " + res.get("nInvalid") + " Invalid, "+ res.get("null") +" Null.");
+        System.out.println(res.get("nValid") + " Read, " + res.get("nInvalid") + " Invalid, " + res.get("null") + " Null.");
         System.out.print("Sorting Accounting...");
         hiper.getAcc().sortAcc();
         System.out.println("Done.");
@@ -288,15 +286,15 @@ public class Main {
 
     /**
      * Parses Sales File and Registers each Sale into HiperMercado
-     *  also counts invalid Sales.
-     * @param hipermercado
+     * also counts invalid Sales.
+     *
+     * @param hiperMercado
      * @param filename
      */
-    private static Results parseSales(Hipermercado hipermercado, String filename) throws FileNotFoundException
-    {
+    private static Results parseSales(HiperMercado hiperMercado, String filename) throws FileNotFoundException {
         int nInvalidSales = 0;
         int nullSales = 0;
-        Results res = new Results( "null", "nValid", "nInvalid" );
+        Results res = new Results("null", "nValid", "nInvalid");
 
 
         try {
@@ -318,22 +316,22 @@ public class Main {
                 client = tok.nextToken();
                 month = new Integer(tok.nextToken());
 
-                if( ammount == 0 )
+                if (ammount == 0)
                     res.inc("null");
 
                 try {
 
-                    s = new Sale(month, ammount, price, new Product( product ), new Client( client), type);
-                    hipermercado.registerSale(s);
-                    res.inc( "nValid");
+                    s = new Sale(month, ammount, price, new Product(product), new Client(client), type);
+                    hiperMercado.registerSale(s);
+                    res.inc("nValid");
 
                 } catch (ClientNotFoundException | ProductNotFoundException p) {
-                    res.inc( "nInvalid" );
+                    res.inc("nInvalid");
                 }
 
             }
             br.close();
-        } catch( FileNotFoundException e ) {
+        } catch (FileNotFoundException e) {
             throw e;
 
         } catch (IOException e) {
@@ -345,12 +343,12 @@ public class Main {
 
     /**
      * Parses default ClientCatalog's File
-     *  also outputs executionTime in seconds
-     * @param hipermercado
+     * also outputs executionTime in seconds
+     *
+     * @param hiperMercado
      * @return Nº Invalid Clients
      */
-    private static Results parseClientCatalog(Hipermercado hipermercado) throws FileNotFoundException
-    {
+    private static Results parseClientCatalog(HiperMercado hiperMercado) throws FileNotFoundException {
         int nInvalid = 0;
         Results res = new Results("nValid", "nInvalid");
 
@@ -363,15 +361,17 @@ public class Main {
 
                 try {
 
-                    hipermercado.registerClient(line);
+                    hiperMercado.registerClient(line);
                     res.inc("nValid");
 
-                } catch (ClientAlreadyExistsException e) { res.inc("nInvalid"); }
+                } catch (ClientAlreadyExistsException e) {
+                    res.inc("nInvalid");
+                }
 
             }
             System.out.println(Crono.stop());
             br.close();
-        }catch( FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             throw e;
         } catch (IOException e) {
             e.printStackTrace();
@@ -382,12 +382,12 @@ public class Main {
 
     /**
      * Parses Default ProductCatalog's File
-     *  outputs executionTime in seconds
-     * @param hipermercado
+     * outputs executionTime in seconds
+     *
+     * @param hiperMercado
      * @return Nº Invalid Products
      */
-    private static Results parseProductCatalog(Hipermercado hipermercado) throws FileNotFoundException
-    {
+    private static Results parseProductCatalog(HiperMercado hiperMercado) throws FileNotFoundException {
         Results res = new Results("nValid", "nInvalid");
 
 
@@ -395,19 +395,20 @@ public class Main {
             BufferedReader br = new BufferedReader(new FileReader("CatalogoProdutos.txt"));
             String line;
             Crono.start();
-            while((line = br.readLine()) != null)
-            {
+            while ((line = br.readLine()) != null) {
                 try {
 
-                    hipermercado.registerProduct(line);
+                    hiperMercado.registerProduct(line);
                     res.inc("nValid");
 
-                }catch (ProductAlreadyExistsException e){ res.inc("nInvalid"); }
+                } catch (ProductAlreadyExistsException e) {
+                    res.inc("nInvalid");
+                }
 
             }
             System.out.println(Crono.stop());
             br.close();
-        }catch( FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             throw e;
         } catch (IOException e) {
             e.printStackTrace();
@@ -416,13 +417,12 @@ public class Main {
         return res;
     }
 
-    private static void scannerNoParse()
-    {
+    private static void scannerNoParse() {
         try {
             Scanner sc = new Scanner(new FileInputStream("Compras1.txt"));
             String line;
             Crono.start();
-            while(sc.hasNextLine())
+            while (sc.hasNextLine())
                 line = sc.nextLine();
             System.out.println(Crono.stop());
         } catch (IOException e) {
@@ -430,13 +430,12 @@ public class Main {
         }
     }
 
-    private static  void brNoParse()
-    {
+    private static void brNoParse() {
         try {
             BufferedReader br = new BufferedReader(new FileReader("Compras1.txt"));
             String line;
             Crono.start();
-            while((line = br.readLine()) != null)
+            while ((line = br.readLine()) != null)
                 ;
             System.out.println(Crono.stop());
             br.close();
@@ -445,8 +444,7 @@ public class Main {
         }
     }
 
-    private static void scannerParse()
-    {
+    private static void scannerParse() {
         try {
             Scanner sc = new Scanner(new FileInputStream("Compras1.txt")).useLocale(Locale.US);
             String product, client, type;
@@ -455,8 +453,7 @@ public class Main {
 
 
             Crono.start();
-            while(sc.hasNextLine())
-            {
+            while (sc.hasNextLine()) {
                 product = sc.next();
                 price = sc.nextDouble();
                 ammount = sc.nextInt();
@@ -468,15 +465,13 @@ public class Main {
             sc.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }   catch (NoSuchElementException e)
-        {
+        } catch (NoSuchElementException e) {
             System.out.println(Crono.stop());
             System.out.println(e.getMessage());
         }
     }
 
-    private static  void brParse()
-    {
+    private static void brParse() {
         try {
             BufferedReader br = new BufferedReader(new FileReader("Compras1.txt"));
             String line;
@@ -486,8 +481,7 @@ public class Main {
             StringTokenizer tok;
             Sale s;
             Crono.start();
-            while((line = br.readLine()) != null)
-            {
+            while ((line = br.readLine()) != null) {
                 tok = new StringTokenizer(line, " ", false);
                 product = tok.nextToken();
                 price = new Double(tok.nextToken());

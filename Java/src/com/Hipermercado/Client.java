@@ -3,29 +3,42 @@ package com.Hipermercado;
 import java.io.Serializable;
 
 /**
- *  Client Class
- *  @author     Diogo
- *  @since      03/06/2015
+ * Client Class
+ *
+ * @author Diogo
+ * @since 03/06/2015
  */
 public class Client implements Serializable {
-
     String code;
 
-    Client(){ this.code = ""; }
+    /**
+     * Client Constructor, used to init empty Client
+     */
+    Client() {
+        this.code = "";
+    }
 
-    public Client(String code)
-    {
+    /**
+     * Client Constructor, inits with given code
+     *
+     * @param code
+     */
+    public Client(String code) {
         this.code = code;
     }
 
-    Client(Client c)
-    {
+    /**
+     * Client Constructor, clones given Client
+     *
+     * @param c
+     */
+    Client(Client c) {
         this.code = c.getCode();
     }
 
-
     /**
      * Retrieves Client Code
+     *
      * @return Client Code
      */
     public String getCode() {
@@ -35,10 +48,11 @@ public class Client implements Serializable {
 
     /**
      * Clones current Client instance, making use of Constructor
+     *
      * @return New Client Instance
      */
-    public Client clone()
-    {
+    @Override
+    public Client clone() {
         return new Client(this);
     }
 
@@ -61,5 +75,7 @@ public class Client implements Serializable {
     }
 
     @Override
-    public String toString() { return code; }
+    public String toString() {
+        return code;
+    }
 }

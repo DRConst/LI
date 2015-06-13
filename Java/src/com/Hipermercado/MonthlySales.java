@@ -3,28 +3,30 @@ package com.Hipermercado;
 import java.util.ArrayList;
 
 /**
- *  MonthlySales Class, used by Sales Class
- *  @author     Diogo
- *  @since      09/06/2015
+ * MonthlySales Class, used by Sales Class
+ *
+ * @author Diogo
+ * @since 09/06/2015
  */
 public class MonthlySales implements Comparable<MonthlySales> {
-
-    private ArrayList<SalesList > monthly;
+    private ArrayList<SalesList> monthly;
 
     private String key;     // Parent key, used for alpha order
-
-    private int totalP;		// sum of all months's MetaSales nTypeP
-    private int totalN;		//	...
-
-    private double total$P;	//	...
-    private double total$N;	//	...
-
-    private int totalAmount;	// sum of all months's MetaSales's amounts
+    private int totalP;        // sum of all months's MetaSales nTypeP
+    private int totalN;        //	...
+    private double total$P;    //	...
+    private double total$N;    //	...
+    private int totalAmount;    // sum of all months's MetaSales's amounts
 
 
-    public MonthlySales()
-    {
-        this.monthly = new ArrayList<>( 12 );
+    /**
+     * MonthlySales Constructor, inits empty MonthlySales
+     */
+    public MonthlySales() {
+
+        for (int i = 0; i < 12; i++)
+            monthly.add(new SalesList());
+
         this.key = "";
         this.totalP = 0;
         this.totalN = 0;
@@ -33,10 +35,16 @@ public class MonthlySales implements Comparable<MonthlySales> {
         this.total$N = 0.0;
     }
 
-    public MonthlySales( String key ) {
-        this.monthly = new ArrayList<>( 12 );
-        for( int i = 0; i < 12; i++ )
-            monthly.add( new SalesList() );
+    /**
+     * MonthlySales Constructor, inits with given key
+     *
+     * @param key
+     */
+    public MonthlySales(String key) {
+
+        for (int i = 0; i < 12; i++)
+            monthly.add(new SalesList());
+
         this.key = key;
         this.totalP = 0;
         this.totalN = 0;
@@ -45,8 +53,12 @@ public class MonthlySales implements Comparable<MonthlySales> {
         this.total$N = 0.0;
     }
 
-    public MonthlySales(MonthlySales sales)
-    {
+    /**
+     * MonthlySales Constructor, clones given MonthlySales
+     *
+     * @param sales
+     */
+    public MonthlySales(MonthlySales sales) {
         this.monthly = sales.getMonthly();
         this.totalP = sales.getTotalP();
         this.totalN = sales.getTotalN();
@@ -56,27 +68,30 @@ public class MonthlySales implements Comparable<MonthlySales> {
         this.key = sales.getKey();
     }
 
-    public void registerSale(Sale sale, String child)
-    {
+
+    /**
+     * Registers Given Sale in MonthlySales
+     *
+     * @param sale  Given Sale
+     * @param child Subject of Sale, not Recipient
+     */
+    public void registerSale(Sale sale, String child) {
         SalesList temp;
 
-        temp = monthly.get( sale.getMonth() - 1 );
+        temp = monthly.get(sale.getMonth() - 1);
 
-        if( temp == null) {
+        if (temp == null) {
             temp = new SalesList();
-            monthly.set( ( sale.getMonth() - 1), temp );
+            monthly.set((sale.getMonth() - 1), temp);
         }
 
-        temp.registerSale( sale, child );
+        temp.registerSale(sale, child);
 
 
-
-        if(sale.getType().equals("P"))
-        {
+        if (sale.getType().equals("P")) {
             this.totalP++;
             this.total$P += sale.getPrice() * sale.getAmount();
-        }else
-        {
+        } else {
             this.totalN++;
             this.total$N += sale.getPrice() * sale.getAmount();
         }
@@ -84,23 +99,31 @@ public class MonthlySales implements Comparable<MonthlySales> {
         this.totalAmount += sale.getAmount();
     }
 
+    /**
+     * Returns Year's Worth of SalesLists
+     *
+     * @return
+     */
     public ArrayList<SalesList> getMonthly() {
         ArrayList<SalesList> toRet = new ArrayList<>();
 
-        for(SalesList salesList : this.monthly)
-        {
+        for (SalesList salesList : this.monthly) {
             toRet.add(salesList.clone());
         }
 
         return toRet;
     }
 
-    public void setKey( String key ) { this.key = key; }
-
-    public String getKey() { return key; }
-
     public void setMonthly(ArrayList<SalesList> monthly) {
         this.monthly = monthly;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public int getTotalP() {
@@ -143,8 +166,8 @@ public class MonthlySales implements Comparable<MonthlySales> {
         this.totalAmount = totalAmount;
     }
 
-    public MonthlySales clone()
-    {
+    @Override
+    public MonthlySales clone() {
         return new MonthlySales(this);
     }
 
@@ -155,7 +178,7 @@ public class MonthlySales implements Comparable<MonthlySales> {
 
         MonthlySales that = (MonthlySales) o;
 
-        if( !getKey().equals( that.getKey() ) ) return false;
+        if (!getKey().equals(that.getKey())) return false;
         if (getTotalP() != that.getTotalP()) return false;
         if (getTotalN() != that.getTotalN()) return false;
         if (Double.compare(that.getTotal$P(), getTotal$P()) != 0) return false;
@@ -197,9 +220,9 @@ public class MonthlySales implements Comparable<MonthlySales> {
 
     @Override
     public int compareTo(MonthlySales o) {
-        int res =  ( o.getTotalN() + o.getTotalP() ) - ( this.totalN + this.totalP );
+        int res = (o.getTotalN() + o.getTotalP()) - (this.totalN + this.totalP);
 
-        if( res == 0 )
+        if (res == 0)
             res = key.compareTo(o.getKey());
 
         return res;

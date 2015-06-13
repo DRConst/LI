@@ -3,29 +3,44 @@ package com.Hipermercado;
 import java.io.Serializable;
 
 /**
- *  Product Class
- *  @author     Diogo
- *  @since      03/06/2015
+ * Product Class
+ *
+ * @author Diogo
+ * @since 03/06/2015
  */
 public class Product implements Serializable {
-
     String code;
 
-    Product() { this.code = ""; }
 
-    public Product(String code)
-    {
+    /**
+     * Product Constructor, inits empty Product
+     */
+    Product() {
+        this.code = "";
+    }
+
+    /**
+     * Product Constructor, inits with given code
+     *
+     * @param code
+     */
+    public Product(String code) {
         this.code = code;
     }
 
-    Product(Product c)
-    {
-        this.code = c.getCode();
+    /**
+     * Product Constructor, clones given Product
+     *
+     * @param p
+     */
+    Product(Product p) {
+        this.code = p.getCode();
     }
 
 
     /**
      * Retrieves Product Code
+     *
      * @return Product Code
      */
     public String getCode() {
@@ -35,10 +50,10 @@ public class Product implements Serializable {
 
     /**
      * Clones current Product instance, making use of Constructor
+     *
      * @return New Product Instance
      */
-    public Product clone()
-    {
+    public Product clone() {
         return new Product(this);
     }
 
@@ -60,5 +75,7 @@ public class Product implements Serializable {
 
 
     @Override
-    public String toString() { return code; }
+    public String toString() {
+        return code;
+    }
 }
