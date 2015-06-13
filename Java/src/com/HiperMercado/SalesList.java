@@ -186,7 +186,7 @@ public class SalesList implements Serializable {
         if(toRet == null)
             throw new SalesNotFoundException();
 
-        return toRet;
+        return toRet.clone();
     }
 
     @Override
@@ -223,31 +223,6 @@ public class SalesList implements Serializable {
     @Override
     public SalesList clone() {
         return new SalesList(this);
-    }
-
-
-    /**
-     * ValueComparator Class, used internally for Sorting Purposes
-     */
-    private class ValueComparator implements Comparator {
-        Map map;
-
-
-        public ValueComparator(Map map) {
-            this.map = map;
-        }
-
-
-        public int compare(Object keyA, Object keyB) {
-
-            Comparable valueA = (Comparable) map.get(keyA);
-            Comparable valueB = (Comparable) map.get(keyB);
-
-
-            return valueA.compareTo(valueB);
-
-        }
-
     }
 
 

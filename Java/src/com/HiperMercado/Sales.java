@@ -121,6 +121,30 @@ public class Sales implements Serializable {
         this.salesMetaCli = salesMetaCli;
     }
 
+    public TreeMap<String, Integer> getMostBoughtProduct(String code)
+    {
+        HashMap<String, MetaSale> temp = new HashMap<>();
+
+        for(SalesList salesList : salesMetaCli.get(code).getMonthly())
+        {
+            for(MetaSale metaSale : salesList.getSales().values())
+            {
+                String key = metaSale.getKey();
+                MetaSale tMetaSale;
+                if(temp.containsKey(key))
+                {
+                    tMetaSale = temp.remove(key);
+                    tMetaSale.setAmount(tMetaSale.getAmount() + metaSale.getAmount());
+                    temp.put(key, tMetaSale);
+                }else{
+                    temp.put(key, metaSale);
+                }
+            }
+        }
+        return new TreeMap<>(new com.Hipermercado.ValueComparator(temp));
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -153,6 +153,42 @@ public class HiperMercado implements Serializable {
 
         return clientStats;
     }
+
+    /**
+     * Query4 - Gets statistics pertaining the clients purchases
+     *
+     * @param code Product's identifier
+     * @param month Month
+     * @throws ProductNotFoundException
+     */
+    public ClientStats getMonthlyProductStats(String code, int month) throws ProductNotFoundException, SalesNotFoundException {
+        ClientStats clientStats = new ClientStats();
+
+        if(!productCatalog.existsProduct(code))
+            throw new ProductNotFoundException(code + " not found");
+
+        clientStats.setYearlyBill(acc.getProductsYearlyBill(code));
+
+        clientStats.setSalesCount(acc.getProductMonthlyCount(code));
+
+        clientStats.setBill(acc.getProductMonthlyBill(code));
+
+        try {
+            clientStats.setUniqueCount(sales.getUniquePurchases(code));
+        } catch (SalesNotFoundException e) {
+            throw e;
+        }
+
+
+        return clientStats;
+    }
+
+    public YearlySaleStats getYearlyProductStats(String code) throws ProductNotFoundException{
+        if(!productCatalog.existsProduct(code))
+            throw new ProductNotFoundException(code + "isn't registered");
+
+        return acc.getYearlyProductStats(code);
+    }
     /**
      * Registers Given Sale into Sales and Accounting
      *
