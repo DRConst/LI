@@ -179,6 +179,16 @@ public class SalesList implements Serializable {
     }
 
 
+    public MetaSale getMetaSale(String code) throws SalesNotFoundException
+    {
+        MetaSale toRet = sales.get(code);
+
+        if(toRet == null)
+            throw new SalesNotFoundException();
+
+        return toRet;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

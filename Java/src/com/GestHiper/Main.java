@@ -60,6 +60,7 @@ public class Main {
             switch (userOpt) {
 
                 case 1:
+                    hiper.getUnboughtProducts();
                     /*
                     try {
                         testSales.registerProd( prod1 );
@@ -102,6 +103,7 @@ public class Main {
 
 
                 case 2:
+                    hiper.getClientsWithoutPurchases();
                     /*
                     TreeMap<Product, MonthlySales> treeProd = testSales.getSortedSalesProd();
                     TreeMap<Client, MonthlySales> treeCli = testSales.getSortedSalesCli();
@@ -114,6 +116,13 @@ public class Main {
                     break;
 
                 case 4:
+                    try {
+                        hiper.getMonthlyClientStats("asd", 0);
+                    } catch (ClientNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (SalesNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     System.out.println("hai");
                     break;
 

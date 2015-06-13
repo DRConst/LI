@@ -128,6 +128,61 @@ public class Accounting implements Serializable {
         return clis;
     }
 
+    public double getClientsYearlyBill(String code)
+    {
+        double toRet = 0;
+
+        for(SalesList salesList : clients)
+        {
+            try {
+                MetaSale s = salesList.getMetaSale(code);
+                toRet +=  s.getTotal$P() + s.getTotal$N();
+            } catch (SalesNotFoundException e) {
+                //Client has no purchases that month
+            }
+        }
+        return toRet;
+    }
+
+    public ArrayList<Integer> getClientMonthlyCount(String code)
+    {
+        ArrayList<Integer> toRet = new ArrayList<>();
+
+
+        for( int i = 0; i < 12; i++)
+        {
+            try {
+                SalesList salesList = clients.get(i);
+                MetaSale s = salesList.getMetaSale(code);
+                toRet.add(i, s.getTotalP() + s.getTotalN());
+            } catch (SalesNotFoundException e) {
+                //Client has no purchases that month
+                toRet.add(i, 0);
+            }
+        }
+        return toRet;
+    }
+
+    public ArrayList<Double> getClientMonthlyBill(String code)
+    {
+        ArrayList<Double> toRet = new ArrayList<>();
+
+
+        for( int i = 0; i < 12; i++)
+        {
+            try {
+                SalesList salesList = clients.get(i);
+                MetaSale s = salesList.getMetaSale(code);
+                toRet.add(i, s.getTotal$N() + s.getTotal$P());
+            } catch (SalesNotFoundException e) {
+                //Client has no purchases that month
+                toRet.add(i, 0.0);
+            }
+        }
+        return toRet;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

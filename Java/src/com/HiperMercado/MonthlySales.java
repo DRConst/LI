@@ -171,6 +171,18 @@ public class MonthlySales implements Comparable<MonthlySales> {
         return new MonthlySales(this);
     }
 
+    public ArrayList<Integer> getUniquePurchases()
+    {
+        ArrayList<Integer> toRet = new ArrayList<>();
+
+        for(int i = 0; i < 12; i++)
+        {
+            toRet.add(i, monthly.get(i).getNDiff());
+        }
+
+        return toRet;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

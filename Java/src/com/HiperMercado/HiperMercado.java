@@ -2,6 +2,7 @@ package com.Hipermercado;
 
 
 import java.io.Serializable;
+import java.util.TreeSet;
 
 /**
  * Hipermercado Class
@@ -106,6 +107,52 @@ public class HiperMercado implements Serializable {
         sales.registerCli(cli);
     }
 
+    /**
+     * Query1
+     * @return Unbought Products ordered alphabeticaly
+     */
+    public TreeSet<String> getUnboughtProducts()
+    {
+        return sales.getUnboughtProducts();
+    }
+
+    /**
+     * Query2
+     * @return Clients without purchases ordered alphabeticaly
+     */
+    public TreeSet<String> getClientsWithoutPurchases()
+    {
+        return sales.getClientsWithoutPurchases();
+    }
+
+    /**
+     * Query4 - Gets statistics pertaining the clients purchases
+     *
+     * @param code Client's identifier
+     * @param month Month
+     * @throws ClientNotFoundException
+     */
+    public ClientStats getMonthlyClientStats(String code, int month) throws ClientNotFoundException, SalesNotFoundException {
+        ClientStats clientStats = new ClientStats();
+
+        if(!clientCatalog.existsClient(code))
+            throw new ClientNotFoundException(code + " not found");
+
+        clientStats.setYearlyBill(acc.getClientsYearlyBill(code));
+
+        clientStats.setSalesCount(acc.getClientMonthlyCount(code));
+
+        clientStats.setBill(acc.getClientMonthlyBill(code));
+
+        try {
+            clientStats.setUniqueCount(sales.getUniquePurchases(code));
+        } catch (SalesNotFoundException e) {
+            throw e;
+        }
+
+
+        return clientStats;
+    }
     /**
      * Registers Given Sale into Sales and Accounting
      *

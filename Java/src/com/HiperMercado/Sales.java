@@ -1,6 +1,7 @@
 package com.Hipermercado;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -135,7 +136,7 @@ public class Sales implements Serializable {
 
     /**
      * Query1
-     * @return Unbought Products ordered Alphabeticaly
+     * @return Unbought Products ordered alphabeticaly
      */
     public TreeSet<String> getUnboughtProducts()
     {
@@ -153,6 +154,39 @@ public class Sales implements Serializable {
         }
 
         return toRet;
+    }
+
+    /**
+     * Query2
+     * @return Clients without purchases ordered alphabeticaly
+     */
+    public TreeSet<String> getClientsWithoutPurchases()
+    {
+        TreeSet<String> toRet = new TreeSet<>();
+
+        if(!isSorted)
+            this.sortSales();
+
+        for(MonthlySales p : salesMetaCli.values())
+        {
+            if(p.getTotalAmount() != 0)
+                break;
+
+            toRet.add(p.getKey());
+        }
+
+        return toRet;
+    }
+
+    public ArrayList<Integer> getUniquePurchases(String code) throws SalesNotFoundException
+    {
+        MonthlySales monthlySales = salesMetaCli.get(code);
+
+        if(monthlySales == null)
+            throw new SalesNotFoundException("No sales for " + code);
+
+        return  monthlySales.getUniquePurchases();
+
     }
 
     @Override
