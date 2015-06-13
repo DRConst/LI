@@ -121,7 +121,7 @@ public class Sales implements Serializable {
         this.salesMetaCli = salesMetaCli;
     }
 
-    public TreeMap<String, Integer> getMostBoughtProduct(String code)
+    public TreeSet<String> getMostBoughtProductsForClient(String code)
     {
         HashMap<String, MetaSale> temp = new HashMap<>();
 
@@ -141,9 +141,24 @@ public class Sales implements Serializable {
                 }
             }
         }
-        return new TreeMap<>(new com.Hipermercado.ValueComparator(temp));
+        return new TreeSet<>(new ValueComparator(temp));
     }
 
+    public TreeSet<String> getClientsWithMostPurchases()
+    {
+        HashMap<String, Integer> temp = new HashMap<>();
+
+        for(MonthlySales monthlySales : salesMetaCli.values())
+        {
+            Integer sum = 0;
+            for(Integer i : monthlySales.getUniquePurchases())
+                sum += i;
+            temp.put(monthlySales.getKey(), sum);
+        }
+        return new TreeSet<>(new ValueComparator(temp));
+    }
+
+    
 
     @Override
     public boolean equals(Object o) {
