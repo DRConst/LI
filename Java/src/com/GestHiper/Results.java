@@ -1,6 +1,7 @@
 package com.GestHiper;
 
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Results Class, HashMap containing keys and incremental functions
@@ -9,7 +10,7 @@ import java.util.HashMap;
  * @since 12/06/2015
  */
 public class Results {
-    private HashMap<String, Integer> res;
+    private HashMap<String, Object> res;
 
     public Results() {
         res = new HashMap<>();
@@ -27,7 +28,7 @@ public class Results {
     }
 
     public void inc(String key) {
-        Integer val = res.get(key);
+        Integer val = (Integer)res.get(key);
 
         if (val == null)
             res.put(key, 1);
@@ -35,7 +36,7 @@ public class Results {
             res.put(key, val + 1);
     }
 
-    public int get(String key) {
+    public Object get(String key) {
         return res.get(key);
     }
 
@@ -43,10 +44,20 @@ public class Results {
         res.put(key, val);
     }
 
-    public HashMap<String, Integer> getResults() {
-        HashMap<String, Integer> newRes = new HashMap<>();
+    public HashMap<String, Object> getResults() {
+        HashMap<String, Object> newRes = new HashMap<>();
 
         return newRes;
+    }
+
+    public int size()
+    {
+        return res.size();
+    }
+
+    public Set<String> getKeys()
+    {
+        return res.keySet();
     }
 
     @Override
