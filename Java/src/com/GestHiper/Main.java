@@ -67,10 +67,16 @@ public class Main {
 
 
                 case 2:
-                    System.out.println(hiper.getClientsWithoutPurchases());
+
+
+                    Query2( hiper );
+
                     break;
 
                 case 3:
+
+                    Query3( hiper );
+
                     break;
 
                 case 4:
@@ -246,10 +252,30 @@ public class Main {
     public static void Query1( HiperMercado hiper )
     {
         Results res = new Results();
+        LinkedList<String> prods = hiper.getUnboughtProducts();
+        res.add("Products", prods);
+        res.add( "*Total", prods.size() );
+        paginate(res);
+    }
 
-        //res.add( "Products", hiper.getUnboughtProducts() );
-        System.out.println(hiper.getUnboughtProducts());
-        //paginate( res );
+    public static void Query2( HiperMercado hiper )
+    {
+        Results res = new Results();
+        LinkedList<String> clis = hiper.getClientsWithoutPurchases();
+        res.add( "Products", clis );
+        res.add( "*Total", clis.size() );
+        paginate( res );
+    }
+
+    public static void Query3( HiperMercado hiper )
+    {
+        int month;
+
+
+        System.out.println("Insert Month: ");
+        month = getIntOpt(1, 12);
+
+        System.out.println("Nº Sales: "+ hiper.getNSalesPerMonth( month ) +", Nº Unique Clients: "+ hiper.getNDiffClientsPerMonth( month ) );
     }
 
     public static HiperMercado Query12() throws FileNotFoundException {

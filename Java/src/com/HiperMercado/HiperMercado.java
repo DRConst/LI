@@ -204,6 +204,18 @@ public class HiperMercado implements Serializable {
         return sales.getSortedSalesCli().keySet();
     }
 
+    public int getNSalesPerMonth( int month ) {
+        return acc.getNSalesByMonth( month );
+    }
+
+    public int getNDiffClientsPerMonth( int month ) {
+        return acc.getNDiffClientsByMonth( month );
+    }
+
+    public int getNDiffProductsPerMonth( int month ) {
+        return acc.getNDiffProductsByMonth( month );
+    }
+
     /**
      * Registers Given Sale into Sales and Accounting
      *
