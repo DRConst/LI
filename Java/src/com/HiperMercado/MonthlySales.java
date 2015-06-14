@@ -1,5 +1,6 @@
 package com.Hipermercado;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -8,7 +9,7 @@ import java.util.ArrayList;
  * @author Diogo
  * @since 09/06/2015
  */
-public class MonthlySales implements Comparable<MonthlySales> {
+public class MonthlySales implements Comparable<MonthlySales>,Serializable {
     private ArrayList<SalesList> monthly;
 
     private String key;     // Parent key, used for alpha order

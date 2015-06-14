@@ -53,8 +53,26 @@ public class Sales implements Serializable {
         return result;
     }
 
-    public MonthlySales getMonthlyProd(Product prod) {
-        return salesMetaProd.get(prod);
+    public MonthlySales getMonthlyProd(Product prod) throws ProductNotFoundException {
+        MonthlySales ret;
+
+        ret = salesMetaProd.get(prod);
+
+        if( ret == null )
+            throw new ProductNotFoundException("com.Hipermercado.Sales "+ prod.getCode() +" Not Found in Sales");
+
+        return ret;
+    }
+
+    public MonthlySales getMonthlyCli( Client cli ) throws ClientNotFoundException {
+        MonthlySales ret;
+
+        ret = salesMetaCli.get(cli);
+
+        if( ret == null )
+            throw new ClientNotFoundException("com.Hipermercado.Sales "+ cli.getCode() +" Not Found in Sales");
+
+        return ret;
     }
 
     public void registerProd(Product prod) throws ProductAlreadyExistsException {
@@ -146,8 +164,18 @@ public class Sales implements Serializable {
         toRet.addAll(temp.keySet());
         return toRet;
     }
+/*
+    public LinkedList<String> getMostBoughtProductsForClient( Client cli ) {
+        LinkedList<String> prods = new LinkedList<>();
+        TreeMap<String, MetaSale> total = new TreeMap<>( new ValueComparator() );
+        ArrayList<SalesList> monthly;
 
+        monthly = salesMetaCli.get(cli).getMonthly();
+        for( SalesList )
 
+        return prods;
+    }
+*/
 
 
     @Override

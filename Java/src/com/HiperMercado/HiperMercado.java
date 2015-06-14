@@ -126,61 +126,170 @@ public class HiperMercado implements Serializable {
     }
 
     /**
-     * Query4 - Gets statistics pertaining the clients purchases
-     *
-     * @param code Client's identifier
-     * @param month Month
-     * @throws ClientNotFoundException
+     * Checks for existence of given code in ClientCatalog
+     * @param code
+     * @return true,false
      */
-    public ClientStats getMonthlyClientStats(String code, int month) throws ClientNotFoundException, SalesNotFoundException {
-        ClientStats clientStats = new ClientStats();
-        Client cli = clientCatalog.getClient(code);
-        if(cli == null)
-            throw new ClientNotFoundException(code + " not found");
-
-        clientStats.setYearlyBill(acc.getClientsYearlyBill(code));
-
-        clientStats.setSalesCount(acc.getClientMonthlyCount(code));
-
-        clientStats.setBill(acc.getClientMonthlyBill(code));
-
-        try {
-            clientStats.setUniqueCount(sales.getUniqueClientPurchases(cli));
-        } catch (SalesNotFoundException e) {
-            throw e;
-        }
-
-
-        return clientStats;
+    public boolean existsClient(String code) {
+        return clientCatalog.existsClient( code );
     }
 
     /**
-     * Query4 - Gets statistics pertaining the clients purchases
-     *
-     * @param code Product's identifier
-     * @param month Month
+     * Checks for existence of given code in ProductCatalog
+     * @param code
+     * @return
+     */
+    public boolean existsProduct( String code ) {
+        return productCatalog.existsProduct( code );
+    }
+
+    /**
+     * Returns ArrayList containing Unique Sales for specified code
+     * @param code Client
+     * @return # Sales per Month
+     * @throws ClientNotFoundException
+     */
+    public ArrayList<Integer> getClientNSalesYearly( String code ) throws ClientNotFoundException {
+        ArrayList<Integer> toRet;
+
+
+        if( !clientCatalog.existsClient( code ) )
+            throw new ClientNotFoundException();
+
+        toRet = acc.getClientMonthlyCount( code );
+
+        return toRet;
+    }
+
+    /**
+     * Returns ArrayList containing Unique Sales for specified code
+     * @param code Product
+     * @return # Sales per Month
      * @throws ProductNotFoundException
      */
-    public ClientStats getMonthlyProductStats(String code, int month) throws ProductNotFoundException, SalesNotFoundException {
-        ClientStats clientStats = new ClientStats();
-        Product pr = productCatalog.getProduct(code);
-        if(pr == null)
-            throw new ProductNotFoundException(code + " not found");
+    public ArrayList<Integer> getProductNSalesYearly( String code ) throws ProductNotFoundException {
+        ArrayList<Integer> toRet;
 
-        clientStats.setYearlyBill(acc.getProductsYearlyBill(code));
 
-        clientStats.setSalesCount(acc.getProductMonthlyCount(code));
+        if( !productCatalog.existsProduct(code) )
+            throw new ProductNotFoundException();
 
-        clientStats.setBill(acc.getProductMonthlyBill(code));
+        toRet = acc.getProductMonthlyCount(code);
+
+        return toRet;
+    }
+
+    /**
+     * Returns ArrayList containing Unique Products for specified code
+     * @param code Client
+     * @return # Unique Products bought by specified client, per month
+     * @throws ClientNotFoundException
+     * @throws SalesNotFoundException
+     */
+    public ArrayList<Integer> getClientNUniqueProducts( String code ) throws ClientNotFoundException,SalesNotFoundException {
+        ArrayList<Integer> toRet;
+        Client cli;
+
 
         try {
-            clientStats.setUniqueCount(sales.getUniqueProductPurchases(pr));
-        } catch (SalesNotFoundException e) {
+            cli = clientCatalog.getClient( code );
+            toRet = sales.getUniqueClientPurchases( cli );
+
+        }catch( ClientNotFoundException | SalesNotFoundException e ) {
             throw e;
         }
 
 
-        return clientStats;
+        return toRet;
+    }
+
+    /**
+     * Returns ArrayList containing Unique Clients for specified code
+     * @param code Product
+     * @return # Unique Clients that bought the specified Product, per month
+     * @throws ProductNotFoundException
+     * @throws SalesNotFoundException
+     */
+    public ArrayList<Integer> getProductNUniqueProducts( String code ) throws ProductNotFoundException,SalesNotFoundException {
+        ArrayList<Integer> toRet;
+        Product prod;
+
+
+        try {
+            prod = productCatalog.getProduct(code);
+            toRet = sales.getUniqueProductPurchases(prod);
+
+        }catch( ProductNotFoundException | SalesNotFoundException e ) {
+            throw e;
+        }
+
+
+        return toRet;
+    }
+
+    /**
+     * Get Client Expenses Yearly
+     * @param code code
+     * @return Expenses per Month
+     * @throws ClientNotFoundException
+     */
+    public ArrayList<Double> getClientExpenses( String code ) throws ClientNotFoundException {
+        ArrayList<Double> toRet = new ArrayList<>(12);
+        Client cli;
+        MonthlySales m;
+
+        cli = clientCatalog.getClient( code );
+
+        if( cli == null )
+            throw new ClientNotFoundException();
+
+        m = sales.getMonthlyCli( cli );
+
+        for(int i=0;i<12;i++) {
+            SalesList temp = m.getMonthly().get(i);
+            toRet.add( temp.getTotal$N() + temp.getTotal$P() );
+        }
+
+
+        return toRet;
+    }
+
+    /**
+     * Get Product Expenses Yearly
+     * @param code code
+     * @return Expenses per Month
+     * @throws ProductNotFoundException
+     */
+    public ArrayList<Double> getProductExpenses( String code ) throws ProductNotFoundException {
+        ArrayList<Double> toRet = new ArrayList<>(12);
+        Product prod;
+        MonthlySales m;
+
+        prod = productCatalog.getProduct(code);
+
+        if( prod == null )
+            throw new ProductNotFoundException();
+
+        m = sales.getMonthlyProd(prod);
+
+        for(int i=0;i<12;i++) {
+            SalesList temp = m.getMonthly().get(i);
+            toRet.add( temp.getTotal$N() + temp.getTotal$P() );
+        }
+
+
+        return toRet;
+    }
+
+    public ArrayList<SalesList> getProductMonthlyStats( String code) throws ProductNotFoundException {
+        Product prod;
+
+        prod = productCatalog.getProduct( code );
+
+        if( prod == null )
+            throw new ProductNotFoundException();
+
+        return sales.getMonthlyProd( prod ).getMonthly();
     }
 
     public TreeSet<String> getMostBoughtProductsForClient(String code) throws ClientNotFoundException {
@@ -255,6 +364,5 @@ public class HiperMercado implements Serializable {
     public HiperMercado clone() {
         return new HiperMercado(this);
     }
-
 
 }

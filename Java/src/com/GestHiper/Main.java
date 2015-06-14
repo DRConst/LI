@@ -4,6 +4,7 @@ package com.GestHiper;
 import com.Hipermercado.*;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -19,41 +20,6 @@ public class Main {
         HiperMercado hiper = new HiperMercado();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        /*
-        Sales testSales = new Sales();
-        Sale s1,s2,s3,s4,s5,s6,s7,s8;
-        Product prod1,prod2,prod3,prod4,prod5,prod6;
-        Client cl1,cl2,cl3,cl4,cl5,cl6;
-
-        prod1 = new Product( "AX5023" );
-        prod2 = new Product( "TA9952" );
-        prod3 = new Product( "AA6126" );
-        prod4 = new Product( "YS2863" );
-        prod5 = new Product( "BB6013" );
-        prod6 = new Product( "OL2332" );
-
-        cl1 = new Client("AD001");
-        cl2 = new Client("AD002");
-        cl3 = new Client("CK503");
-        cl4 = new Client("QA832");
-        cl5 = new Client("GO965");
-        cl6 = new Client("LA615");
-
-        s1 = new Sale( 5, 7, 3.21, prod1, cl2, "P");
-
-        s2 = new Sale( 12, 5, 12.1, prod5, cl2, "N");
-
-        s3 = new Sale( 1, 2, 0.62, prod1, cl6, "N");
-
-        s4 = new Sale( 1, 5, 8.34, prod2, cl3, "P");
-        s5 = new Sale( 1, 12, 73.25, prod6, cl1, "P");
-        s6 = new Sale( 7, 1, 1.96, prod6, cl2, "P");
-        s7 = new Sale( 5, 6, 6.16, prod1, cl4, "N");
-        s8 = new Sale( 9, 2, 2.88, prod3, cl1, "P");
-        */
-        parseClientCatalog(hiper);
-        parseProductCatalog(hiper);
-        parseSales(hiper, "Compras.txt");
         do {
             userOpt = menu();
 
@@ -80,33 +46,21 @@ public class Main {
                     break;
 
                 case 4:
-                    System.out.println("Insert the client code: ");
-                    String clientCode = br.readLine();
-                    ArrayList<ClientStats> stats = new ArrayList<>();
-                    try {
-                        for( int i = 0; i < 12; i++)
-                            stats.add(i, hiper.getMonthlyClientStats(clientCode, i + 1));
-                    } catch (ClientNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (SalesNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println("hai");
+
+                    Query4( hiper );
+
                     break;
 
                 case 5:
-                    try {
-                        System.out.println(hiper.getMonthlyProductStats("XA1482", 1).getBill());
-                    } catch (ProductNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (SalesNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println("hai");
+
+                    Query5( hiper );
+
                     break;
 
                 case 6:
-                    System.out.println(hiper.getYearlyProductStats("XA1482"));
+
+                    Query6( hiper );
+
                     break;
 
                 case 7:
@@ -139,6 +93,11 @@ public class Main {
                     break;
 
                 case 13:
+
+                    try {
+                        hiper = new HiperMercado( (HiperMercado)Serializer.readObject(hiper.getClass().getName() ) );
+                    }catch( ClassNotFoundException e) {}
+
                     break;
 
                 case 14:
@@ -278,6 +237,190 @@ public class Main {
         System.out.println("Nº Sales: "+ hiper.getNSalesPerMonth( month ) +", Nº Unique Clients: "+ hiper.getNDiffClientsPerMonth( month ) );
     }
 
+    public static void Query4( HiperMercado hiper )
+    {
+        String code;
+        Scanner scanner = new Scanner(System.in);
+        int month;
+        ArrayList<Integer> nSales, nUnique;
+        ArrayList<Double> expenses;
+        Results res = new Results();
+        int nTotalSales, nTotalUnique;
+        double totalExpenses;
+        LinkedList<String> tempSales, tempUnique, tempExpenses;
+        DecimalFormat formatExpenses = new DecimalFormat("0.00");
+
+
+        System.out.println("Insert Client Code: ");
+        code = scanner.nextLine();
+
+        try {
+            nSales = hiper.getClientNSalesYearly( code );
+            nUnique = hiper.getClientNUniqueProducts( code );
+            expenses = hiper.getClientExpenses( code );
+
+        }catch( ClientNotFoundException e) {
+            System.out.println("No Client Found");
+            return;
+        }catch( SalesNotFoundException e ) {
+            System.out.println("No Sales Found for specified Client");
+            return;
+        }
+
+        nTotalSales = nTotalUnique = 0;
+        totalExpenses = 0.0;
+        tempExpenses = new LinkedList<>();
+        tempSales = new LinkedList<>();
+        tempUnique = new LinkedList<>();
+        for(int i=0;i<12; i++) {
+
+            tempSales.add( nSales.get(i)+"" );
+            tempUnique.add( nUnique.get(i)+"" );
+            tempExpenses.add( formatExpenses.format( expenses.get(i) ) );
+
+            nTotalSales += nSales.get( i );
+            nTotalUnique += nUnique.get( i );
+            totalExpenses += expenses.get( i );
+        }
+
+        res.add( "# Sales", tempSales );
+        res.add( "# Products", tempUnique );
+        res.add( "$ Spent", tempExpenses );
+        res.add( "*TotalSales: ", nTotalSales );
+        res.add( "*TotalProducts: ", nTotalUnique );
+        res.add( "*TotalExpense: ", formatExpenses.format( totalExpenses ) );
+
+        paginate(res);
+    }
+
+    public static void Query5( HiperMercado hiper ) {
+        String code;
+        Scanner scanner = new Scanner(System.in);
+        int month;
+        ArrayList<Integer> nSales, nUnique;
+        ArrayList<Double> expenses;
+        Results res = new Results();
+        int nTotalSales, nTotalUnique;
+        double totalExpenses;
+        LinkedList<String> tempSales, tempUnique, tempExpenses;
+        DecimalFormat formatExpenses = new DecimalFormat("0.00");
+
+
+        System.out.println("Insert Product Code: ");
+        code = scanner.nextLine();
+
+        try {
+            nSales = hiper.getProductNSalesYearly(code);
+            nUnique = hiper.getProductNUniqueProducts(code);
+            expenses = hiper.getProductExpenses(code);
+
+        }catch( ProductNotFoundException e) {
+            System.out.println("No Product Found");
+            return;
+        }catch( SalesNotFoundException e ) {
+            System.out.println("No Sales Found for specified Product");
+            return;
+        }
+
+        nTotalSales = nTotalUnique = 0;
+        totalExpenses = 0.0;
+        tempExpenses = new LinkedList<>();
+        tempSales = new LinkedList<>();
+        tempUnique = new LinkedList<>();
+        for(int i=0;i<12; i++) {
+
+            tempSales.add( nSales.get(i)+"" );
+            tempUnique.add( nUnique.get(i)+"" );
+            tempExpenses.add( formatExpenses.format( expenses.get(i) ) );
+
+            nTotalSales += nSales.get( i );
+            nTotalUnique += nUnique.get( i );
+            totalExpenses += expenses.get( i );
+        }
+
+        res.add( "# Sales", tempSales );
+        res.add( "# Clients", tempUnique );
+        res.add( "$ Spent", tempExpenses );
+        res.add( "*TotalSales: ", nTotalSales );
+        res.add( "*TotalClients: ", nTotalUnique );
+        res.add( "*TotalExpense: ", formatExpenses.format( totalExpenses ) );
+
+        paginate(res);
+    }
+
+    public static void Query6( HiperMercado hiper ) {
+        Results res = new Results();
+        ArrayList<SalesList> monthly;
+        String code;
+        Scanner scanner = new Scanner( System.in );
+        LinkedList<String> countP, countN, expenseP, expenseN;
+        DecimalFormat formatExpenses = new DecimalFormat("0.00");
+        int nTotalP, nTotalN;
+        double expensePTotal, expenseNTotal;
+
+        System.out.println("Insert Product Code: ");
+        code = scanner.nextLine();
+
+        try {
+            monthly = hiper.getProductMonthlyStats(code);
+
+        }catch( ProductNotFoundException e) {
+            System.out.println("No Product Found");
+            return;
+        }
+
+        countP = new LinkedList<>();
+        countN = new LinkedList<>();
+        expenseP = new LinkedList<>();
+        expenseN = new LinkedList<>();
+        nTotalN = nTotalP = 0;
+        expenseNTotal = expensePTotal = 0.0;
+        for( SalesList s : monthly ) {
+
+            countP.add( s.getTotalP()+"" );
+            countN.add( s.getTotalN()+"" );
+            expenseP.add( formatExpenses.format(s.getTotal$P()) );
+            expenseN.add( formatExpenses.format( s.getTotal$N() ) );
+
+            nTotalP += s.getTotalP();
+            nTotalN += s.getTotalN();
+            expensePTotal += s.getTotal$P();
+            expenseNTotal += s.getTotal$N();
+        }
+
+        res.add( "*TotalP: ", nTotalP );
+        res.add( "*TotalN: ", nTotalN );
+        res.add( "*Expense P: ", expensePTotal );
+        res.add( "*Expense N: ", expenseNTotal );
+
+        res.add( "# Type P", countP );
+        res.add( "# Type N", countN );
+        res.add( "$ Type P", expenseP );
+        res.add( "$ Type N", expenseN );
+
+        paginate( res );
+    }
+/*
+    public static void Query7( HiperMercado hiper ) {
+        Results res = new Results();
+        String client;
+        Scanner scanner = new Scanner( System.in );
+        LinkedList<String> prods;
+
+        System.out.println("Insert Client: ");
+        client = scanner.nextLine();
+
+
+        try {
+            prods = hiper.getMostBoughtProductsForClient( client );
+        }catch( ClientNotFoundException e) {
+            System.out.println("Client Not Found");
+            return;
+        }
+
+        paginate(res);
+    }
+*/
     public static HiperMercado Query12() throws FileNotFoundException {
         Scanner scanner = new Scanner(System.in);
         HiperMercado hiper = new HiperMercado();
