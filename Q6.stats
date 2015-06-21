@@ -1,0 +1,17 @@
+Default:
+	Reading: 3.004718366
+	Sorting Acc: 0.840147105
+	Sorting Sales: 0.645363934
+	Q6: 0.001121674
+	
+HashMap Only:
+	Reading: 3.015905203
+	Sorting Acc: 0.972233488
+	Sorting Sales: 0.64527508
+	Q6: 0.001348942
+	
+TreeMap Only:
+	Reading: 3.958900073
+	Sorting Acc: 3.067595208
+	Sorting Sales: 1.4931223
+	Q6: 0.001131352
