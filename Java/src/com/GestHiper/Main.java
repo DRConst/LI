@@ -213,7 +213,7 @@ public class Main {
         Results res = new Results();
         LinkedList<String> prods = hiper.getUnboughtProducts();
         res.add("Products", prods);
-        res.add( "*Total", prods.size() );
+        res.add("*Total", prods.size());
         paginate(res);
     }
 
@@ -234,7 +234,7 @@ public class Main {
         System.out.println("Insert Month: ");
         month = getIntOpt(1, 12);
 
-        System.out.println("Nº Sales: "+ hiper.getNSalesPerMonth( month ) +", Nº Unique Clients: "+ hiper.getNDiffClientsPerMonth( month ) );
+        System.out.println("Nº Sales: " + hiper.getNSalesPerMonth(month) + ", Nº Unique Clients: " + hiper.getNDiffClientsPerMonth(month));
     }
 
     public static void Query4( HiperMercado hiper )
@@ -746,6 +746,7 @@ public class Main {
     }
 
     private static void scannerParse() {
+        Sale s;
         try {
             Scanner sc = new Scanner(new FileInputStream("Compras1.txt")).useLocale(Locale.US);
             String product, client, type;
@@ -761,12 +762,11 @@ public class Main {
                 type = sc.next();
                 client = sc.next();
                 month = sc.nextInt();
+                s = new Sale(month, ammount, price, new Product(product), new Client(client), type );
             }
             System.out.println(Crono.stop());
             sc.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             System.out.println(Crono.stop());
             System.out.println(e.getMessage());
         }
@@ -790,6 +790,7 @@ public class Main {
                 type = tok.nextToken();
                 client = tok.nextToken();
                 month = new Integer(tok.nextToken());
+                s = new Sale(month, ammount, price, new Product(product), new Client(client), type );
 
             }
             System.out.println(Crono.stop());
